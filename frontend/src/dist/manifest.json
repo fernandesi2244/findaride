@@ -1,0 +1,39 @@
+{
+  "_vendor-e63d5aea.js": {
+    "file": "assets/vendor-e63d5aea.js"
+  },
+  "assets/logo.png": {
+    "file": "assets/logo-03d6d6da.png",
+    "src": "assets/logo.png"
+  },
+  "index.css": {
+    "file": "assets/index-41724408.css",
+    "src": "index.css"
+  },
+  "index.html": {
+    "assets": [
+      "assets/logo-03d6d6da.png"
+    ],
+    "css": [
+      "assets/index-41724408.css"
+    ],
+    "dynamicImports": [
+      "views/AboutView.vue"
+    ],
+    "file": "assets/index-ff2d8437.js",
+    "imports": [
+      "_vendor-e63d5aea.js"
+    ],
+    "isEntry": true,
+    "src": "index.html"
+  },
+  "views/AboutView.vue": {
+    "file": "assets/AboutView-056d9982.js",
+    "imports": [
+      "index.html",
+      "_vendor-e63d5aea.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "views/AboutView.vue"
+  }
+}
