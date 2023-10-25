@@ -1,49 +1,49 @@
 <template>
-    <main>
-      <!-- <img alt="Vue logo" class="logo" src="/static/logo.svg" width="125" height="125" /> -->
-  
-      <div class="greetings">
-        <h1 class="dark-green">findaride</h1>
-        <h3>Go find a ride!</h3>
-        <!-- Hearts in action -->
-      </div>
-  
-      <div class="login-container">
-          <form @submit.prevent="submitLogIn">
-              <input type="text" v-model="email" id="email" placeholder="Email" autocomplete="email" required>
-              <br />
-              <input type="password" v-model="password" id="password" placeholder="Password" autocomplete="current-password" required>
-              <br />
-              <button type="submit">Log in</button>
-          </form>
-          <div class="sign-up">
-              <p>Don't have an account yet?</p>
-              <a href="/signup">Create one</a>
-          </div>
-      </div>
-    </main>
-  </template>
-  
-  <script setup>
+  <main>
+    <!-- <img alt="Vue logo" class="logo" src="/static/logo.svg" width="125" height="125" /> -->
+
+    <div class="greetings">
+      <h1 class="dark-green">findaride</h1>
+      <h3>Go find a ride!</h3>
+      <!-- Hearts in action -->
+    </div>
+
+    <div class="login-container">
+        <form @submit.prevent="submitLogIn">
+            <input type="text" v-model="email" id="email" placeholder="Email" autocomplete="email" required>
+            <br />
+            <input type="password" v-model="password" id="password" placeholder="Password" autocomplete="current-password" required>
+            <br />
+            <button type="submit">Log in</button>
+        </form>
+        <div class="sign-up">
+            <p>Don't have an account yet?</p>
+            <a href="/signup">Create one</a>
+        </div>
+    </div>
+  </main>
+</template>
+
+<script setup>
   import { ref } from 'vue';
   import { axios } from "../common/axios_service.js";
   import { endpoints } from "../common/endpoints.js";
   import { useRouter, useRoute } from 'vue-router'
-  
+
   const router = useRouter()
   const route = useRoute()
-  
+
   const email = ref('')
   const password = ref('')
-  
+
   async function submitLogIn() {
     const endpoint = endpoints["login"];
-  
+
     const data = {
       email: email.value,
       password: password.value
     }
-  
+
     try {
       const response = await axios.post(endpoint, data);
       console.log(response);
@@ -56,10 +56,9 @@
       console.log(error);
     }
   }
-  </script>
-  
-  <style scoped>
-  
+</script>
+
+<style scoped>
   main {
     display: flex;
     flex-direction: column;
@@ -129,5 +128,5 @@
   .greetings h3 {
     text-align: center;
   }
-  </style>
+</style>
   
