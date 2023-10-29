@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
 
+    'django_cas_ng',
+
+
     'users',
     'core',
 ]
@@ -57,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django_cas_ng.middleware.CASMiddleware'
 ]
 
 REST_FRAMEWORK = {
@@ -142,7 +146,15 @@ STATICFILES_DIRS = [
 ]
 
 AUTH_USER_MODEL = "users.CustomUser"
-AUTHENTICATION_BACKENDS = ["users.backends.CustomUserModelBackend"]
+AUTHENTICATION_BACKENDS = [
+    "users.backends.CustomUserModelBackend", 
+    'django_cas_ng.backends.CASBackend',
+    ]
+
+# CAS Settings
+#CAS_SERVER_URL = 'https://signon.cs.princeton.edu/'
+CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
+CAS_VERSION = 2
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
