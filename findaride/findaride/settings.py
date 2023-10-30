@@ -157,6 +157,8 @@ AUTHENTICATION_BACKENDS = [
 #CAS_SERVER_URL = 'https://signon.cs.princeton.edu/'
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
 CAS_VERSION = 2
+CAS_USERNAME_ATTRIBUTE = 'mail'
+CAS_REDIRECT_URL = "/dashboard/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
