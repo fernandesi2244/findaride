@@ -97,7 +97,7 @@ WSGI_APPLICATION = "findaride.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {'default': dj_database_url.config(default="postgres://postgres:darren5014101@localhost:5433/findaride")}
+DATABASES = {'default': dj_database_url.config(default=os.getenv("DB_URL"))}
 
 
 # Password validation
@@ -149,7 +149,8 @@ STATICFILES_DIRS = [
 AUTH_USER_MODEL = "users.CustomUser"
 AUTHENTICATION_BACKENDS = [
     "users.backends.CustomUserModelBackend", 
-    'django_cas_ng.backends.CASBackend',
+    "users.backends.CustomCASBackend",
+    #'django_cas_ng.backends.CASBackend',
     ]
 
 # CAS Settings
