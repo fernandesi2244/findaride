@@ -97,7 +97,7 @@ WSGI_APPLICATION = "findaride.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {'default': dj_database_url.config(default="postgres://postgres:postgres@localhost:5432/findaride")}
+DATABASES = {'default': dj_database_url.config(default="postgres://postgres:darren5014101@localhost:5433/findaride")}
 
 
 # Password validation
