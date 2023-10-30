@@ -1,5 +1,5 @@
 from django.db import models
-from findaride.users.models import User # is this the right user?
+from django.apps import apps
 
 class Location(models.Model):
     postal_code = models.IntegerField()
@@ -10,28 +10,28 @@ class Location(models.Model):
 class Trip(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     num_participants = models.IntegerField()
-    participant_list = models.ManyToManyField(User, related_name='trips') # can use user.trips.all() to get all trips for a user
+    participant_list = models.ManyToManyField('users.CustomUser', related_name='trips') # can use user.trips.all() to get all trips for a user
     is_full = models.BooleanField()
     associated_college = models.CharField(max_length=255)
-    departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT)
-    arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT)
+    departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
+    arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     depature_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     num_trip_requests = models.IntegerField()
-    trip_requests = models.ManyToManyField('SingleTripRequest', related_name='trip_requested', on_delete=models.DO_NOTHING) # can use single_trip_request.trip_requested.all() to get the trip that the single trip request is applying to
-    blacklisted_users = models.ManyToManyField(User, related_name='blacklisted_trips') # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
+    trip_requests = models.ManyToManyField('SingleTripRequest', related_name='trip_requested') # can use single_trip_request.trip_requested.all() to get the trip that the single trip request is applying to
+    blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips') # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
 
     class Meta:
         ordering = ['created_on']
     
 class MulipleTripRequest(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT)
-    arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT)
+    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
+    departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
+    arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
-    trips_requested = models.ManyToManyField('SingleTripRequest', related_name='parent_trip_request', on_delete=models.DO_NOTHING) # can use single_trip_request.parent_trip_request.all() to get the multiple trip request that the single trip request is a part of
+    trips_requested = models.ManyToManyField('SingleTripRequest', related_name='parent_trip_request') # can use single_trip_request.parent_trip_request.all() to get the multiple trip request that the single trip request is a part of
 
     class Meta:
         ordering = ['created_on']
