@@ -31,13 +31,13 @@ const routes = [
   {
     path: '/dashboard/',
     name: 'dashboard',
-    component: () => import(/* webpackChunkName: "about" */ '../views/DashboardView.vue'),
+    component: () => import('../views/DashboardView.vue'),
     
   },
   {
     path: '/addtripform/',
     name: 'addtripform',
-    component: () => import(/* webpackChunkName: "about" */ '../views/AddTripFormView.vue')
+    component: () => import('../views/AddTripFormView.vue')
   }
 ]
 async function isLoggedIn() {
