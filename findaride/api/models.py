@@ -2,7 +2,6 @@ from django.db import models
 from django.apps import apps
 
 class Location(models.Model):
-    postal_code = models.IntegerField()
     address = models.CharField(max_length=255)
     latitude = models.FloatField()
     longitude = models.FloatField()
@@ -19,12 +18,7 @@ class Trip(models.Model):
     num_join_requests = models.IntegerField()
     join_requests = models.ManyToManyField('JoinRequest', related_name='trip_requested') # can use join_request.trip_requested.all() to get the trip that the join request is applying to
     blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips') # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
-    
-    @property
-    def college(self):
-        if self.participant_list.first():
-            return self.participant_list.all()[0].college
-        return ''
+    college = models.CharField(max_length=5)
 
     class Meta:
         ordering = ['created_on']

@@ -7,7 +7,7 @@ from django.contrib.auth.password_validation import validate_password
 from datetime import timedelta
 import datetime
 
-from .models import TripRequest, Trip, JoinRequest
+from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest
 
 UserModel = get_user_model()
 
@@ -26,20 +26,15 @@ class TripRequestSerializer(serializers.ModelSerializer):
         if attrs['num_luggage_bags'] < 0 or attrs['num_luggage_bags'] > 5: # TODO: change if we mess with bag filtering
             raise serializers.ValidationError({"num_luggage_bags": "Number of luggage bags must be between 0 and 5."})
 
-        if attrs['password'] != attrs['confirm_password']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-        
-        # TODO: should we validate the locations here and add them to the database if they don't exist?
-
         return attrs
 
     def create(self, validated_data):
-        # TODO: if location(s) don't exist in database, create it
+        departureLocation, arrivalLocation = TripRequestSerializer.__getLocationObjects(validated_data['departure_location'], validated_data['arrival_location'])
 
         tripRequest = TripRequest.objects.create(
             user = self.context['request'].user,
-            departure_location = validated_data['departure_location'],
-            arrival_location = validated_data['arrival_location'],
+            departure_location = departureLocation,
+            arrival_location = arrivalLocation,
             departure_time = validated_data['departure_time'],
             num_luggage_bags = validated_data['num_luggage_bags']
         )
@@ -74,7 +69,7 @@ class TripRequestSerializer(serializers.ModelSerializer):
 
             tripRequest.delete()
 
-            return None # TODO: IS THIS RIGHT??
+            return None
         
         # Otherwise, we have matching trips, so we need to create a join request for each of them under a unified trip request
         for trip in matchingTrips:
@@ -88,38 +83,49 @@ class TripRequestSerializer(serializers.ModelSerializer):
 
         return tripRequest
 
-class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField(
-        label="Email",
-        # This will be used when the DRF browsable API is enabled
-        trim_whitespace=False,
-        write_only=True
-    )
-    password = serializers.CharField(
-        label="Password",
-        # This will be used when the DRF browsable API is enabled
-        style={'input_type': 'password'},
-        trim_whitespace=False,
-        write_only=True
-    )
-
-    def validate(self, attrs):
-        # Take email and password from request
-        email = attrs.get('email')
-        password = attrs.get('password')
-
-        if email and password:
-            # Try to authenticate the user using Django auth framework.
-            user = authenticate(request=self.context.get('request'),
-                                email=email, password=password)
-            if not user:
-                # If we don't have a regular user, raise a ValidationError
-                msg = 'Access denied: wrong email or password.'
-                raise serializers.ValidationError(msg, code='authorization')
+    def __getLocationObjects(departureLocation, arrivalLocation):
+        # See if location table contains any rows with the same departure address. If so, fetch that row. Otherwise, create a new row.
+        matchingDepartureLocations = Location.objects.filter(address=departureLocation['address'])
+        if matchingDepartureLocations.exists():
+            departureLocation = matchingDepartureLocations[0]
         else:
-            msg = 'Both "email" and "password" are required.'
-            raise serializers.ValidationError(msg, code='authorization')
-        # We have a valid user, put it in the serializer's validated_data.
-        # It will be used in the view.
-        attrs['user'] = user
-        return attrs
+            departureLocation = Location.objects.create(
+                address=departureLocation['address'],
+                latitude=departureLocation['latitude'],
+                longitude=departureLocation['longitude']
+            )
+            departureLocation.save()
+        
+        # Do the same for the arrival location
+        matchingArrivalLocations = Location.objects.filter(address=arrivalLocation['address'])
+        if matchingArrivalLocations.exists():
+            arrivalLocation = matchingArrivalLocations[0]
+        else:
+            arrivalLocation = Location.objects.create(
+                address=arrivalLocation['address'],
+                latitude=arrivalLocation['latitude'],
+                longitude=arrivalLocation['longitude']
+            )
+            arrivalLocation.save()
+        
+        return departureLocation, arrivalLocation
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+class TripSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = '__all__'
+
+class JoinRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JoinRequest
+        fields = '__all__'
+
+class ConfirmationRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConfirmationRequest
+        fields = '__all__'
