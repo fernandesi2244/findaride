@@ -1,8 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
+from django_cas_ng.backends import CASBackend
 
 UserModel = get_user_model()
+
+class CustomCASBackend(CASBackend):
+    # only allow cas logins for now
+    pass
 
 
 class CustomUserModelBackend(ModelBackend):

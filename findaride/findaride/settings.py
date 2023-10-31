@@ -97,7 +97,7 @@ WSGI_APPLICATION = "findaride.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {'default': dj_database_url.config(default="postgres://postgres:postgres@localhost:5432/findaride")}
+DATABASES = {'default': dj_database_url.config(default=os.getenv("DB_URL"))}
 
 
 # Password validation
@@ -149,13 +149,16 @@ STATICFILES_DIRS = [
 AUTH_USER_MODEL = "users.CustomUser"
 AUTHENTICATION_BACKENDS = [
     "users.backends.CustomUserModelBackend", 
-    'django_cas_ng.backends.CASBackend',
+    "users.backends.CustomCASBackend",
+    #'django_cas_ng.backends.CASBackend',
     ]
 
 # CAS Settings
 #CAS_SERVER_URL = 'https://signon.cs.princeton.edu/'
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
 CAS_VERSION = 2
+CAS_USERNAME_ATTRIBUTE = 'mail'
+CAS_REDIRECT_URL = "/dashboard/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
