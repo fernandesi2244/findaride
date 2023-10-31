@@ -59,6 +59,23 @@ class JoinRequest(models.Model):
         tripRequest.save()
 
         # TODO: send email notification (or by preferred notification method) to trip participants that a new join request has been made
+    
+    def accept(self, user):
+        """
+        Mark that the given existing trip user has accepted this join request. If all trip members have accepted,
+        then send a confirmation request to the user that requested the trip.
+        """
+        self.participants_that_accepted.add(user)
+        self.num_participants_accepted += 1
+        self.save()
+
+        if self.num_participants_accepted == self.trip_requested.num_participants:
+            # send confirmation request to user that requested trip
+            ConfirmationRequest.objects.create(
+                join_request=self
+            )
+
+            # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
 
 class ConfirmationRequest(models.Model):
     join_request = models.ForeignKey(JoinRequest, on_delete=models.CASCADE)

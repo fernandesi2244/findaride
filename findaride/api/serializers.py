@@ -5,6 +5,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 
 from datetime import timedelta
+import datetime
 
 from .models import TripRequest, Trip, JoinRequest
 
@@ -16,8 +17,19 @@ class TripRequestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate(self, attrs):
+        # If the departure time is not after the current time, raise a ValidationError
+        if attrs['departure_time'] <= datetime.now():
+            raise serializers.ValidationError({"departure_time": "Departure time must be after the current time."})
+
+        # TODO: depending on what we do for stale requests later, we might impose a max limit on the departure_time
+
+        if attrs['num_luggage_bags'] < 0 or attrs['num_luggage_bags'] > 5: # TODO: change if we mess with bag filtering
+            raise serializers.ValidationError({"num_luggage_bags": "Number of luggage bags must be between 0 and 5."})
+
         if attrs['password'] != attrs['confirm_password']:
             raise serializers.ValidationError({"password": "Password fields didn't match."})
+        
+        # TODO: should we validate the locations here and add them to the database if they don't exist?
 
         return attrs
 
@@ -33,7 +45,7 @@ class TripRequestSerializer(serializers.ModelSerializer):
         )
 
         # logic for finding matching trips
-        userCollege = tripRequest.user.college # TODO: make sure Kohei adds this
+        userCollege = tripRequest.user.college
         matchingTrips = Trip.objects.filter(
             college=userCollege,
             departure_location__postal_code=tripRequest.departure_location.postal_code,

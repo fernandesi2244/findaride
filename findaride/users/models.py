@@ -45,20 +45,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 
-    def acceptJoinRequest(self, joinRequest):
-        joinRequest.participants_that_accepted.add(self)
-        joinRequest.num_participants_accepted += 1
-        joinRequest.save()
-
-        if joinRequest.num_participants_accepted == joinRequest.trip_requested.num_participants:
-            # send confirmation request to user that requested trip
-            confirmationRequest = ConfirmationRequest.objects.create(
-                join_request=joinRequest
-            )
-
-            # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
-
-
 def in_24_hours():
     return timezone.now() + timedelta(hours=24)
 
