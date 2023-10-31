@@ -7,6 +7,10 @@ from django.utils import timezone
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    PRINCETON = "PU"
+    COLLEGE_CHOICES = [
+        (PRINCETON, "Princeton"),
+    ]
 
     email = models.EmailField(
         verbose_name='email address',
@@ -15,6 +19,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
+
+    college = models.CharField(
+        max_length=5,
+        choices=COLLEGE_CHOICES,
+        default=PRINCETON,
+    )
 
     phone_number = PhoneNumberField(blank=True)
 

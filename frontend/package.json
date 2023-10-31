@@ -9,6 +9,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@mapbox/search-js-web": "^1.0.0-beta.18",
     "axios": "^1.6.0",
     "core-js": "^3.8.3",
     "vite-tsconfig-paths": "^4.2.1",

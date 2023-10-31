@@ -12,7 +12,6 @@ class Trip(models.Model):
     num_participants = models.IntegerField()
     participant_list = models.ManyToManyField('users.CustomUser', related_name='trips') # can use user.trips.all() to get all trips for a user
     is_full = models.BooleanField()
-    associated_college = models.CharField(max_length=255)
     departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     depature_time = models.DateTimeField()
@@ -20,6 +19,12 @@ class Trip(models.Model):
     num_trip_requests = models.IntegerField()
     trip_requests = models.ManyToManyField('SingleTripRequest', related_name='trip_requested') # can use single_trip_request.trip_requested.all() to get the trip that the single trip request is applying to
     blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips') # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
+    
+    @property
+    def college(self):
+        if self.participant_list.first():
+            return self.participant_list.all()[0].college
+        return ''
 
     class Meta:
         ordering = ['created_on']

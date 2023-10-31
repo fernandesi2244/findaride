@@ -6,10 +6,13 @@
         <form @submit.prevent="submit">
           <!-- Form fields for trip details -->
           <div class="form-group">
-            <input v-model="trip.from" placeholder="From" required />
+            <input id="from" ref="fromRef" placeholder="From" required/>
           </div>
           <div class="form-group">
-            <input v-model="trip.to" placeholder="To" required />
+            <input id="to" ref="toRef" placeholder="To" required />
+          </div>
+          <div class="form-group">
+            <input id="to" ref="toRef" placeholder="To" required />
           </div>
           <div class="form-group">
             <input v-model="trip.departureTime" type="time" required />
@@ -30,12 +33,20 @@
   </template>
   
   <script setup>
-  import { ref, reactive, defineEmits } from 'vue';
+  import { ref, reactive, defineEmits, onMounted } from 'vue';
   const emit = defineEmits(['addTrip', 'close']);
+
+  const fromRef = ref();
+  const toRef = ref();
+  
   const trip = reactive({
     id: Date.now(),
     from: '',
+    fromLat: 0,
+    fromLong: 0, 
     to: '',
+    toLat: 0,
+    toLong: 0,
     departureTime: '',
     luggageCount: 0,
     comments: '',
@@ -56,11 +67,41 @@
   
   function resetForm() {
     trip.from = '';
+    trip.fromLat = 0;
+    trip.fromLong = 0;
     trip.to = '';
+    trip.toLat = 0;
+    trip.toLong = 0;
     trip.departureTime = '';
     trip.luggageCount = 0;
     trip.comments = '';
   }
+
+  onMounted(()=>{
+    const acFrom = new google.maps.places.Autocomplete(fromRef.value, {
+      types: ["transit_station"],
+      fields: ["geometry"]
+    });
+
+    const acTo = new google.maps.places.Autocomplete(toRef.value, {
+      types: ["transit_station"],
+      fields: ["geometry"]
+    });
+
+    google.maps.event.addListener(acFrom, "place_changed", () => {
+      let place = acFrom.getPlace().geometry.location;
+      trip.fromLat = place.lat();
+      trip.fromLong = place.lng();
+      trip.from = document.getElementById('from').value;
+    });
+
+    google.maps.event.addListener(acTo, "place_changed", () => {
+      let place = acTo.getPlace().geometry.location;
+      trip.toLat = place.lat();
+      trip.toLong = place.lng();
+      trip.to = document.getElementById('to').value;
+    });
+  });
   </script>
   
   <style scoped>
