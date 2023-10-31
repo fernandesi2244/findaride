@@ -3,9 +3,78 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
-from phonenumber_field.serializerfields import PhoneNumberField
+
+from datetime import timedelta
+
+from .models import TripRequest, Trip, JoinRequest
 
 UserModel = get_user_model()
+
+class TripRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TripRequest
+        fields = '__all__'
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['confirm_password']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        return attrs
+
+    def create(self, validated_data):
+        # TODO: if location(s) don't exist in database, create it
+
+        tripRequest = TripRequest.objects.create(
+            user = self.context['request'].user,
+            departure_location = validated_data['departure_location'],
+            arrival_location = validated_data['arrival_location'],
+            departure_time = validated_data['departure_time'],
+            num_luggage_bags = validated_data['num_luggage_bags']
+        )
+
+        # logic for finding matching trips
+        userCollege = tripRequest.user.college # TODO: make sure Kohei adds this
+        matchingTrips = Trip.objects.filter(
+            college=userCollege,
+            departure_location__postal_code=tripRequest.departure_location.postal_code,
+            arrival_location__postal_code=tripRequest.arrival_location.postal_code,
+            departure_time_ge=tripRequest.departure_time,
+            departure_time_le=tripRequest.departure_time + timedelta(minutes=20),
+            num_luggage_bags_le=5 - tripRequest.num_luggage_bags,
+            is_full=False,
+        ).exclude(blacklisted_users__contains=tripRequest.user).order_by('departure_time', 'num_participants', 'num_luggage_bags')[:5]
+
+        if len(matchingTrips) == 0:
+            # No trips to match to, so make a new trip for the user requesting a trip
+            # TODO: How does atomicity work with django? For example, we want the following lines to either all occur or not occur at all.
+            trip = Trip.objects.create(
+                college=userCollege,
+                departure_location=tripRequest.departure_location,
+                arrival_location=tripRequest.arrival_location,
+                departure_time=tripRequest.departure_time,
+                num_luggage_bags=tripRequest.num_luggage_bags,
+                num_participants=1,
+                is_full=False,
+                num_join_requests=0
+            )
+            trip.participant_list.add(tripRequest.user)
+            trip.save()
+
+            tripRequest.delete()
+
+            return None # TODO: IS THIS RIGHT??
+        
+        # Otherwise, we have matching trips, so we need to create a join request for each of them under a unified trip request
+        for trip in matchingTrips:
+            joinRequest = JoinRequest.objects.create(
+                num_participants_accepted=0,
+                trip_details_changed=False
+            )
+            joinRequest.save()
+
+            joinRequest.assign(trip, tripRequest)
+
+        return tripRequest
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(
@@ -42,43 +111,3 @@ class LoginSerializer(serializers.Serializer):
         # It will be used in the view.
         attrs['user'] = user
         return attrs
-
-
-class SignUpSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-            required=True,
-            validators=[UniqueValidator(queryset=UserModel.objects.all())]
-            )
-    
-    phone_number = PhoneNumberField(region="US", allow_blank=True)
-
-    #password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password = serializers.CharField(write_only=True, required=True)
-    confirm_password = serializers.CharField(write_only=True, required=True)
-
-    class Meta:
-        model = UserModel
-        fields = ('email', 'phone_number', 'password', 'confirm_password', 'first_name', 'last_name')
-        extra_kwargs = {
-            'first_name': {'required': True},
-            'last_name': {'required': True}
-        }
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['confirm_password']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
-
-        return attrs
-
-    def create(self, validated_data):
-        user = UserModel.objects.create(
-            phone_number=validated_data['phone_number'],
-            email=validated_data['email'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
-        )
-
-        user.set_password(validated_data['password'])
-        user.save()
-
-        return user

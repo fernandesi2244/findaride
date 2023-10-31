@@ -1,11 +1,12 @@
-from django.urls import path
+from django.urls import include, path
 from .views import TripRequestModelViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'model-viewset', TripRequestModelViewSet)
+router.register(r'trip-request', TripRequestModelViewSet)
 
 urlpatterns = [
-    # path('create-trip-request/', views.TripRequestView, name='create_trip_request'),
-    # path('user-confirmation-requests/<int:user-id>/', ..., name='user_confirmation_requests'),
+
 ]
+
+urlpatterns += router.urls
