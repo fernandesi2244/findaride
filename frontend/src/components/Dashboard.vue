@@ -10,7 +10,7 @@
       <div v-if="trips.length">
         <ul class="list-reset">
           <li v-for="trip in trips" :key="trip.id" class="card">
-            <button @click="clickTrip">
+            <button @click="clickTrip(trip)">
                 <div class="trip-info">
                     <div><strong>From:</strong> {{ trip.from }}</div>
                     <div><strong>To:</strong> {{ trip.to }}</div>
@@ -25,6 +25,8 @@
                     <div><strong>Name:</strong> {{ join.name }}</div>
                     <div><strong>Departure Time:</strong> {{ join.departureTime }}</div>
                     <div><strong>Luggage Count:</strong> {{ join.luggageCount }}</div>
+                    <!-- <button @click="acceptJoin(join)">Accept</button>
+                    <button @click="rejectJoin(join.id)">Reject</button> -->
                 </li>
             </div>
         </ul>
@@ -92,7 +94,7 @@ import AddTripForm from '../components/AddTripForm.vue';
   
 const trips = reactive([]);
 const showTrip = ref(false);
-const displayedTrip = ref();
+const displayedTrip = ref({});
 const tripRequests = reactive([
     { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
 ])
@@ -109,6 +111,7 @@ const confRequests = reactive([
             luggageCount: 3,
             joinRequests: [
                 {
+                    tripid: 1,
                     id: 0,
                     name: "Dylan",
                     departureTime: "10:30AM",
@@ -126,6 +129,12 @@ onMounted(() => {
         { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
     ];
 });
+
+// function acceptJoin(id) {
+//     const joinI = joinRequests
+//     const index = trips.findIndex(trip => trip.id = )
+//     displayedTrip.members.push()
+// }
 
 function clickTrip(trip) {
     showTrip.value = true
