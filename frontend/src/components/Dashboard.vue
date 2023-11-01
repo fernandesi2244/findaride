@@ -20,13 +20,18 @@
                 </div>
             </button>
           </li>
+          <div v-if="showTrip"> 
+                <li v-for="join in displayedTrip.joinRequests" :key="join.id" class="card">
+                    <div><strong>Name:</strong> {{ join.name }}</div>
+                    <div><strong>Departure Time:</strong> {{ join.departureTime }}</div>
+                    <div><strong>Luggage Count:</strong> {{ join.luggageCount }}</div>
+                </li>
+            </div>
         </ul>
       </div>
       <div v-else>
         <p class="no-trips-message">You haven't planned any trips yet.</p>
       </div>
-
-      <Trip v-if="showTrip" @trip="selectedTrip" @close="showTrip = false" />
 
       <div class="section-header">
         <h2>Your Trip Requests</h2>
@@ -86,6 +91,8 @@ import AddTripForm from '../components/AddTripForm.vue';
   
   
 const trips = reactive([]);
+const showTrip = ref(false);
+const displayedTrip = ref();
 const tripRequests = reactive([
     { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
 ])
@@ -93,13 +100,21 @@ const confRequests = reactive([
     {
         id: 0,
         groupName: "group1",
-        groupMembers: ["Dylan"],
         trip: {
+            members: ["Dylan"],
             date: "Oct 31",
             from: "a",
             to: "b",
             departureTime: "10:10AM",
             luggageCount: 3,
+            joinRequests: [
+                {
+                    id: 0,
+                    name: "Dylan",
+                    departureTime: "10:30AM",
+                    luggageCount: 3,
+                }
+            ]
         }
     }
 ])
@@ -112,8 +127,9 @@ onMounted(() => {
     ];
 });
 
-function clickTrip() {
-
+function clickTrip(trip) {
+    showTrip.value = true
+    displayedTrip.value = trip
 }
 
 function addTrip(newTrip) {
