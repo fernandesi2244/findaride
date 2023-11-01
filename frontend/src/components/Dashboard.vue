@@ -5,23 +5,67 @@
     <div class="trips-section">
       <div class="section-header">
         <h2>Your Trips</h2>
-        <button @click="showAddTrip = true" class="btn add-trip-btn">+ Add New Trip</button>
       </div>
       
       <div v-if="trips.length">
         <ul class="list-reset">
           <li v-for="trip in trips" :key="trip.id" class="card">
+            <button @click="clickTrip">
+                <div class="trip-info">
+                    <div><strong>From:</strong> {{ trip.from }}</div>
+                    <div><strong>To:</strong> {{ trip.to }}</div>
+                    <div><strong>Departure Time:</strong> {{ trip.departureTime }}</div>
+                    <div><strong>Luggage Count:</strong> {{ trip.luggageCount }}</div>
+                    <div><strong>Comments:</strong> {{ trip.comments }}</div>
+                </div>
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p class="no-trips-message">You haven't planned any trips yet.</p>
+      </div>
+
+      <Trip v-if="showTrip" @trip="selectedTrip" @close="showTrip = false" />
+
+      <div class="section-header">
+        <h2>Your Trip Requests</h2>
+        <button @click="showAddTripRequest = true" class="btn add-trip-btn">+ Add New Trip Request</button>
+      </div>
+      <div v-if="tripRequests.length">
+        <ul class="list-reset">
+          <li v-for="tripR in tripRequests" :key="tripR.id" class="card">
             <div class="trip-info">
-              <div><strong>Date:</strong> {{ trip.date }}</div>
-              <div><strong>From:</strong> {{ trip.from }}</div>
-              <div><strong>To:</strong> {{ trip.to }}</div>
-              <div><strong>Departure Time:</strong> {{ trip.departureTime }}</div>
-              <div><strong>Luggage Count:</strong> {{ trip.luggageCount }}</div>
-              <div><strong>Comments:</strong> {{ trip.comments }}</div>
+              <div><strong>From:</strong> {{ tripR.from }}</div>
+              <div><strong>To:</strong> {{ tripR.to }}</div>
+              <div><strong>Departure Time:</strong> {{ tripR.departureTime }}</div>
+              <div><strong>Luggage Count:</strong> {{ tripR.luggageCount }}</div>
+              <div><strong>Comments:</strong> {{ tripR.comments }}</div>
             </div>
-            <span :class="['status', trip.status === 'Active' ? 'status-active' : 'status-inactive']">{{ trip.status }}</span>
-            <button @click="joinTrip(trip.id)" class="btn btn-primary">Join</button>
-            <button @click="removeTrip(trip.id)" class="btn btn-danger">Remove</button>
+            <button @click="removeTripRequest(tripR.id)" class="btn btn-danger">Remove</button>
+          </li>
+        </ul>
+      </div>
+      <div v-else>
+        <p class="no-trips-message">You haven't planned any trips yet.</p>
+      </div>
+
+      <div class="section-header">
+        <h2>Your Confirmation Requests</h2>
+      </div>
+      <div v-if="confRequests.length">
+        <ul class="list-reset">
+          <li v-for="conf in confRequests" :key="conf.id" class="card">
+            <div class="trip-info">
+              <div><strong>Group:</strong> {{ conf.groupName }}</div>
+              <div><strong>Date:</strong> {{ conf.trip.date }}</div>
+              <div><strong>From:</strong> {{ conf.trip.from }}</div>
+              <div><strong>To:</strong> {{ conf.trip.to }}</div>
+              <div><strong>Departure Time:</strong> {{ conf.trip.departureTime }}</div>
+              <div><strong>Luggage Count:</strong> {{ conf.trip.luggageCount }}</div>
+            </div>
+            <button @click="acceptConfirmationRequest(conf.id)" class="btn btn-primary">Join</button>
+            <button @click="rejectConfirmationRequest(conf.id)" class="btn btn-danger">Reject</button>
           </li>
         </ul>
       </div>
@@ -30,25 +74,8 @@
       </div>
     </div>
 
-    <AddTripForm v-if="showAddTrip" @addTrip="addTrip" @close="showAddTrip = false" />
-      <h1>Pending Trip Requests</h1>
-      <div v-if="pendingTrips.length">
-        <ul class="list-reset">
-          <li v-for="trip in pendingTrips" :key="trip.id" class="card">
-            <div class="trip-info">
-              <div><strong>From:</strong> {{ trip.departureLocation }}</div>
-              <div><strong>To:</strong> {{ trip.arrivalLocation }}</div>
-              <div><strong>Departure Time:</strong> {{ trip.departureTime }}</div>
-              <div><strong>Luggage:</strong> {{ trip.luggage }}</div>
-              <div><strong>Comments:</strong> {{ trip.comments }}</div>
-            </div>
-            <button @click="rejectTrip(trip.id)" class="btn btn-danger">Reject</button>
-          </li>
-        </ul>
-      </div>
-      <div v-else>
-        <p class="no-trips-message">No pending trip requests.</p>
-      </div>
+    <AddTripForm v-if="showAddTripRequest" @addTripRequest="addTripRequest" @close="showAddTripRequest = false" />
+
   </div>
   
 </template>
@@ -59,14 +86,35 @@ import AddTripForm from '../components/AddTripForm.vue';
   
   
 const trips = reactive([]);
-const showAddTrip = ref(false);
+const tripRequests = reactive([
+    { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
+])
+const confRequests = reactive([
+    {
+        id: 0,
+        groupName: "group1",
+        groupMembers: ["Dylan"],
+        trip: {
+            date: "Oct 31",
+            from: "a",
+            to: "b",
+            departureTime: "10:10AM",
+            luggageCount: 3,
+        }
+    }
+])
+const showAddTripRequest = ref(false);
 const pendingTrips = ref([]);
   
-  onMounted(() => {
-    pendingTrips.value = [
-      { id: 1, departureLocation: 'New York', arrivalLocation: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
+onMounted(() => {
+    tripRequests.value = [
+        { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
     ];
-  });
+});
+
+function clickTrip() {
+
+}
 
 function addTrip(newTrip) {
   trips.push(newTrip);
@@ -84,6 +132,33 @@ function joinTrip(id) {
   // Implement the functionality to join a trip here.
   // This could involve updating the trip's status or adding the user to the trip's list of participants.
   console.log('Joined trip with ID:', id);
+}
+
+function addTripRequest(newTripRequest) {
+  tripRequests.push(newTripRequest);
+  showAddTripRequest.value = false
+}
+
+function removeTripRequest(id) {
+  const index = tripRequests.findIndex(trip => trip.id === id);
+  if (index !== -1) {
+    tripRequests.splice(index, 1);
+  }
+}
+
+function acceptConfirmationRequest(id) {
+    const index = confRequests.findIndex(conf => conf.id === id);
+    if (index !== -1) {
+        trips.push(confRequests[index].trip)
+        confRequests.splice(index, 1);
+    }
+}
+
+function rejectConfirmationRequest(id) {
+    const index = confRequests.findIndex(conf => conf.id === id);
+    if (index !== -1) {
+        confRequests.splice(index, 1);
+    }
 }
 function rejectTrip(id) {
   if (confirm('Are you sure you want to reject this trip?')) {

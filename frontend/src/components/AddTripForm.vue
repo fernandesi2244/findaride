@@ -1,18 +1,15 @@
 <template>
     <div class="modal-overlay">
       <div class="modal">
-        <h3>Add a new trip</h3>
+        <h3>Add a new trip request</h3>
         
         <form @submit.prevent="submit">
           <!-- Form fields for trip details -->
           <div class="form-group">
-            <input id="from" ref="fromRef" placeholder="From" required/>
+            <input id="from" v-model="trip.from" placeholder="From" required/>
           </div>
           <div class="form-group">
-            <input id="to" ref="toRef" placeholder="To" required />
-          </div>
-          <div class="form-group">
-            <input id="to" ref="toRef" placeholder="To" required />
+            <input id="to" v-model="trip.to" placeholder="To" required />
           </div>
           <div class="form-group">
             <input v-model="trip.departureTime" type="time" required />
@@ -24,17 +21,19 @@
             <textarea v-model="trip.comments" placeholder="Other comments"></textarea>
           </div>
           
-          <button type="submit" class="btn">Add Trip</button>
+          <button type="submit" class="btn">Add Trip Request</button>
         </form>
         
         <button @click="closeModal" class="btn cancel-btn">Cancel</button>
       </div>
+
+
     </div>
   </template>
   
   <script setup>
   import { ref, reactive, defineEmits, onMounted } from 'vue';
-  const emit = defineEmits(['addTrip', 'close']);
+  const emit = defineEmits(['addTripRequest', 'close']);
 
   const fromRef = ref();
   const toRef = ref();
@@ -55,7 +54,7 @@
   
   function submit() {
     console.log("Submitting trip:", trip);
-    emit('addTrip', { ...trip });
+    emit('addTripRequest', { ...trip });
     resetForm();
   }
   
