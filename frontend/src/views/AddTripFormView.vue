@@ -1,4 +1,4 @@
-  <script setup lang="ts">
+<script setup>
 import AddTripForm from "../components/AddTripForm.vue";
 </script>
 

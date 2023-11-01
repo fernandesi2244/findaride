@@ -90,11 +90,22 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
 import AddTripForm from '../components/AddTripForm.vue';
-  
-  
-const trips = reactive([]);
-const showTrip = ref(false);
-const displayedTrip = ref({});
+import { endpoints } from '../common/endpoints.js';
+import { axios } from '../common/axios_service.js'
+
+const userID = ref(-1);
+
+const trips = ref([]);
+
+onMounted(async () => {
+  const endpoint = endpoints["me"];
+  const response = await axios.get(endpoint);
+  userID.value = response.data.id;
+  const response2 = await axios.get("/api/trip-request-list/");
+  console.log(response2)
+  trips.value = response2.data;
+});
+
 const tripRequests = reactive([
     { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
 ])
@@ -124,11 +135,6 @@ const confRequests = reactive([
 const showAddTripRequest = ref(false);
 const pendingTrips = ref([]);
   
-onMounted(() => {
-    tripRequests.value = [
-        { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
-    ];
-});
 
 // function acceptJoin(id) {
 //     const joinI = joinRequests
@@ -159,9 +165,38 @@ function joinTrip(id) {
   console.log('Joined trip with ID:', id);
 }
 
-function addTripRequest(newTripRequest) {
+async function addTripRequest(newTripRequest) {
+  console.log(newTripRequest);
   tripRequests.push(newTripRequest);
-  showAddTripRequest.value = false
+
+  let departure = {
+    "address": newTripRequest.from,
+    "longitude": newTripRequest.fromLong,
+    "latitude": newTripRequest.fromLat,
+  }
+  let arrival = {
+    "address": newTripRequest.to,
+    "longitude": newTripRequest.toLong,
+    "latitude": newTripRequest.toLat,
+  }
+
+  let departure_time = `${newTripRequest.departureDate.substring(2)} ${newTripRequest.departureTime}:00`;
+
+  console.log(userID.value);
+
+
+  let data = {
+    "departure_time": departure_time,
+    "num_luggage_bags": newTripRequest.luggageCount,
+    "user": userID.value,
+    "departure_location": departure,
+    "arrival_location": arrival,
+  }
+
+  const endpoint = endpoints["tripRequest"];
+  const response = await axios.post(endpoint, data);
+  
+  showAddTripRequest.value = false;
 }
 
 function removeTripRequest(id) {

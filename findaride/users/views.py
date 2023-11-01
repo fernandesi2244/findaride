@@ -1,6 +1,6 @@
 from rest_framework import generics, status, views, viewsets
 from rest_framework import permissions
-from .serializers import LoginSerializer, SignUpSerializer
+from .serializers import LoginSerializer, SignUpSerializer, UserSerializer
 from django.contrib.auth import login
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
@@ -33,9 +33,17 @@ class IsLoggedInView(views.APIView):
 
     def get(self, request):
         if request.user.is_authenticated:
-            return Response(status=status.HTTP_200_OK)
+            return Response({'isAuthenticated': True}, status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'isAuthenticated': False}, status=status.HTTP_200_OK)
+        
+class CurrentUserView(views.APIView):
+    def get(self, request):
+        if request.user.is_authenticated:
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_204_NO_CONTENT)
         
 
 class ActivateUserView(views.APIView):

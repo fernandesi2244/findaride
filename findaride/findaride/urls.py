@@ -9,7 +9,7 @@ urlpatterns = [
     path('accounts/login/', django_cas_ng.views.LoginView.as_view(), name='cas_ng_login'),
     path('accounts/logout/', django_cas_ng.views.LogoutView.as_view(), name='cas_ng_logout'),
     path('auth/', include("users.urls")),
-    path('', include("api.urls")),
+    path('api/', include("api.urls")),
     re_path(
         r"^.*$",
         TemplateView.as_view(template_name="base.html")

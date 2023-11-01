@@ -6,4 +6,5 @@ urlpatterns = [
     path("is-logged-in/", IsLoggedInView.as_view(), name="is-logged-in"), #isLoggedIn
     path('signup/', SignUpView.as_view(), name='signup'),
     path('activate/<str:token>/', ActivateUserView.as_view(), name='activate'),
+    path('me/', CurrentUserView.as_view(), name="current-user")
 ]

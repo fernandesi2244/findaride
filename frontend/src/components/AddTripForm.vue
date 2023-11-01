@@ -6,10 +6,13 @@
         <form @submit.prevent="submit">
           <!-- Form fields for trip details -->
           <div class="form-group">
-            <input id="from" v-model="trip.from" placeholder="From" required/>
+            <input id="from" ref="fromRef" placeholder="From" required/>
           </div>
           <div class="form-group">
-            <input id="to" v-model="trip.to" placeholder="To" required />
+            <input id="to" ref="toRef" placeholder="To" required />
+          </div>
+          <div class="form-group">
+            <input v-model="trip.departureDate" type="date" required />
           </div>
           <div class="form-group">
             <input v-model="trip.departureTime" type="time" required />
@@ -39,13 +42,13 @@
   const toRef = ref();
   
   const trip = reactive({
-    id: Date.now(),
     from: '',
     fromLat: 0,
     fromLong: 0, 
     to: '',
     toLat: 0,
     toLong: 0,
+    departureDate:'',
     departureTime: '',
     luggageCount: 0,
     comments: '',
@@ -71,6 +74,7 @@
     trip.to = '';
     trip.toLat = 0;
     trip.toLong = 0;
+    trip.departureDate='';
     trip.departureTime = '';
     trip.luggageCount = 0;
     trip.comments = '';

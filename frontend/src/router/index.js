@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue';
+import HomeView from '../views/HomeView.vue';
 import axios from 'axios';
-import { endpoints } from '@/common/endpoints.js';
+import { endpoints } from '../common/endpoints.js'
 
 const routes = [
   {
@@ -21,8 +21,7 @@ const routes = [
     path: '/login/',
     name: 'login',
     component: () => import('../views/LoginView.vue')
-  }
-  ,
+  },
   {
     path: '/signup/',
     name: 'signup',
@@ -61,7 +60,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const isProtected = protectedRoutes.includes(to.name as string)
+  const isProtected = protectedRoutes.includes(to.name)
   //const isSkippable = skippableRoutes.includes(to.name as string)
 
   /*if (isSkippable) {
@@ -74,13 +73,14 @@ router.beforeEach(async (to, from, next) => {
     }
   }*/
 
+  console.log(isProtected)
   if (isProtected) {
     const isloggedin = await isLoggedIn();
+    console.log(isloggedin)
     if (isloggedin) {
       next()
     }
     else {
-      console.log(`/accounts/login/`);
       window.location.href = '/accounts/login/';
     }
   } else next()
