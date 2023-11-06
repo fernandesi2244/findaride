@@ -10,7 +10,7 @@ from datetime import timedelta, datetime
 UserModel = get_user_model()
 
 from .models import TripRequest, Trip, JoinRequest, Location
-from .serializers import TripRequestSerializer, SimpleTripRequestSerializer
+from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer
 
 # TODO: see if any permissions need to be changed
 
@@ -26,7 +26,6 @@ class TripRequestModelViewSet(viewsets.ModelViewSet):
 class TripRequestListAPIView(generics.ListAPIView):
     serializer_class = SimpleTripRequestSerializer
     queryset = TripRequest.objects.all()
-
 
 
 class TripRequestCreateAPIView(views.APIView):
@@ -80,3 +79,6 @@ class TripRequestCreateAPIView(views.APIView):
 
         {"departure_time":"test","num_luggage_bags":0,"user":1,"departure_location":{"address":"JFK Terminal 1, Queens, NY, USA","longitude":-73.7890953,"latitude":40.6433188},"arrival_location":{"address":"Princeton Jct., Wallace Circle, Princeton Junction, NJ, USA","longitude":-74.6238302,"latitude":40.3163592}}
     
+class UserTripsDetailAPIView(generics.RetrieveAPIView):
+    queryset = UserModel.objects.all()
+    serializer_class = UserTripsSerializer

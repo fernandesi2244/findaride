@@ -26,9 +26,10 @@ class Trip(models.Model):
     class Meta:
         ordering = ['created_on']
     
+# created when a user submits the trip request form from the dashboard
 class TripRequest(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE)
+    user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='trip_requests')
     departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     departure_time = models.DateTimeField()
@@ -38,6 +39,7 @@ class TripRequest(models.Model):
     class Meta:
         ordering = ['created_on']
 
+# request to join a group, possible multiple JoinRequests for one TripRequest
 class JoinRequest(models.Model):
     # has access to the trip it is requesting through 'trip_requested' related name on Trip
     # has access to the trip request it is a part of through 'parent_trip_request' related name on TripRequest

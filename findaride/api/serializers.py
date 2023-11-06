@@ -11,6 +11,15 @@ from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationReques
 
 UserModel = get_user_model()
 
+class SimpleTripSerializer(serializers.ModelSerializer):
+    arrival_location = serializers.StringRelatedField()
+    departure_location = serializers.StringRelatedField()
+
+    class Meta:
+        model = Trip
+        fields = '__all__'
+
+
 class SimpleTripRequestSerializer(serializers.ModelSerializer):
     arrival_location = serializers.StringRelatedField()
     departure_location = serializers.StringRelatedField()
@@ -136,3 +145,10 @@ class ConfirmationRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConfirmationRequest
         fields = '__all__'
+
+class UserTripsSerializer(serializers.ModelSerializer):
+    trip_requests = SimpleTripRequestSerializer(many=True)
+    trips = SimpleTripSerializer(many=True)
+    class Meta:
+        model = UserModel
+        fields = ('trip_requests', 'trips')
