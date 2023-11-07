@@ -3,8 +3,9 @@ from django.apps import apps
 
 class Location(models.Model):
     address = models.CharField(max_length=255)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    postal_code = models.CharField(max_length=5, default='00000')
+    #latitude = models.FloatField()
+    #longitude = models.FloatField()
 
     def __str__(self):
         return self.address

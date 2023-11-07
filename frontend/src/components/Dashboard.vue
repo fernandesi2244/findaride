@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <h1>Welcome back, Placeholder!</h1>
+    <h1>Welcome back, {{ user.first_name }}!</h1>
     
     <div class="trips-section">
       <div class="section-header">
@@ -12,10 +12,11 @@
           <li v-for="trip in trips" :key="trip.id" class="card">
             <button @click="clickTrip(trip)">
                 <div class="trip-info">
-                    <div><strong>From:</strong> {{ trip.from }}</div>
-                    <div><strong>To:</strong> {{ trip.to }}</div>
-                    <div><strong>Departure Time:</strong> {{ trip.departureTime }}</div>
-                    <div><strong>Luggage Count:</strong> {{ trip.luggageCount }}</div>
+                    <div><strong>From:</strong> {{ cleanLocation(trip.departure_location) }}</div>
+                    <div><strong>To:</strong> {{ cleanLocation(trip.arrival_location) }}</div>
+                    <div><strong>Departure Date:</strong> {{ getDate(trip.departure_time) }}</div>
+                    <div><strong>Departure Time:</strong> {{ getTime(trip.departure_time) }}</div>
+                    <div><strong>Luggage Count:</strong> {{ trip.num_luggage_bags }}</div>
                     <div><strong>Comments:</strong> {{ trip.comments }}</div>
                 </div>
             </button>
@@ -37,19 +38,20 @@
 
       <div class="section-header">
         <h2>Your Trip Requests</h2>
-        <button @click="showAddTripRequest = true" class="btn add-trip-btn">+ Add New Trip Request</button>
+        <button @click="showTripForm = true" class="btn add-trip-btn">+ Add New Trip Request</button>
       </div>
       <div v-if="tripRequests.length">
         <ul class="list-reset">
-          <li v-for="tripR in tripRequests" :key="tripR.id" class="card">
-            <div class="trip-info">
-              <div><strong>From:</strong> {{ tripR.from }}</div>
-              <div><strong>To:</strong> {{ tripR.to }}</div>
-              <div><strong>Departure Time:</strong> {{ tripR.departureTime }}</div>
-              <div><strong>Luggage Count:</strong> {{ tripR.luggageCount }}</div>
-              <div><strong>Comments:</strong> {{ tripR.comments }}</div>
-            </div>
-            <button @click="removeTripRequest(tripR.id)" class="btn btn-danger">Remove</button>
+          <li v-for="tripRequest in tripRequests" :key="tripRequest.id" class="card">
+                <div class="trip-info">
+                    <div><strong>From:</strong> {{ cleanLocation(tripRequest.departure_location) }}</div>
+                    <div><strong>To:</strong> {{ cleanLocation(tripRequest.arrival_location) }}</div>
+                    <div><strong>Departure Date:</strong> {{ getDate(tripRequest.departure_time) }}</div>
+                    <div><strong>Departure Time:</strong> {{ getTime(tripRequest.departure_time) }}</div>
+                    <div><strong>Luggage Count:</strong> {{ tripRequest.num_luggage_bags }}</div>
+                    <div><strong>Comments:</strong> {{ tripRequest.comments }}</div>
+                </div>
+            <button @click="removeTripRequest(tripRequest.id)" class="btn btn-danger">Remove</button>
           </li>
         </ul>
       </div>
@@ -81,7 +83,7 @@
       </div>
     </div>
 
-    <AddTripForm v-if="showAddTripRequest" @addTripRequest="addTripRequest" @close="showAddTripRequest = false" />
+    <AddTripForm v-if="showTripForm" @addTripRequest="addTripRequest" @close="showTripForm = false" />
 
   </div>
   
@@ -93,22 +95,23 @@ import AddTripForm from '../components/AddTripForm.vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 
-const userID = ref(-1);
-
-const trips = ref([]);
-
-onMounted(async () => {
-  const endpoint = endpoints["me"];
-  const response = await axios.get(endpoint);
-  userID.value = response.data.id;
-  const response2 = await axios.get("/api/trip-request-list/");
-  console.log(response2)
-  trips.value = response2.data;
+const user = reactive({
+  first_name: "", 
+  id: -1,
 });
 
+const trips = ref([]);
+const tripRequests = ref([]);
+
+onMounted(async () => {
+  await getUserInfo();
+  await getUserTrips();
+});
+
+/*
 const tripRequests = reactive([
-    { id: 1, from: 'New York', to: 'Los Angeles', departureTime: '10:00 AM', luggage: '2 Bags', comments: 'No special requirements', status: 'Pending' },
-])
+    { id: 1, departure_location: 'New York', arrival_location: 'Los Angeles', departure_time: '10:00 AM', num_luggage_bags: '2 Bags', comments: 'No special requirements', status: 'Pending' },
+])*/
 const confRequests = reactive([
     {
         id: 0,
@@ -132,7 +135,7 @@ const confRequests = reactive([
         }
     }
 ])
-const showAddTripRequest = ref(false);
+const showTripForm = ref(false);
 const pendingTrips = ref([]);
   
 
@@ -149,7 +152,7 @@ function clickTrip(trip) {
 
 function addTrip(newTrip) {
   trips.push(newTrip);
-  showAddTrip.value = false;
+  showTripForm.value = false;
 }
 
 function removeTrip(id) {
@@ -166,29 +169,25 @@ function joinTrip(id) {
 }
 
 async function addTripRequest(newTripRequest) {
-  console.log(newTripRequest);
-  tripRequests.push(newTripRequest);
+
+  //tripRequests.value.push(newTripRequest);
 
   let departure = {
     "address": newTripRequest.from,
-    "longitude": newTripRequest.fromLong,
-    "latitude": newTripRequest.fromLat,
+    "postal_code": newTripRequest.fromPostalCode,
   }
   let arrival = {
     "address": newTripRequest.to,
-    "longitude": newTripRequest.toLong,
-    "latitude": newTripRequest.toLat,
+    "postal_code": newTripRequest.toPostalCode,
   }
 
   let departure_time = `${newTripRequest.departureDate.substring(2)} ${newTripRequest.departureTime}:00`;
-
-  console.log(userID.value);
 
 
   let data = {
     "departure_time": departure_time,
     "num_luggage_bags": newTripRequest.luggageCount,
-    "user": userID.value,
+    "user": user.id,
     "departure_location": departure,
     "arrival_location": arrival,
   }
@@ -196,7 +195,22 @@ async function addTripRequest(newTripRequest) {
   const endpoint = endpoints["tripRequest"];
   const response = await axios.post(endpoint, data);
   
-  showAddTripRequest.value = false;
+  showTripForm.value = false;
+
+  getUserTrips();
+}
+
+async function getUserInfo() {
+  const endpoint = endpoints["me"];
+  const response = await axios.get(endpoint);
+  Object.assign(user, response.data);
+}
+
+async function getUserTrips() {
+  const endpoint = `${endpoints["userTrips"]}${user.id}/`;
+  const response = await axios.get(endpoint);
+  tripRequests.value = response.data.trip_requests;
+  trips.value = response.data.trips;
 }
 
 function removeTripRequest(id) {
@@ -230,6 +244,23 @@ function rejectTrip(id) {
       console.error('Trip not found');
     }
   }
+}
+
+function getDate(dateString) {
+  // TODO: figure out timezone?
+  let date = new Date(dateString);
+  return date.toLocaleDateString();
+}
+function getTime(dateString) {
+  let date = new Date(dateString);
+  return date.toLocaleTimeString();
+}
+
+function cleanLocation(location) {
+  let tokens = location.split(",");
+  tokens.splice(-1);
+
+  return tokens.join(",");
 }
 
 </script>

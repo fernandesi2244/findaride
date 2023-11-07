@@ -9,6 +9,7 @@ const endpoints = {
   me: `${authEndpoint}/me/`,
 
   tripRequest: `${apiEndpoint}/trip-request/`,
+  userTrips: `${apiEndpoint}/user-trips/`,
 };
 
 export { endpoints };
