@@ -1,14 +1,23 @@
 <template>
+<div id="app">
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <a href="/accounts/login/">Login</a> |
-    <a href="/accounts/logout/">Logout</a> |
-    <router-link to="/login">Login</router-link> |
-    <router-link to="/signup">Sign Up</router-link>|
-    <router-link to="/dashboard">Dashboard</router-link>
+  <div class="nav-content">
+          <span class = text-size><router-link to="/">FindARide</router-link></span>
+
+    <div class="right">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <a href="/accounts/login/">Login</a> |
+      <a href="/accounts/logout/">Logout</a> |
+      <!----<router-link to="/login">Login</router-link> |
+      <router-link to="/signup">Sign Up</router-link>| ---->
+      <router-link to="/dashboard">Dashboard</router-link>
+    </div>
+  </div>
   </nav>
   <router-view/>
+</div>
+
 </template>
 
 <style>
@@ -21,15 +30,32 @@
 }
 
 nav {
-  padding: 30px;
+  background: #aed8ab;
+  box-shadow: 0 2px 4px rgba(182, 166, 166, 0.1);
+  padding: 0.5rem 2rem;
+  
+}
+.nav-content {
+  max-width: none;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 nav a {
   font-weight: bold;
   color: #2c3e50;
+  text-decoration: none;
+  padding: 0 10px;
 }
 
-nav a.router-link-exact-active {
-  color: #42b983;
+.text-size {
+  font-size:22px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
 }
 </style>
