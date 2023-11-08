@@ -102,39 +102,41 @@ const user = reactive({
 
 const trips = ref([]);
 const tripRequests = ref([]);
+const confRequests = ref([]);
 
 onMounted(async () => {
   await getUserInfo();
   await getUserTrips();
+  await getConfirmationRequests();
 });
 
 /*
 const tripRequests = reactive([
     { id: 1, departure_location: 'New York', arrival_location: 'Los Angeles', departure_time: '10:00 AM', num_luggage_bags: '2 Bags', comments: 'No special requirements', status: 'Pending' },
 ])*/
-const confRequests = reactive([
-    {
-        id: 0,
-        groupName: "group1",
-        trip: {
-            members: ["Dylan"],
-            date: "Oct 31",
-            from: "a",
-            to: "b",
-            departureTime: "10:10AM",
-            luggageCount: 3,
-            joinRequests: [
-                {
-                    tripid: 1,
-                    id: 0,
-                    name: "Dylan",
-                    departureTime: "10:30AM",
-                    luggageCount: 3,
-                }
-            ]
-        }
-    }
-])
+// const confRequests = reactive([
+//     {
+//         id: 0,
+//         groupName: "group1",
+//         trip: {
+//             members: ["Dylan"],
+//             date: "Oct 31",
+//             from: "a",
+//             to: "b",
+//             departureTime: "10:10AM",
+//             luggageCount: 3,
+//             joinRequests: [
+//                 {
+//                     tripid: 1,
+//                     id: 0,
+//                     name: "Dylan",
+//                     departureTime: "10:30AM",
+//                     luggageCount: 3,
+//                 }
+//             ]
+//         }
+//     }
+// ])
 const showTripForm = ref(false);
 const pendingTrips = ref([]);
   
@@ -218,7 +220,13 @@ async function getUserTrips() {
   trips.value = response.data.trips;
 }
 
-function removeTripRequest(id) {
+async function getConfirmationRequests() {
+  const endpoint = `${endpoints["confirmationRequests"]}`;
+  const response = await axios.get(endpoint);
+  confRequests.value = response.data;
+}
+
+async function removeTripRequest(id) {
   const index = tripRequests.value.findIndex(trip => trip.id === id);
   if (index !== -1) {
     const endpoint = `${endpoints["deleteTripRequest"]}${id}/`;
@@ -235,15 +243,30 @@ function removeTripRequest(id) {
 function acceptConfirmationRequest(id) {
     const index = confRequests.findIndex(conf => conf.id === id);
     if (index !== -1) {
-        trips.push(confRequests[index].trip)
-        confRequests.splice(index, 1);
+      const endpoint = `${endpoints["confirmationRequest"]}${id}/accept/`;
+      try {
+        axios.delete(endpoint);
+        getUserTrips();
+        getConfirmationRequests();
+      } catch (error) {
+        alert(formatError(error.response.data.error));
+        return;
+      }
     }
 }
 
 function rejectConfirmationRequest(id) {
     const index = confRequests.findIndex(conf => conf.id === id);
     if (index !== -1) {
-        confRequests.splice(index, 1);
+      const endpoint = `${endpoints["confirmationRequest"]}${id}/reject/`;
+      try {
+        axios.delete(endpoint);
+        getUserTrips();
+        getConfirmationRequests();
+      } catch (error) {
+        alert(formatError(error.response.data.error));
+        return;
+      }
     }
 }
 function rejectTrip(id) {

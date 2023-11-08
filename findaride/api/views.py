@@ -9,8 +9,8 @@ from datetime import timedelta, datetime
 
 UserModel = get_user_model()
 
-from .models import TripRequest, Trip, JoinRequest, Location
-from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer
+from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest
+from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, ConfirmationRequestSerializer
 
 # TODO: see if any permissions need to be changed
 
@@ -27,6 +27,24 @@ class TripRequestListAPIView(generics.ListAPIView):
     serializer_class = SimpleTripRequestSerializer
     queryset = TripRequest.objects.all()
 
+
+class ConfirmationRequestAPIView(views.APIView):
+    def get(self, request):
+        user = self.request.user
+        confirmation_requests = ConfirmationRequest.objects.filter(join_request__parent_trip_request__user=user)
+        serializer = ConfirmationRequestSerializer(confirmation_requests, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, pk, action):
+        confirmation_request = ConfirmationRequest.objects.get(pk=pk)
+        # TODO: Do all the logic for preventing users from typing random stuff in the URL
+        if action == "accept":
+            confirmation_request.accept()
+        elif action == "reject":
+            confirmation_request.reject()
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
+        return Response(status=status.HTTP_200_OK)
 
 class TripRequestAPIView(views.APIView):
     serializer_class = TripRequestSerializer

@@ -11,6 +11,8 @@ const endpoints = {
   tripRequest: `${apiEndpoint}/trip-request/`,
   userTrips: `${apiEndpoint}/user-trips/`,
   deleteTripRequest: `${apiEndpoint}/delete-trip-request/`,
+  confirmationRequests: `${apiEndpoint}/confirmation-requests/`,
+  confirmationRequest: `${apiEndpoint}/confirmation-request/`,
 };
 
 export { endpoints };

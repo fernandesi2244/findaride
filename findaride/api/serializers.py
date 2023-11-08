@@ -147,9 +147,14 @@ class JoinRequestSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ConfirmationRequestSerializer(serializers.ModelSerializer):
+    # get all important fields from the join request and its associated trip
+    join_request = JoinRequestSerializer()
+    join_request__trip = TripSerializer() # TODO: Once we can test, figure out how to do this.
+
     class Meta:
         model = ConfirmationRequest
         fields = '__all__'
+
 
 class UserTripsSerializer(serializers.ModelSerializer):
     trip_requests = SimpleTripRequestSerializer(many=True)

@@ -75,6 +75,8 @@ class JoinRequest(models.Model):
                 join_request=self
             )
 
+            # Don't delete the join request yet, since we need to display its status to the trip group based on the associated confirmation request
+
             # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
 
 class ConfirmationRequest(models.Model):
@@ -107,3 +109,21 @@ class ConfirmationRequest(models.Model):
         self.delete()
 
         # send email to team indicating confirmation and new trip details
+
+    def reject(self):
+        # remove the user from the trip request and clean up the database
+        tripRequest = self.join_request.parent_trip_request
+        user = tripRequest.user
+
+        tripRequest.join_requests.remove(self.join_request)
+        tripRequest.save()
+
+        trip = self.join_request.trip_requested
+        trip.num_join_requests -= 1
+        trip.join_requests.remove(self.join_request)
+        trip.blacklisted_users.add(user)
+        trip.save()
+
+        self.join_request.delete()
+
+        self.delete()
