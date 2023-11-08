@@ -44,7 +44,7 @@ async function isLoggedIn() {
 }
 
 const protectedRoutes = [
-  /*"dashboard",*/
+  "dashboard",
 ]
 
 /*const skippableRoutes = [
