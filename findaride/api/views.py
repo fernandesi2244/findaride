@@ -28,16 +28,42 @@ class TripRequestListAPIView(generics.ListAPIView):
     queryset = TripRequest.objects.all()
 
 
-class TripRequestCreateAPIView(views.APIView):
+class TripRequestAPIView(views.APIView):
     serializer_class = TripRequestSerializer
+
+    INDIVIDUAL_BAG_LIMIT = 5 # TODO: change if we mess with bag filtering
+
+    def getRequestDataValidationResults(self, data):
+        validation_results = {}
+        # If the departure time is not after the current time, raise a ValidationError
+        if datetime.strptime(data['departure_time'], '%y-%m-%d %H:%M:%S') <= datetime.now():
+            validation_results['departure_time'] = 'Departure time must be after the current time.'
+
+        # TODO: depending on what we do for stale requests later, we might impose a max limit on the departure_time
+
+        if data['num_luggage_bags'] < 0 or data['num_luggage_bags'] > TripRequestAPIView.INDIVIDUAL_BAG_LIMIT: 
+            validation_results['num_luggage_bags'] = f'Number of luggage bags must be between 0 and {TripRequestAPIView.INDIVIDUAL_BAG_LIMIT}.'
+
+        return validation_results
 
     def post(self, request):
         data = request.data
+
+        validation_results = self.getRequestDataValidationResults(data)
+
+        if len(validation_results) > 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": validation_results})
+
+        user = UserModel.objects.get(pk=data['user'])
+
+        # if the user already has 2 pending trip requests, raise an error indicating that they cannot make any more requests at this time
+        if TripRequest.objects.filter(user=user).count() >= 2:
+            # return 400 Response indicating why the request failed
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "You cannot make more than 2 pending trip requests at a time."})
+
         departure_location, arrival_location = self.__getLocationObjects(data['departure_location'], data['arrival_location'])
 
         departure_time = datetime.strptime(data['departure_time'], '%y-%m-%d %H:%M:%S')
-
-        user = UserModel.objects.get(pk=data['user'])
 
         trip_request = TripRequest.objects.create(
             user = user,
@@ -50,9 +76,10 @@ class TripRequestCreateAPIView(views.APIView):
          # logic for finding matching trips
         user_college = trip_request.user.college
         
-
         blacklisted_trips_id = user.blacklisted_trips.values('id')
+        user_trip_ids = user.trips.values('id')
 
+        # Once we get lats/lons, update this. For now, just match on postal code.
         matching_trips = Trip.objects.filter(
             college=user_college,
             departure_location__postal_code=trip_request.departure_location.postal_code,
@@ -62,6 +89,8 @@ class TripRequestCreateAPIView(views.APIView):
             num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
             is_full=False,
         ).exclude(id__in=blacklisted_trips_id).order_by('departure_time', 'num_participants', 'num_luggage_bags')[:5]
+
+        # .exclude(id__in=user_trip_ids) # TODO: PUT THIS BACK IN AFTER TESTING!!!
 
         if len(matching_trips) == 0:
             # No trips to match to, so make a new trip for the user requesting a trip
@@ -118,6 +147,26 @@ class TripRequestCreateAPIView(views.APIView):
             arrival_location.save()
         
         return departure_location, arrival_location
+
+    def delete(self, request, pk):
+        # TODO: Atomicize this
+        tripRequest = TripRequest.objects.get(pk=pk)
+        try:
+            joinRequests = tripRequest.join_requests.all()
+            for joinRequest in joinRequests:
+                associatedTrip = joinRequest.trip_requested.all()[0]
+                associatedTrip.join_requests.remove(joinRequest)
+                associatedTrip.num_join_requests -= 1
+                associatedTrip.save()
+
+                tripRequest.join_requests.remove(joinRequest)
+                tripRequest.save()
+                
+                joinRequest.delete()
+            tripRequest.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
     
 class UserTripsDetailAPIView(generics.RetrieveAPIView):
     queryset = UserModel.objects.all()

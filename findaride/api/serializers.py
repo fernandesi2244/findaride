@@ -27,6 +27,7 @@ class SimpleTripRequestSerializer(serializers.ModelSerializer):
         model = TripRequest
         fields = '__all__'
 
+
 class TripRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = TripRequest
@@ -45,6 +46,10 @@ class TripRequestSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        # if the user already has 2 pending trip requests, raise an error indicating that they cannot make any more requests at this time
+        if TripRequest.objects.filter(user=self.context['request'].user).count() >= 2:
+            raise serializers.ValidationError("You cannot make more than 2 pending trip requests at a time.")
+
         departureLocation, arrivalLocation = TripRequestSerializer.__getLocationObjects(validated_data['departure_location'], validated_data['arrival_location'])
 
         tripRequest = TripRequest.objects.create(

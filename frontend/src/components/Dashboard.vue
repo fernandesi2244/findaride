@@ -182,7 +182,7 @@ async function addTripRequest(newTripRequest) {
   }
 
   let departure_time = `${newTripRequest.departureDate.substring(2)} ${newTripRequest.departureTime}:00`;
-
+  // TODO: Need to deal with timezones; displays wrong time on website
 
   let data = {
     "departure_time": departure_time,
@@ -193,7 +193,12 @@ async function addTripRequest(newTripRequest) {
   }
 
   const endpoint = endpoints["tripRequest"];
-  const response = await axios.post(endpoint, data);
+  try {
+    await axios.post(endpoint, data);
+  } catch (error) {
+    alert(formatError(error.response.data.error));
+    return;
+  }
   
   showTripForm.value = false;
 
@@ -214,9 +219,16 @@ async function getUserTrips() {
 }
 
 function removeTripRequest(id) {
-  const index = tripRequests.findIndex(trip => trip.id === id);
+  const index = tripRequests.value.findIndex(trip => trip.id === id);
   if (index !== -1) {
-    tripRequests.splice(index, 1);
+    const endpoint = `${endpoints["deleteTripRequest"]}${id}/`;
+    try {
+      axios.delete(endpoint);
+      tripRequests.value.splice(index, index + 1);
+    } catch (error) {
+      alert(formatError(error.response.data.error));
+      return;
+    }
   }
 }
 
@@ -261,6 +273,21 @@ function cleanLocation(location) {
   tokens.splice(-1);
 
   return tokens.join(",");
+}
+
+function formatError(errorDict) {
+  if (typeof errorDict === "string") {
+    return errorDict;
+  }
+  try {
+    let errorString = "";
+    for (const [key, value] of Object.entries(errorDict)) {
+      errorString += `${value}\n`;
+    }
+    return errorString;
+  } catch (error) {
+    return JSON.stringify(errorDict);
+  }
 }
 
 </script>
