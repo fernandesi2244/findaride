@@ -6,9 +6,10 @@
             <p class="tagline">
             Your one-stop solution to find affordable, timely rides back home.
             </p>
+            <!--
             <button @click="goToLogin" class="btn-login">
             Log In to Find a Ride
-        </button>
+            </button>-->
         </div>
     </div>
   </template>
