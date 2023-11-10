@@ -1,39 +1,99 @@
 {
-  "_vendor-e63d5aea.js": {
-    "file": "assets/vendor-e63d5aea.js"
+  "AddTripForm.css": {
+    "file": "assets/AddTripForm-88c27dd1.css",
+    "src": "AddTripForm.css"
   },
-  "assets/logo.png": {
-    "file": "assets/logo-03d6d6da.png",
-    "src": "assets/logo.png"
+  "_AddTripForm-861795ce.js": {
+    "css": [
+      "assets/AddTripForm-88c27dd1.css"
+    ],
+    "file": "assets/AddTripForm-861795ce.js",
+    "imports": [
+      "_vendor-1c2b7f9b.js",
+      "index.html"
+    ]
+  },
+  "_vendor-1c2b7f9b.js": {
+    "file": "assets/vendor-1c2b7f9b.js"
   },
   "index.css": {
-    "file": "assets/index-41724408.css",
+    "file": "assets/index-0a8aa3de.css",
     "src": "index.css"
   },
   "index.html": {
-    "assets": [
-      "assets/logo-03d6d6da.png"
-    ],
     "css": [
-      "assets/index-41724408.css"
+      "assets/index-0a8aa3de.css"
     ],
     "dynamicImports": [
-      "views/AboutView.vue"
+      "views/HomeView.vue",
+      "views/AboutView.vue",
+      "views/DashboardView.vue",
+      "views/AddTripFormView.vue"
     ],
-    "file": "assets/index-ff2d8437.js",
+    "file": "assets/index-9e0a4d45.js",
     "imports": [
-      "_vendor-e63d5aea.js"
+      "_vendor-1c2b7f9b.js"
     ],
     "isEntry": true,
     "src": "index.html"
   },
+  "views/AboutView.css": {
+    "file": "assets/AboutView-c4d7284b.css",
+    "src": "views/AboutView.css"
+  },
   "views/AboutView.vue": {
-    "file": "assets/AboutView-056d9982.js",
+    "css": [
+      "assets/AboutView-c4d7284b.css"
+    ],
+    "file": "assets/AboutView-6eee3f1a.js",
     "imports": [
       "index.html",
-      "_vendor-e63d5aea.js"
+      "_vendor-1c2b7f9b.js"
     ],
     "isDynamicEntry": true,
     "src": "views/AboutView.vue"
+  },
+  "views/AddTripFormView.vue": {
+    "file": "assets/AddTripFormView-fc52c05c.js",
+    "imports": [
+      "_AddTripForm-861795ce.js",
+      "_vendor-1c2b7f9b.js",
+      "index.html"
+    ],
+    "isDynamicEntry": true,
+    "src": "views/AddTripFormView.vue"
+  },
+  "views/DashboardView.css": {
+    "file": "assets/DashboardView-08b32789.css",
+    "src": "views/DashboardView.css"
+  },
+  "views/DashboardView.vue": {
+    "css": [
+      "assets/DashboardView-08b32789.css"
+    ],
+    "file": "assets/DashboardView-481a64ad.js",
+    "imports": [
+      "_AddTripForm-861795ce.js",
+      "index.html",
+      "_vendor-1c2b7f9b.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "views/DashboardView.vue"
+  },
+  "views/HomeView.css": {
+    "file": "assets/HomeView-a95015fa.css",
+    "src": "views/HomeView.css"
+  },
+  "views/HomeView.vue": {
+    "css": [
+      "assets/HomeView-a95015fa.css"
+    ],
+    "file": "assets/HomeView-08b841bd.js",
+    "imports": [
+      "index.html",
+      "_vendor-1c2b7f9b.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "views/HomeView.vue"
   }
 }

@@ -1,0 +1,20 @@
+databases:
+  - name: findaride
+    databaseName: findaride
+    user: findaride
+
+services:
+  - type: web
+    name: findaride
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn findaride.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: findaride
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
