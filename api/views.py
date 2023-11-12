@@ -54,8 +54,20 @@ class TripRequestAPIView(views.APIView):
     def getRequestDataValidationResults(self, data):
         validation_results = {}
         # If the departure time is not after the current time, raise a ValidationError
-        if datetime.strptime(data['departure_time'], '%y-%m-%d %H:%M:%S') <= datetime.now():
-            validation_results['departure_time'] = 'Departure time must be after the current time.'
+
+        earliest_departure_time_parsed = datetime.strptime(data['earliest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
+        latest_departure_time_parsed = datetime.strptime(data['latest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
+
+        if earliest_departure_time_parsed <= datetime.utcnow():
+            validation_results['earliest_departure_time'] = 'Departure time must be after the current time.'
+        
+        if latest_departure_time_parsed <= datetime.utcnow():
+            validation_results['latest_departure_time'] = 'Departure time must be after the current time.'
+        
+        if earliest_departure_time_parsed > latest_departure_time_parsed:
+            validation_results['earliest_departure_time'] = 'Earliest departure time must be before latest departure time.'
+            validation_results['latest_departure_time'] = 'Latest departure time must be after earliest departure time.'
+
 
         # TODO: depending on what we do for stale requests later, we might impose a max limit on the departure_time
 
@@ -81,14 +93,17 @@ class TripRequestAPIView(views.APIView):
 
         departure_location, arrival_location = self.__getLocationObjects(data['departure_location'], data['arrival_location'])
 
-        departure_time = datetime.strptime(data['departure_time'], '%y-%m-%d %H:%M:%S')
+        earliest_departure_time = datetime.strptime(data['earliest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
+        latest_departure_time = datetime.strptime(data['latest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
 
         trip_request = TripRequest.objects.create(
             user = user,
             departure_location = departure_location,
             arrival_location = arrival_location,
-            departure_time = departure_time,
-            num_luggage_bags = data['num_luggage_bags']
+            earliest_departure_time = earliest_departure_time,
+            latest_departure_time = latest_departure_time,
+            num_luggage_bags = data['num_luggage_bags'],
+            comment = data['comment']
         )
 
          # logic for finding matching trips
@@ -102,11 +117,11 @@ class TripRequestAPIView(views.APIView):
             college=user_college,
             departure_location__postal_code=trip_request.departure_location.postal_code,
             arrival_location__postal_code=trip_request.arrival_location.postal_code,
-            departure_time__gte=trip_request.departure_time,
-            departure_time__lte=trip_request.departure_time + timedelta(minutes=20),
+            departure_time__gte=trip_request.earliest_departure_time,
+            departure_time__lte=trip_request.latest_departure_time,
             num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
             is_full=False,
-        ).exclude(id__in=blacklisted_trips_id).order_by('departure_time', 'num_participants', 'num_luggage_bags')[:5]
+        ).exclude(id__in=blacklisted_trips_id).order_by('num_participants', 'num_luggage_bags')[:5]
 
         # .exclude(id__in=user_trip_ids) # TODO: PUT THIS BACK IN AFTER TESTING!!!
 
@@ -117,7 +132,7 @@ class TripRequestAPIView(views.APIView):
                 college=user_college,
                 departure_location=trip_request.departure_location,
                 arrival_location=trip_request.arrival_location,
-                departure_time=trip_request.departure_time,
+                departure_time=trip_request.earliest_departure_time + (trip_request.latest_departure_time - trip_request.earliest_departure_time) / 2,
                 num_luggage_bags=trip_request.num_luggage_bags,
                 num_participants=1,
                 is_full=False,

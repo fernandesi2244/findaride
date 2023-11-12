@@ -33,9 +33,11 @@ class TripRequest(models.Model):
     user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='trip_requests')
     departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
-    departure_time = models.DateTimeField()
+    earliest_departure_time = models.DateTimeField()
+    latest_departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     join_requests = models.ManyToManyField('JoinRequest', related_name='parent_trip_request') # can use join_request.parent_trip_request.all() to get the trip request that the join request is a part of
+    comment = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ['created_on']
@@ -65,11 +67,27 @@ class JoinRequest(models.Model):
         Mark that the given existing trip user has accepted this join request. If all trip members have accepted,
         then send a confirmation request to the user that requested the trip.
         """
+        if user in self.participants_that_accepted.all():
+            return
+        
         self.participants_that_accepted.add(user)
         self.num_participants_accepted += 1
         self.save()
 
+        # if new member joins before other member is accepted, how do we deal with pending join requests?
+        # if all trip members previously accepted -> good to go
+        # if not all trip members previously accepted -> need to have new member accept request as well
         if self.num_participants_accepted == self.trip_requested.num_participants:
+            # note that user a and b may both be sent a confirmation request around the same time
+
+            # make sure that there is not already a confirmation request for this join request (user a gets in and accepts user b before b accepts their confirmation request)
+            if ConfirmationRequest.objects.filter(join_request=self).exists():
+                return
+
+            # odd-ball case where user b is already in group but a hasn't refreshed their page yet and tries to accept user b's join request
+            if self.trip_requested.participant_list.filter(pk=self.parent_trip_request.user.pk).exists():
+                return
+
             # send confirmation request to user that requested trip
             ConfirmationRequest.objects.create(
                 join_request=self

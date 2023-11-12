@@ -17,7 +17,6 @@
                     <div><strong>Departure Date:</strong> {{ getDate(trip.departure_time) }}</div>
                     <div><strong>Departure Time:</strong> {{ getTime(trip.departure_time) }}</div>
                     <div><strong>Luggage Count:</strong> {{ trip.num_luggage_bags }}</div>
-                    <div><strong>Comments:</strong> {{ trip.comments }}</div>
                 </div>
             </button>
           </li>
@@ -46,10 +45,10 @@
                 <div class="trip-info">
                     <div><strong>From:</strong> {{ cleanLocation(tripRequest.departure_location) }}</div>
                     <div><strong>To:</strong> {{ cleanLocation(tripRequest.arrival_location) }}</div>
-                    <div><strong>Departure Date:</strong> {{ getDate(tripRequest.departure_time) }}</div>
-                    <div><strong>Departure Time:</strong> {{ getTime(tripRequest.departure_time) }}</div>
-                    <div><strong>Luggage Count:</strong> {{ tripRequest.num_luggage_bags }}</div>
-                    <div><strong>Comments:</strong> {{ tripRequest.comments }}</div>
+                    <div><strong>Earliest departure time:</strong> {{ getDateTime(tripRequest.earliest_departure_time) }}</div>
+                    <div><strong>Latest departure time:</strong> {{ getDateTime(tripRequest.latest_departure_time) }}</div>
+                    <div><strong>Luggage count:</strong> {{ tripRequest.num_luggage_bags }}</div>
+                    <div><strong>Comments:</strong> {{ tripRequest.comment }}</div>
                 </div>
             <button @click="removeTripRequest(tripRequest.id)" class="btn btn-danger">Remove</button>
           </li>
@@ -66,11 +65,10 @@
         <ul class="list-reset">
           <li v-for="conf in confRequests" :key="conf.id" class="card">
             <div class="trip-info">
-              <div><strong>Group:</strong> {{ conf.groupName }}</div>
               <div><strong>Date:</strong> {{ conf.trip.date }}</div>
               <div><strong>From:</strong> {{ conf.trip.from }}</div>
               <div><strong>To:</strong> {{ conf.trip.to }}</div>
-              <div><strong>Departure Time:</strong> {{ conf.trip.departureTime }}</div>
+              <div><strong>Departure Time:</strong> {{ getTime(conf.trip.departure_time) }}</div>
               <div><strong>Luggage Count:</strong> {{ conf.trip.luggageCount }}</div>
             </div>
             <button @click="acceptConfirmationRequest(conf.id)" class="btn btn-primary">Join</button>
@@ -110,42 +108,8 @@ onMounted(async () => {
   await getConfirmationRequests();
 });
 
-/*
-const tripRequests = reactive([
-    { id: 1, departure_location: 'New York', arrival_location: 'Los Angeles', departure_time: '10:00 AM', num_luggage_bags: '2 Bags', comments: 'No special requirements', status: 'Pending' },
-])*/
-// const confRequests = reactive([
-//     {
-//         id: 0,
-//         groupName: "group1",
-//         trip: {
-//             members: ["Dylan"],
-//             date: "Oct 31",
-//             from: "a",
-//             to: "b",
-//             departureTime: "10:10AM",
-//             luggageCount: 3,
-//             joinRequests: [
-//                 {
-//                     tripid: 1,
-//                     id: 0,
-//                     name: "Dylan",
-//                     departureTime: "10:30AM",
-//                     luggageCount: 3,
-//                 }
-//             ]
-//         }
-//     }
-// ])
 const showTripForm = ref(false);
 const pendingTrips = ref([]);
-  
-
-// function acceptJoin(id) {
-//     const joinI = joinRequests
-//     const index = trips.findIndex(trip => trip.id = )
-//     displayedTrip.members.push()
-// }
 
 function clickTrip(trip) {
     showTrip.value = true
@@ -183,15 +147,18 @@ async function addTripRequest(newTripRequest) {
     "postal_code": newTripRequest.toPostalCode,
   }
 
-  let departure_time = `${newTripRequest.departureDate.substring(2)} ${newTripRequest.departureTime}:00`;
-  // TODO: Need to deal with timezones; displays wrong time on website
+  // NOTE: why are we taking the substring again?
+  let earliest_departure_time = new Date(newTripRequest.earliestDepartureTime).toUTCString();
+  let latest_departure_time = new Date(newTripRequest.latestDepartureTime).toUTCString();
 
   let data = {
-    "departure_time": departure_time,
+    "earliest_departure_time": earliest_departure_time,
+    "latest_departure_time": latest_departure_time,
     "num_luggage_bags": newTripRequest.luggageCount,
     "user": user.id,
     "departure_location": departure,
     "arrival_location": arrival,
+    "comment": newTripRequest.comment,
   }
 
   const endpoint = endpoints["tripRequest"];
@@ -269,26 +236,17 @@ function rejectConfirmationRequest(id) {
       }
     }
 }
-function rejectTrip(id) {
-  if (confirm('Are you sure you want to reject this trip?')) {
-    const index = pendingTrips.value.findIndex(trip => trip.id === id);
-    if (index !== -1) {
-      pendingTrips.value.splice(index, 1);
-      console.log('Rejected trip with ID:', id);
-    } else {
-      console.error('Trip not found');
-    }
-  }
-}
 
 function getDate(dateString) {
-  // TODO: figure out timezone?
-  let date = new Date(dateString);
-  return date.toLocaleDateString();
+  return new Date(dateString).toLocaleDateString();
 }
+
 function getTime(dateString) {
-  let date = new Date(dateString);
-  return date.toLocaleTimeString();
+  return new Date(dateString).toLocaleTimeString();
+}
+
+function getDateTime(dateString) {
+  return new Date(dateString).toLocaleString();
 }
 
 function cleanLocation(location) {

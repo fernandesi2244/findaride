@@ -12,16 +12,16 @@
             <input id="to" ref="toRef" placeholder="To" required />
           </div>
           <div class="form-group">
-            <input v-model="trip.departureDate" type="date" required />
+            <input v-model="trip.earliestDepartureTime" type="datetime-local" required />
           </div>
           <div class="form-group">
-            <input v-model="trip.departureTime" type="time" required />
+            <input v-model="trip.latestDepartureTime" type="datetime-local" required />
           </div>
           <div class="form-group">
             <input v-model.number="trip.luggageCount" type="number" min="0" required />
           </div>
           <div class="form-group">
-            <textarea v-model="trip.comments" placeholder="Other comments"></textarea>
+            <textarea v-model="trip.comment" placeholder="Other comments" maxlength="255"></textarea>
           </div>
           
           <button type="submit" class="btn">Add Trip Request</button>
@@ -53,9 +53,10 @@
     toLat: 0,
     toLong: 0,*/
     departureDate:'',
-    departureTime: '',
+    earliestDepartureTime: '',
+    latestDepartureTime: '',
     luggageCount: 0,
-    comments: '',
+    comment: '',
     status: 'Pending',
   });
   
@@ -83,9 +84,10 @@
     trip.toLat = 0;
     trip.toLong = 0;*/
     trip.departureDate='';
-    trip.departureTime = '';
+    trip.earliestDepartureTime = '';
+    trip.latestDepartureTime = '';
     trip.luggageCount = 0;
-    trip.comments = '';
+    trip.comment = '';
   }
 
   onMounted(()=>{
