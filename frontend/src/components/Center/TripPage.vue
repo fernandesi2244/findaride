@@ -1,6 +1,11 @@
 <template>
-    <div class="fill">
-        
+    
+        <div class="fill">
+            <Sidebar />
+        <div :style="{ 'margin-left': sidebarWidth }">
+            <router-view />
+        </div>
+        <div class="main-content" :style="{ 'margin-left': sidebarWidth }">
         <div class="bdr">
             <div class="tripinfo">
                 <div class="triptitle">
@@ -133,13 +138,13 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> </div>
 </template>
-
-
 <script setup>
-  import { defineProps, onMounted, reactive } from 'vue';
 
+  import { defineProps, onMounted, reactive } from 'vue';
+  import Sidebar from './../Sidebar/Sidebar.vue'
+  import { sidebarWidth } from './../Sidebar/state.js'
     const props = defineProps({
         tripid: Number
     })
@@ -185,7 +190,13 @@
 
 
 <style scoped>
+.app-container {
+  display: flex;
+}
 
+.main-content {
+  width: 100%;
+}
 .bdr {
     border-radius: 10px;
     overflow: hidden;

@@ -1,5 +1,10 @@
 <template>
     <div class="fill">
+        <Sidebar />
+      <div :style="{ 'margin-left': sidebarWidth }">
+        <router-view />
+      </div>
+      <div class="main-content" :style="{ 'margin-left': sidebarWidth }">
           <div class="tripinfo">
               <span><h2>{{ from }}  -> {{ to }}</h2> </span>
               <div class="triptitle"><h3>{{ props.date }}  {{ props.time }}</h3></div>
@@ -99,14 +104,15 @@
           </div>
   
   
-          
+      </div>
       </div>
   </template>
   
   
   <script setup>
     import { defineProps, onMounted, reactive } from 'vue';
-  
+    import Sidebar from './../Sidebar/Sidebar.vue'
+    import { sidebarWidth } from './../Sidebar/state.js'
       const props = defineProps([
           'id'
       ])

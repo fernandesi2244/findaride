@@ -1,5 +1,11 @@
 <template>
   <div class="dashboard">
+    <Sidebar />
+    <div :style="{ 'margin-left': sidebarWidth }">
+      <router-view />
+    </div>
+
+    <div class="main-content" :style="{ 'margin-left': sidebarWidth }">
     <h1>Welcome back, {{ user.first_name }}!</h1>
     
     <div class="trips-section">
@@ -84,7 +90,7 @@
     <AddTripForm v-if="showTripForm" @addTripRequest="addTripRequest" @close="showTripForm = false" />
 
   </div>
-  
+  </div>
 </template>
 
 <script setup>
@@ -92,6 +98,8 @@ import { ref, reactive, onMounted } from 'vue';
 import AddTripForm from '../components/AddTripForm.vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
+import Sidebar from '../components/Sidebar/Sidebar.vue'
+import { sidebarWidth } from '../components/Sidebar/state.js'
 
 const user = reactive({
   first_name: "", 
