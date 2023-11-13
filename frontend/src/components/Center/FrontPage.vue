@@ -1,9 +1,5 @@
 <template>
     <main>
-      <Sidebar />
-      <div :style="{ 'margin-left': sidebarWidth }">
-        <router-view />
-      </div>
       <div class="main-content" :style="{ 'margin-left': sidebarWidth }">
         <div>
             <h1>Welcome, User</h1>
@@ -18,8 +14,6 @@
   
   
   <script setup>
- import Sidebar from './../Sidebar/Sidebar.vue'
- import { sidebarWidth } from './../Sidebar/state.js'
 
   </script>
   

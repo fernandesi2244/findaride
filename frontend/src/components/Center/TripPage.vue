@@ -1,10 +1,5 @@
 <template>
-    
-        <div class="fill">
-            <Sidebar />
-        <div :style="{ 'margin-left': sidebarWidth }">
-            <router-view />
-        </div>
+    <div class="fill">
         <div class="main-content" :style="{ 'margin-left': sidebarWidth }">
         <div class="bdr">
             <div class="tripinfo">
@@ -12,10 +7,11 @@
                     <div class="left">
                         <span><h2>{{ from }}  &#8594; {{ to }}</h2> </span>
                         <h5>{{ minTime }} &mdash; {{ maxTime }}</h5>
+                        Luggage: {{ luggage }}
                     </div>
                     <div>
                         <button>Edit</button>
-                        <button>Delete</button>
+                        <button>Leave</button>
                     </div> 
                 </div>
             </div>
@@ -30,7 +26,6 @@
 
         <div class="triptitle margin">
             <h4>Group members</h4>
-            <button>Leave</button>
         </div>
 
         <div class="table-responsive">
@@ -132,7 +127,7 @@
                     <td>{{ confirmation.luggage }}</td>
                     <td>
                         {{ confirmation.status }}
-                        <button>Cancel</button>
+                        <button v-if="confirmation.status === 'Sent'">Cancel</button>
                     </td>
                 </tr>
                 </tbody>
@@ -153,6 +148,7 @@
     const to = "EWR"
     const minTime = "Oct.13, 10:00am"
     const maxTime = "Oct.13, 11:00pm"
+    const luggage = 3
 
     const participants = reactive([
         {id: 0, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
@@ -165,7 +161,7 @@
     ])
 
     const confirmationRequests = reactive([
-        {id: 0, status: "Pending", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
+        {id: 0, status: "Sent", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
         {id: 1, status: "Rejected", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
     ])
 
