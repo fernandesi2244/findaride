@@ -1,6 +1,6 @@
 <template>
     <div class="dashboard">
-        <Sidebar @selectTrip="selectTrip" @selectTripRequest="selectTripRequest" @showTripForm="showTripForm = true" :trips="trips"/>
+        <Sidebar @selectTrip="selectTrip" @selectTripRequest="selectTripRequest" @showTripForm="showTripForm = true" :trips="trips" :tripRequests="tripRequests"/>
 
         <div class="padding">
             <div class="card padding">
