@@ -5,9 +5,9 @@
             <div class="tripinfo">
                 <div class="triptitle">
                     <div class="left">
-                        <span><h2>{{ props.trip.data.departure }}  &#8594; {{ props.trip.data.arrival }}</h2> </span>
-                        <h5>{{ props.trip.data.minTime }} &mdash; {{ props.trip.data.maxTime }}</h5>
-                        Luggage: {{ props.trip.data.luggage }}
+                        <span><h2>{{ props.trip.departure_location }}  &#8594; {{ props.trip.arrival_location }}</h2> </span>
+                        <h5>{{ props.trip.departure_time }} &mdash; {{ props.trip.departure_time }}</h5>
+                        Luggage: {{ props.trip.num_luggage_bags }}
                     </div>
                     <div>
                         <button>Edit</button>
@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-
+ 
             <!-- <div class="trip-info">
                 <div><strong>To:</strong> {{ props.to }}</div>
                 <div><strong>Departure Time:</strong> {{ props.departureTime }}</div>
@@ -44,13 +44,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="participant in props.trip.participants" :key="participant.id">
-                    <td>{{ participant.name }}</td>
-                    <td>{{ participant.minTime }}</td>
-                    <td>{{ participant.maxTime }}</td>
-                    <td>{{ participant.departure }}</td>
-                    <td>{{ participant.arrival }}</td>
-                    <td>{{ participant.luggage }}</td>
+                    <tr v-for="participant in props.trip.participant_list" :key="participant.id">
+                    <td>{{ participant.first_name }} {{ participant.last_name }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <!-- <td>{{ participant.email }}</td>
                     <td>{{ participant.phone }}</td> -->
                     <td></td>
@@ -79,13 +79,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="join in props.trip.joinRequests" :key="join.id">
-                    <td>{{ join.name }}</td>
-                    <td>{{ join.minTime }}</td>
-                    <td>{{ join.maxTime }}</td>
-                    <td>{{ join.departure }}</td>
-                    <td>{{ join.arrival }}</td>
-                    <td>{{ join.luggage }}</td>
+                    <tr v-for="join in props.trip.join_requests" :key="join.id">
+                    <td>{{ join.trip_request.user.first_name }} {{ join.trip_request.user.last_name }}</td>
+                    <td>{{ join.trip_request.earliest_departure_time }}</td>
+                    <td>{{ join.trip_request.latest_departure_time }}</td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ join.num_luggage_bags }}</td>
                     <!-- <td>{{ participant.email }}</td>
                     <td>{{ participant.phone }}</td> -->
                     <td>

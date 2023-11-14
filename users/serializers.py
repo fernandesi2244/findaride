@@ -87,3 +87,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel 
         fields = '__all__'
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel 
+        fields = ('first_name', 'last_name', 'id', 'email', 'college',)

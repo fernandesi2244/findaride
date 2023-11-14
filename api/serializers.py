@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueValidator
+from users.serializers import SimpleUserSerializer
 from django.contrib.auth.password_validation import validate_password
 
 from datetime import timedelta
@@ -11,24 +12,35 @@ from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationReques
 
 UserModel = get_user_model()
 
-class SimpleTripSerializer(serializers.ModelSerializer):
+class TripSerializer(serializers.ModelSerializer):
     arrival_location = serializers.StringRelatedField()
     departure_location = serializers.StringRelatedField()
-
     class Meta:
         model = Trip
         fields = '__all__'
 
+class JoinRequestTripSerializer(serializers.ModelSerializer):
+    trip = TripSerializer()
 
-class SimpleTripRequestSerializer(serializers.ModelSerializer):
-    arrival_location = serializers.StringRelatedField()
-    departure_location = serializers.StringRelatedField()
     class Meta:
-        model = TripRequest
+        model = JoinRequest
+        fields = '__all__'
+        fields = ('num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip')
+
+
+class SimpleConfirmationRequestSerializer(serializers.ModelSerializer):
+    join_request = JoinRequestTripSerializer()
+    class Meta:
+        model = ConfirmationRequest
         fields = '__all__'
 
-
 class TripRequestSerializer(serializers.ModelSerializer):
+    arrival_location = serializers.StringRelatedField()
+    departure_location = serializers.StringRelatedField()
+    user = SimpleUserSerializer()
+    join_requests = JoinRequestTripSerializer(many=True)
+    confirmation_requests = SimpleConfirmationRequestSerializer(many=True)
+    
     class Meta:
         model = TripRequest
         fields = '__all__'
@@ -136,15 +148,20 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = '__all__'
 
-class TripSerializer(serializers.ModelSerializer):
+class SimpleTripRequestSerializer(serializers.ModelSerializer):
+    arrival_location = serializers.StringRelatedField()
+    departure_location = serializers.StringRelatedField()
+    user = SimpleUserSerializer()
     class Meta:
-        model = Trip
+        model = TripRequest
         fields = '__all__'
 
 class JoinRequestSerializer(serializers.ModelSerializer):
+    trip_request = SimpleTripRequestSerializer()
     class Meta:
         model = JoinRequest
         fields = '__all__'
+        fields = ('num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip_request')
 
 class ConfirmationRequestSerializer(serializers.ModelSerializer):
     # get all important fields from the join request and its associated trip
@@ -155,9 +172,19 @@ class ConfirmationRequestSerializer(serializers.ModelSerializer):
         model = ConfirmationRequest
         fields = '__all__'
 
+class SimpleTripSerializer(serializers.ModelSerializer):
+    arrival_location = serializers.StringRelatedField()
+    departure_location = serializers.StringRelatedField()
+    participant_list = SimpleUserSerializer(many=True)
+    join_requests = JoinRequestSerializer(many=True)
+
+    class Meta:
+        model = Trip
+        fields = '__all__'
+
 
 class UserTripsSerializer(serializers.ModelSerializer):
-    trip_requests = SimpleTripRequestSerializer(many=True)
+    trip_requests = TripRequestSerializer(many=True)
     trips = SimpleTripSerializer(many=True)
     class Meta:
         model = UserModel

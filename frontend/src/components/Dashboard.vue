@@ -5,7 +5,7 @@
         <div class="padding">
             <div class="card padding">
                 <div v-if="centerDisplay.type === 'trip'"><TripPage :trip="getTrip(centerDisplay.id)"/></div>
-                <div v-else-if="centerDisplay.type === 'request'"><TripRequestPage :reqid="centerDisplay.id"/></div>
+                <div v-else-if="centerDisplay.type === 'request'"><TripRequestPage :tripRequest="getTripRequest(centerDisplay.id)"/></div>
                 <div v-else><FrontPage v-bind:user="'user'"/></div>
             </div>
         </div>
@@ -46,8 +46,11 @@ const confirmationRequests = reactive([
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
-const trips = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
-const tripRequests = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
+//const trips = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
+const trips = ref([]);
+const tripRequests = ref([]);
+
+//const tripRequests = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
 
 // display vars
 const centerDisplay = ref({ type: "default", id: 0 });
@@ -69,6 +72,7 @@ async function getUserTrips() {
     const response = await axios.get(endpoint);
     tripRequests.value = response.data.trip_requests;
     trips.value = response.data.trips;
+    console.log(trips.value);
 }
 
 async function addTripRequest(newTripRequest) {
@@ -108,10 +112,6 @@ async function addTripRequest(newTripRequest) {
     showTripForm.value = false;
 
     getUserTrips();
-}
-
-async function editTrip(id, changes) {
-     
 }
 
 async function getConfirmationRequests() {
@@ -178,6 +178,13 @@ function getTrip(id) {
     const index = trips.value.findIndex(trip => trip.id === id);
     if (index != -1) {
         return trips.value[index]
+    }
+}
+
+function getTripRequest(id) {
+    const index = tripRequests.value.findIndex(tripReq => tripReq.id === id);
+    if (index != -1) {
+        return tripRequests.value[index]
     }
 }
 

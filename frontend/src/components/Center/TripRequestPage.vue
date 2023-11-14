@@ -4,9 +4,9 @@
             <div class="tripinfo">
                 <div class="triptitle">
                     <div class="left">
-                        <span><h2>{{ from }}  &#8594; {{ to }}</h2> </span>
-                        <h5>{{ minTime }} &mdash; {{ maxTime }}</h5>
-                        Luggage: {{ luggage }}
+                        <span><h2>{{ props.tripRequest.departure_location }}  &#8594; {{ props.tripRequest.arrival_location }}</h2> </span>
+                        <h5>{{ props.tripRequest.earliest_departure_time }} &mdash; {{ props.tripRequest.latest_departure_time }}</h5>
+                        Luggage: {{ props.tripRequest.num_luggage_bags }}
                     </div>
                     <div>
                         <button>Edit</button>
@@ -18,6 +18,7 @@
 
         <div class="left">
             <h4>Join requests</h4>
+            <div>{{ props.tripRequest.join_requests.length }}</div>
         </div>
 
         <div class="table-responsive">
@@ -34,13 +35,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="join in joinRequests" :key="join.id">
-                    <td>{{ join.name }}</td>
-                    <td>{{ join.minTime }}</td>
-                    <td>{{ join.maxTime }}</td>
-                    <td>{{ join.departure }}</td>
-                    <td>{{ join.arrival }}</td>
-                    <td>{{ join.luggage }}</td>
+                    <tr v-for="join in props.tripRequest.join_requests" :key="join.id">
+                    <td></td>
+                    <td>{{ join.trip.earliest_departure_time }}</td>
+                    <td></td>
+                    <td>{{ join.trip.departure_location }}</td>
+                    <td>{{ join.trip.arrival_location }}</td>
+                    <td>{{ join.trip.num_luggage_bags }}</td>
                     <td>
                         <button @click="acceptJoinRequest(req.id)">Accept</button>
                         <button @click="rejectJoinRequest(req.id)">Deny</button>
@@ -92,16 +93,16 @@
   import { defineProps, onMounted, reactive } from 'vue';
   import { getTime, getDate, getDateTime, cleanLocation } from './common.js'
 
-    const props = defineProps({
-        reqid: Number
-    })
+  const props = defineProps(['tripRequest'])
 
+  /*
     const from = "Princeton"
     const to = "EWR"
     const minTime = "Oct.13, 10:00am"
     const maxTime = "Oct.13, 11:00pm"
     const luggage = 3
 
+    
     const participants = reactive([
         {id: 0, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
         {id: 1, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
@@ -118,9 +119,10 @@
         {id: 1, status: "None", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
     ])
 
+    */
     onMounted(()=> {
         // participants.values = props.participants
-        participants.values = fetchTrip(props.id)
+        //participants.values = fetchTrip(props.id)
     });
 
     function fetchTrip() {

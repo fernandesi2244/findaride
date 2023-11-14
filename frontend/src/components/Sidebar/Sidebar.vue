@@ -65,11 +65,11 @@ export default {
         <div v-for="trip in tripsArray" :key="trip.id">
             <button @click="clickTrip(trip.id)">
                 <div class="card">
-                    <div><strong>From:</strong> {{ cleanLocation(trip.data.departure) }}</div>
-                    <div><strong>To:</strong> {{ cleanLocation(trip.data.arrival) }}</div>
-                    <div><strong>Departure Date:</strong> {{ getDate(trip.data.minTime) }}</div>
-                    <div><strong>Departure Time:</strong> {{ getTime(trip.data.maxTime) }}</div>
-                    <div><strong>Luggage Count:</strong> {{ trip.data.luggage }}</div>
+                    <div><strong>From:</strong> {{ cleanLocation(trip.departure_location) }}</div>
+                    <div><strong>To:</strong> {{ cleanLocation(trip.arrival_location) }}</div>
+                    <div><strong>Departure Date:</strong> {{ getDate(trip.departure_time) }}</div>
+                    <div><strong>Departure Time:</strong> {{ getTime(trip.departure_time) }}</div>
+                    <div><strong>Luggage Count:</strong> {{ trip.num_luggage_bags }}</div>
                 </div>
             </button>
         </div>
@@ -78,11 +78,11 @@ export default {
         <div v-for="tripReq in tripRequestsArray" :key="tripReq.id">
             <button @click="clickTripRequest(tripReq.id)">
                 <div class="card">
-                    <div><strong>From:</strong> {{ cleanLocation(tripReq.data.departure) }}</div>
-                    <div><strong>To:</strong> {{ cleanLocation(tripReq.data.arrival) }}</div>
-                    <div><strong>Departure Date:</strong> {{ getDate(tripReq.data.minTime) }}</div>
-                    <div><strong>Departure Time:</strong> {{ getTime(tripReq.data.maxTime) }}</div>
-                    <div><strong>Luggage Count:</strong> {{ tripReq.data.luggage }}</div>
+                    <div><strong>From:</strong> {{ cleanLocation(tripReq.departure_location) }}</div>
+                    <div><strong>To:</strong> {{ cleanLocation(tripReq.arrival_location) }}</div>
+                    <div><strong>Departure Date:</strong> {{ getDate(tripReq.earliest_departure_time) }}</div>
+                    <div><strong>Departure Time:</strong>{{ getTime(tripReq.earliest_departure_time) }} &#8594; {{ getTime(tripReq.latest_departure_time) }}</div>
+                    <div><strong>Luggage Count:</strong> {{ tripReq.num_luggage_bags }}</div>
                 </div>
             </button>
         </div>

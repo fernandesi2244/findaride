@@ -20,8 +20,7 @@ class Trip(models.Model):
     departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     num_join_requests = models.IntegerField()
-    join_requests = models.ManyToManyField('JoinRequest', related_name='trip_requested') # can use join_request.trip_requested.all() to get the trip that the join request is applying to
-    blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips') # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
+    blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips', null=True, blank=True) # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
     college = models.CharField(max_length=5)
 
     class Meta:
@@ -36,7 +35,6 @@ class TripRequest(models.Model):
     earliest_departure_time = models.DateTimeField()
     latest_departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
-    join_requests = models.ManyToManyField('JoinRequest', related_name='parent_trip_request') # can use join_request.parent_trip_request.all() to get the trip request that the join request is a part of
     comment = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -44,13 +42,13 @@ class TripRequest(models.Model):
 
 # request to join a group, possible multiple JoinRequests for one TripRequest
 class JoinRequest(models.Model):
-    # has access to the trip it is requesting through 'trip_requested' related name on Trip
-    # has access to the trip request it is a part of through 'parent_trip_request' related name on TripRequest
     # TODO: Use signals (Django) to delete this object when its associated trip or trip request is deleted
     # TODO: See any other relationships where this needs to be coded out
-    num_participants_accepted = models.IntegerField() # members from specific trip being applied to that have accepted this applicant
+    num_participants_accepted = models.IntegerField(default=0) # members from specific trip being applied to that have accepted this applicant
     participants_that_accepted = models.ManyToManyField('users.CustomUser', related_name='+')
     trip_details_changed = models.BooleanField(default=False) # whether or not the trip details have changed since the request was made; relevant for notifying the user when they are confirming their acceptance
+    trip_request = models.ForeignKey('TripRequest', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
+    trip = models.ForeignKey('Trip', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
 
     def assign(self, trip, tripRequest):
         trip.num_join_requests += 1
@@ -77,7 +75,7 @@ class JoinRequest(models.Model):
         # if new member joins before other member is accepted, how do we deal with pending join requests?
         # if all trip members previously accepted -> good to go
         # if not all trip members previously accepted -> need to have new member accept request as well
-        if self.num_participants_accepted == self.trip_requested.num_participants:
+        if self.num_participants_accepted == self.trip.num_participants:
             # note that user a and b may both be sent a confirmation request around the same time
 
             # make sure that there is not already a confirmation request for this join request (user a gets in and accepts user b before b accepts their confirmation request)
@@ -85,7 +83,7 @@ class JoinRequest(models.Model):
                 return
 
             # odd-ball case where user b is already in group but a hasn't refreshed their page yet and tries to accept user b's join request
-            if self.trip_requested.participant_list.filter(pk=self.parent_trip_request.user.pk).exists():
+            if self.trip.participant_list.filter(pk=self.trip_request.user.pk).exists():
                 return
 
             # send confirmation request to user that requested trip
@@ -98,7 +96,7 @@ class JoinRequest(models.Model):
             # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
 
 class ConfirmationRequest(models.Model):
-    join_request = models.ForeignKey(JoinRequest, on_delete=models.CASCADE)
+    join_request = models.OneToOneField(JoinRequest, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -106,14 +104,14 @@ class ConfirmationRequest(models.Model):
     
     def accept(self):
         # add the user to the trip they accepted and clean up the database
-        trip = self.join_request.trip_requested
-        tripRequest = self.join_request.parent_trip_request
+        trip = self.join_request.trip
+        tripRequest = self.join_request.trip_request
         user = tripRequest.user
 
         trip.num_participants += 1
         trip.participant_list.add(user)
-        trip.departure_time = self.join_request.parent_trip_request.departure_time # since requested departure time had to have been <= group departure time
-        trip.num_luggage_bags += self.join_request.parent_trip_request.num_luggage_bags
+        trip.departure_time = self.join_request.trip_request.departure_time # since requested departure time had to have been <= group departure time
+        trip.num_luggage_bags += self.join_request.trip_request.num_luggage_bags
         trip.num_join_requests -= 1
         trip.join_requests.remove(self.join_request)
         trip.save()
@@ -130,13 +128,13 @@ class ConfirmationRequest(models.Model):
 
     def reject(self):
         # remove the user from the trip request and clean up the database
-        tripRequest = self.join_request.parent_trip_request
+        tripRequest = self.join_request.trip_request
         user = tripRequest.user
 
         tripRequest.join_requests.remove(self.join_request)
         tripRequest.save()
 
-        trip = self.join_request.trip_requested
+        trip = self.join_request.trip
         trip.num_join_requests -= 1
         trip.join_requests.remove(self.join_request)
         trip.blacklisted_users.add(user)
