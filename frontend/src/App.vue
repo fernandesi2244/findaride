@@ -1,23 +1,23 @@
 <template>
-<div id="app">
-  <nav>
-  <div class="nav-content">
-          <span class = text-size><router-link to="/">FindARide</router-link></span>
+<div id="app" class="box">
+    <nav>
+        <div class="nav-content">
+            <span class = text-size><router-link to="/">FindARide</router-link></span>
 
-    <div class="right">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <!----<a href="/accounts/login/">Login</a> |
-      <a href="/accounts/logout/">Logout</a> |
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/signup">Sign Up</router-link>| ---->
-      <router-link to="/dashboard">Dashboard</router-link>
-    </div>
-  </div>
-  </nav>
-  <router-view/>
+            <div class="right">
+                <router-link to="/">Home</router-link> |
+                <router-link to="/about">About</router-link> |
+                <!----<a href="/accounts/login/">Login</a> |
+                <a href="/accounts/logout/">Logout</a> |
+                <router-link to="/login">Login</router-link> |
+                <router-link to="/signup">Sign Up</router-link>| ---->
+                <router-link to="/dashboard">Dashboard</router-link>
+            </div>
+        </div>
+    </nav>
+
+    <router-view class="full-height"/>
 </div>
-
 </template>
 
 <style>
@@ -27,6 +27,16 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100vh;
+}
+
+.full-height {
+    height: 100%;
 }
 
 nav {

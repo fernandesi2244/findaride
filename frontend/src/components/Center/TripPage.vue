@@ -1,13 +1,13 @@
 <template>
     <div class="fill">
-        <div class="main-content" :style="{ 'margin-left': sidebarWidth }">
+        <!-- <div class="main-content" :style="{ 'margin-left': sidebarWidth }"> -->
         <div class="bdr">
             <div class="tripinfo">
                 <div class="triptitle">
                     <div class="left">
-                        <span><h2>{{ from }}  &#8594; {{ to }}</h2> </span>
-                        <h5>{{ minTime }} &mdash; {{ maxTime }}</h5>
-                        Luggage: {{ luggage }}
+                        <span><h2>{{ props.trip.data.departure }}  &#8594; {{ props.trip.data.arrival }}</h2> </span>
+                        <h5>{{ props.trip.data.minTime }} &mdash; {{ props.trip.data.maxTime }}</h5>
+                        Luggage: {{ props.trip.data.luggage }}
                     </div>
                     <div>
                         <button>Edit</button>
@@ -44,7 +44,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="participant in participants" :key="participant.id">
+                    <tr v-for="participant in props.trip.participants" :key="participant.id">
                     <td>{{ participant.name }}</td>
                     <td>{{ participant.minTime }}</td>
                     <td>{{ participant.maxTime }}</td>
@@ -79,7 +79,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="join in joinRequests" :key="join.id">
+                    <tr v-for="join in props.trip.joinRequests" :key="join.id">
                     <td>{{ join.name }}</td>
                     <td>{{ join.minTime }}</td>
                     <td>{{ join.maxTime }}</td>
@@ -118,7 +118,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="confirmation in confirmationRequests" :key="confirmation.id">
+                    <tr v-for="confirmation in props.trip.confirmationRequests" :key="confirmation.id">
                     <td>{{ confirmation.name }}</td>
                     <td>{{ confirmation.minTime }}</td>
                     <td>{{ confirmation.maxTime }}</td>
@@ -133,47 +133,44 @@
                 </tbody>
             </table>
         </div>
-    </div> </div>
+    </div> 
+    <!-- </div> -->
 </template>
 <script setup>
 
   import { defineProps, onMounted, reactive } from 'vue';
-  import Sidebar from './../Sidebar/Sidebar.vue'
-  import { sidebarWidth } from './../Sidebar/state.js'
-    const props = defineProps({
-        tripid: Number
-    })
+    const props = defineProps(['trip'])
 
-    const from = "Princeton"
-    const to = "EWR"
-    const minTime = "Oct.13, 10:00am"
-    const maxTime = "Oct.13, 11:00pm"
-    const luggage = 3
+    // const from = "Princeton"
+    // const to = "EWR"
+    // const minTime = "Oct.13, 10:00am"
+    // const maxTime = "Oct.13, 11:00pm"
+    // const luggage = 3
 
-    const participants = reactive([
-        {id: 0, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
-        {id: 1, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
-    ])
+    // const participants = reactive([])
+    // const joinRequests = reactive([])
+    // const confirmationRequests = reactive([])
 
-    const joinRequests = reactive([
-        {id: 0, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
-        {id: 1, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
-    ])
+    // const participants = reactive([
+    //     {id: 0, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
+    //     {id: 1, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
+    // ])
 
-    const confirmationRequests = reactive([
-        {id: 0, status: "Sent", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
-        {id: 1, status: "Rejected", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
-    ])
+    // const joinRequests = reactive([
+    //     {id: 0, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
+    //     {id: 1, minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
+    // ])
+
+    // const confirmationRequests = reactive([
+    //     {id: 0, status: "Sent", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Friend Center", arrival: "EWR", name: "a", email:"a@princeton.edu", phone:"666-666-6666", luggage: 1},
+    //     {id: 1, status: "Rejected", minTime: "Oct. 13, 10:00am", maxTime: "Oct. 13, 1:00pm", departure: "Admissions Center", arrival: "EWR", name: "b", email:"bbbbb@princeton.edu", phone:"666-666-6667", luggage: 2}
+    // ])
 
     onMounted(()=> {
-        // participants.values = props.participants
-        participants.values = fetchTrip(props.id)
+        // participants.value = props.trip.participants
+        // joinRequests.value = props.trip.joinRequests
+
     });
-
-    function fetchTrip(id) {
-
-    }
-
 
     function acceptJoinRequest(reqid) {
         print(props.tripid, reqid);

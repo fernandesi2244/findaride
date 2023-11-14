@@ -90,9 +90,10 @@
 
 <script setup>
   import { defineProps, onMounted, reactive } from 'vue';
+  import { getTime, getDate, getDateTime, cleanLocation } from './common.js'
 
     const props = defineProps({
-        tripid: Number
+        reqid: Number
     })
 
     const from = "Princeton"

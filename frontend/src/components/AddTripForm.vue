@@ -1,36 +1,34 @@
 <template>
     <div class="modal-overlay">
-      <div class="modal">
-        <h3>Add a new trip request</h3>
-        
-        <form @submit.prevent="submit">
-          <!-- Form fields for trip details -->
-          <div class="form-group">
-            <input id="from" ref="fromRef" placeholder="From" required/>
-          </div>
-          <div class="form-group">
-            <input id="to" ref="toRef" placeholder="To" required />
-          </div>
-          <div class="form-group">
-            <input v-model="trip.earliestDepartureTime" type="datetime-local" required />
-          </div>
-          <div class="form-group">
-            <input v-model="trip.latestDepartureTime" type="datetime-local" required />
-          </div>
-          <div class="form-group">
-            <input v-model.number="trip.luggageCount" type="number" min="0" required />
-          </div>
-          <div class="form-group">
-            <textarea v-model="trip.comment" placeholder="Other comments" maxlength="255"></textarea>
-          </div>
-          
-          <button type="submit" class="btn">Add Trip Request</button>
-        </form>
-        
-        <button @click="closeModal" class="btn cancel-btn">Cancel</button>
-      </div>
-
-
+        <div class="">
+            <h3>Add a new trip request</h3>
+            
+            <form @submit.prevent="submit">
+            <!-- Form fields for trip details -->
+            <div class="form-group">
+                <input id="from" ref="fromRef" placeholder="From" required/>
+            </div>
+            <div class="form-group">
+                <input id="to" ref="toRef" placeholder="To" required />
+            </div>
+            <div class="form-group">
+                <input v-model="trip.earliestDepartureTime" type="datetime-local" required />
+            </div>
+            <div class="form-group">
+                <input v-model="trip.latestDepartureTime" type="datetime-local" required />
+            </div>
+            <div class="form-group">
+                <input v-model.number="trip.luggageCount" type="number" min="0" required />
+            </div>
+            <div class="form-group">
+                <textarea v-model="trip.comment" placeholder="Other comments" maxlength="255"></textarea>
+            </div>
+            
+            <button type="submit" class="btn">Add Trip Request</button>
+            </form>
+            
+            <button @click="closeModal" class="btn cancel-btn">Cancel</button>
+        </div>
     </div>
   </template>
   
@@ -133,15 +131,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2;
   }
   
   .modal {
-    background: #fff;
+    /* background: #fff;
     padding: 20px;
     border-radius: 5px;
     width: 90%;
     max-width: 400px;
-    text-align: center;
+    text-align: center; */
   }
   
   .form-group {

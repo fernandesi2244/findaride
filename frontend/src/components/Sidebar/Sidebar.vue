@@ -1,43 +1,100 @@
 <script>
+import { toRef } from 'vue'
 import SidebarLink from './SidebarLink.vue'
 import { collapsed, toggleSidebar, sidebarWidth } from './state.js'
+import { getDate, getDateTime, getTime, cleanLocation } from '../Center/common.js'
 
 export default {
-  props: {},
-  components: { SidebarLink },
-  setup() {
-    return { collapsed, toggleSidebar, sidebarWidth }
-  }
+    props: ['trips', 'tripRequests'],
+    emits: ['selectTrip', 'selectTripRequest', 'showTripForm'],
+    methods: {
+        clickTrip(id) {
+            console.log('selected trip' + id)
+            this.$emit('selectTrip', id)
+        },
+        clickTripRequest(id) {
+            console.log('selected trip request ' + id)
+            this.$emit('selectTripRequest', id)
+        },
+        clickAddTrip() {
+            console.log('clicked form')
+            this.$emit('showTripForm')
+        }
+    },
+    components: { SidebarLink },
+
+    setup(props) {
+        const tripsArray = toRef(props, 'trips')
+        const tripRequestsArray = toRef(props, 'tripRequests')
+
+        return { 
+            collapsed, toggleSidebar, sidebarWidth, 
+            tripsArray, tripRequestsArray,
+            getDate, getDateTime, getTime, cleanLocation 
+        }
+    }
 }
+
+
 </script>
 
 <template>
-  <div class="sidebar" :style="{ width: sidebarWidth }">
-    <h1>
-      <span v-if="collapsed">
-        <div>V</div>
-        <div>S</div>
-      </span>
-      
-      <span class="text-size" v-else>
-        <router-link to="/" style="text-decoration: none; color: inherit; cursor: pointer;">FindARide</router-link>
-      </span>
-    </h1>
+    <div class="sidebar" :style="{ width: sidebarWidth }">
+        <h1>
+        <span v-if="collapsed">
+            <div>V</div>
+            <div>S</div>
+        </span>
+        
+        <span class="text-size" v-else>
+            <router-link to="/" style="text-decoration: none; color: inherit; cursor: pointer;">FindARide</router-link>
+        </span>
+        </h1>
 
-    <SidebarLink to="/frontpage" icon="fas fa-home">Home</SidebarLink>
-    <SidebarLink to="/dashboard" icon="fas fa-columns">Dashboard</SidebarLink>
-    <SidebarLink to="/trips" icon="fas fa-chart-bar">Your Trips</SidebarLink>
-    <SidebarLink to="/triprequest" icon="fas fa-users">Trip Requests</SidebarLink>
-    <!---SidebarLink to="/confirmationrequest" icon="fas fa-image">Confirmation Requests</SidebarLink>--->
+        <!-- <SidebarLink to="/frontpage" icon="fas fa-home">Home</SidebarLink>
+        <SidebarLink to="/dashboard" icon="fas fa-columns">Dashboard</SidebarLink>
+        <SidebarLink to="/trips" icon="fas fa-chart-bar">Your Trips</SidebarLink>
+        <SidebarLink to="/triprequest" icon="fas fa-users">Trip Requests</SidebarLink>
+        <SidebarLink to="/confirmationrequest" icon="fas fa-image">Confirmation Requests</SidebarLink> -->
+        
+        <div class="section-header">
+            <button @click="clickAddTrip" class="btn add-trip-btn">+ Create New Request</button>
+        </div>
 
-    <span
-      class="collapse-icon"
-      :class="{ 'rotate-180': collapsed }"
-      @click="toggleSidebar"
-    >
-      <i class="fas fa-angle-double-left" />
-    </span>
-  </div>
+        <h4 class="left">Trips</h4>
+        <div v-for="trip in tripsArray" :key="trip.id">
+            <button @click="clickTrip(trip.id)">
+                <div class="card">
+                    <div><strong>From:</strong> {{ cleanLocation(trip.data.departure) }}</div>
+                    <div><strong>To:</strong> {{ cleanLocation(trip.data.arrival) }}</div>
+                    <div><strong>Departure Date:</strong> {{ getDate(trip.data.minTime) }}</div>
+                    <div><strong>Departure Time:</strong> {{ getTime(trip.data.maxTime) }}</div>
+                    <div><strong>Luggage Count:</strong> {{ trip.data.luggage }}</div>
+                </div>
+            </button>
+        </div>
+
+        <h4 class="left">Requests</h4>
+        <div v-for="tripReq in tripRequestsArray" :key="tripReq.id">
+            <button @click="clickTripRequest(tripReq.id)">
+                <div class="card">
+                    <div><strong>From:</strong> {{ cleanLocation(tripReq.data.departure) }}</div>
+                    <div><strong>To:</strong> {{ cleanLocation(tripReq.data.arrival) }}</div>
+                    <div><strong>Departure Date:</strong> {{ getDate(tripReq.data.minTime) }}</div>
+                    <div><strong>Departure Time:</strong> {{ getTime(tripReq.data.maxTime) }}</div>
+                    <div><strong>Luggage Count:</strong> {{ tripReq.data.luggage }}</div>
+                </div>
+            </button>
+        </div>
+
+        <span
+        class="collapse-icon"
+        :class="{ 'rotate-180': collapsed }"
+        @click="toggleSidebar"
+        >
+        <i class="fas fa-angle-double-left" />
+        </span>
+    </div>
 </template>
 
 <style>
@@ -67,6 +124,9 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.left {
+    text-align: left;
+}
 .text-size {
   font-size:30px;
 }
@@ -87,5 +147,10 @@ export default {
 .rotate-180 {
   transform: rotate(180deg);
   transition: 0.2s linear;
+}
+
+.add-trip-btn {
+    background-color: #008CBA;
+    color: #fff;
 }
 </style>
