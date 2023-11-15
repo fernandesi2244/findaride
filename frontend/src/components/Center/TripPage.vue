@@ -140,6 +140,7 @@
 
   import { defineProps, onMounted, reactive } from 'vue';
   import { endpoints } from '../../common/endpoints.js';
+import { axios } from '../../common/axios_service.js'
     const props = defineProps(['trip'])
 
     // const from = "Princeton"
@@ -180,7 +181,7 @@
         //   getUserTrips();
         //   getConfirmationRequests();
         } catch (error) {
-          alert(formatError(error.response.data.error));
+          alert(error);
           return;
         }
     }
@@ -192,7 +193,7 @@
             // getUserTrips();
             // getConfirmationRequests();
         } catch (error) {
-            alert(formatError(error.response.data.error));
+            alert(error);
             return;
         }
     }
