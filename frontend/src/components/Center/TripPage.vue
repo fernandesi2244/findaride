@@ -89,8 +89,8 @@
                     <!-- <td>{{ participant.email }}</td>
                     <td>{{ participant.phone }}</td> -->
                     <td>
-                        <button @click="acceptJoinRequest(req.id)">Accept</button>
-                        <button @click="rejectJoinRequest(req.id)">Reject</button>
+                        <button @click="acceptJoinRequest(join.id)">Accept</button>
+                        <button @click="rejectJoinRequest(join.id)">Reject</button>
                     </td>
                 </tr>
                 </tbody>
@@ -139,6 +139,7 @@
 <script setup>
 
   import { defineProps, onMounted, reactive } from 'vue';
+  import { endpoints } from '../../common/endpoints.js';
     const props = defineProps(['trip'])
 
     // const from = "Princeton"
@@ -173,7 +174,6 @@
     });
 
     function acceptJoinRequest(reqid) {
-        console.log("I'm getting called");
         const endpoint = `${endpoints["joinRequest"]}${reqid}/accept/`;
         try {
           axios.delete(endpoint);
