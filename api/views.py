@@ -47,7 +47,8 @@ class ConfirmationRequestAPIView(views.APIView):
         return Response(status=status.HTTP_200_OK)
 
 class JoinRequestAPIView(views.APIView):
-    def delete(self, request, pk, action):
+    def post(self, request, pk):
+        action = self.request.query_params.get("action", None)
         join_request = JoinRequest.objects.get(pk=pk)
         # TODO: Do all the logic for preventing users from typing random stuff in the URL
         if action == "accept":

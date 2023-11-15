@@ -35,7 +35,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="join in props.tripRequest.join_requests" :key="join.id">
+                    <tr v-for="join in props.tripRequest.join_requests" :key="join.id" :id="join.id">
                     <td></td>
                     <td>{{ join.trip.earliest_departure_time }}</td>
                     <td></td>
