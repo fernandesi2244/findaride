@@ -39,7 +39,7 @@ export default {
 </script>
 
 <template>
-    <div class="sidebar" :style="{ width: sidebarWidth }">
+    <div class="sidebar" :style="{ width: sidebarWidth }" style="overflow-y: auto">
         <h1>
         <span v-if="collapsed">
             <div>V</div>
@@ -47,7 +47,7 @@ export default {
         </span>
         
         <span class="text-size" v-else>
-            <router-link to="/" style="text-decoration: none; color: inherit; cursor: pointer;">FindARide</router-link>
+            <router-link to="/" style="text-decoration: none; color: inherit; cursor: pointer;">findaride</router-link>
         </span>
         </h1>
 

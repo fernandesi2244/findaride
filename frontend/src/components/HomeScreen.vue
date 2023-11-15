@@ -2,7 +2,7 @@
     <div class="home">
         <div class="home-overlay"></div>
         <div class="home-content">
-            <h1>Welcome to FindARide!</h1>
+            <h1>Welcome to findaride!</h1>
             <p class="tagline">
             Your one-stop solution to find affordable, timely rides back home.
             </p>

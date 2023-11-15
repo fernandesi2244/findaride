@@ -1,12 +1,12 @@
 <template>
     <div class="about">
         <header class="header">
-    <h1>About FindARide</h1>
+    <h1>About findaride</h1>
     </header>
 
     <section class="concept">
         <p>
-            FindARide is an innovative platform designed to take
+            findaride is an innovative platform designed to take
             the hassle out of student travel. Recognizing the
             struggles with costly fares and the endless search
             through chaotic forums and bulletin boards, we offer
@@ -18,17 +18,17 @@
         <p>
             Our mission is to revolutionize the way students find
             and book their rides. When peak travel seasons roll around,
-            FindARide steps in to provide a service that’s not only
+            findaride steps in to provide a service that’s not only
             easy to use but also kind to your wallet. We’ve crafted
             a tool that does away with the complexities of planning
             your trips, whether it’s a ride back home or to an event.
         </p>
         <p>
-            At the core of FindARide is a commitment to simplicity
+            At the core of findaride is a commitment to simplicity
             and affordability. We understand that manual searches
             for the right travel option can be time-consuming
             and frustrating, often leading to overpriced choices
-            or last-minute scrambles. FindARide eliminates this
+            or last-minute scrambles. findaride eliminates this
             stress by consolidating travel options in one accessible
             place, enabling students to book their perfect ride in
             just a few clicks.
@@ -38,14 +38,14 @@
             community where students can find companions for their
             journeys, share costs, and make travel during the busiest
             times of the year as smooth as possible. Our vision is for 
-            FindARide to become an indispensable travel companion for 
+            findaride to become an indispensable travel companion for 
             students, ensuring that you can focus more on your studies
             and less on how you’ll get to your next destination.
         </p>
 </section>
   
       <section class="team">
-        <h2>The Team Behind FindARide</h2>
+        <h2>The Team Behind findaride</h2>
             <ul>
               <li>Ian Fernandes - ianfernandes@princeton.edu</li>
               <li>Dylan Li - dl2223@princeton.edu</li>

@@ -10,7 +10,7 @@ from datetime import timedelta, datetime
 UserModel = get_user_model()
 
 from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest
-from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, ConfirmationRequestSerializer
+from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleConfirmationRequestSerializer
 
 # TODO: see if any permissions need to be changed
 
@@ -31,8 +31,8 @@ class TripRequestListAPIView(generics.ListAPIView):
 class ConfirmationRequestAPIView(views.APIView):
     def get(self, request):
         user = self.request.user
-        confirmation_requests = ConfirmationRequest.objects.filter(join_request__parent_trip_request__user=user)
-        serializer = ConfirmationRequestSerializer(confirmation_requests, many=True)
+        confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request__user=user)
+        serializer = SimpleConfirmationRequestSerializer(confirmation_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, pk, action):
@@ -149,10 +149,15 @@ class TripRequestAPIView(views.APIView):
         for trip in matching_trips:
             join_request = JoinRequest.objects.create(
                 num_participants_accepted=0,
-                trip_details_changed=False
+                trip_details_changed=False,
+                trip_request=trip_request,
+                trip=trip
             )
             join_request.save()
-            join_request.assign(trip, trip_request)
+            trip.num_join_requests += 1
+            trip.save()
+
+            # TODO: send email notification (or by preferred notification method) to trip participants that a new join request has been made
 
         return Response(status=status.HTTP_200_OK)
     
@@ -187,14 +192,9 @@ class TripRequestAPIView(views.APIView):
         try:
             joinRequests = tripRequest.join_requests.all()
             for joinRequest in joinRequests:
-                associatedTrip = joinRequest.trip_requested.all()[0]
-                associatedTrip.join_requests.remove(joinRequest)
+                associatedTrip = joinRequest.trip
                 associatedTrip.num_join_requests -= 1
                 associatedTrip.save()
-
-                tripRequest.join_requests.remove(joinRequest)
-                tripRequest.save()
-                
                 joinRequest.delete()
             tripRequest.delete()
             return Response(status=status.HTTP_200_OK)

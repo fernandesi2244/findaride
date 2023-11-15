@@ -49,16 +49,6 @@ class JoinRequest(models.Model):
     trip_details_changed = models.BooleanField(default=False) # whether or not the trip details have changed since the request was made; relevant for notifying the user when they are confirming their acceptance
     trip_request = models.ForeignKey('TripRequest', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
     trip = models.ForeignKey('Trip', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
-
-    def assign(self, trip, tripRequest):
-        trip.num_join_requests += 1
-        trip.join_requests.add(self)
-        trip.save()
-
-        tripRequest.join_requests.add(self)
-        tripRequest.save()
-
-        # TODO: send email notification (or by preferred notification method) to trip participants that a new join request has been made
     
     def accept(self, user):
         """
@@ -110,13 +100,11 @@ class ConfirmationRequest(models.Model):
 
         trip.num_participants += 1
         trip.participant_list.add(user)
-        trip.departure_time = self.join_request.trip_request.departure_time # since requested departure time had to have been <= group departure time
         trip.num_luggage_bags += self.join_request.trip_request.num_luggage_bags
         trip.num_join_requests -= 1
-        trip.join_requests.remove(self.join_request)
         trip.save()
 
-        # remove all other join requests from the trip request
+        # remove all join requests from the trip request
         for joinRequest in tripRequest.join_requests.all():
             joinRequest.delete()
         
@@ -131,12 +119,8 @@ class ConfirmationRequest(models.Model):
         tripRequest = self.join_request.trip_request
         user = tripRequest.user
 
-        tripRequest.join_requests.remove(self.join_request)
-        tripRequest.save()
-
         trip = self.join_request.trip
         trip.num_join_requests -= 1
-        trip.join_requests.remove(self.join_request)
         trip.blacklisted_users.add(user)
         trip.save()
 

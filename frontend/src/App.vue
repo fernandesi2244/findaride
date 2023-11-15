@@ -2,7 +2,7 @@
 <div id="app" class="box">
     <nav>
         <div class="nav-content">
-            <span class = text-size><router-link to="/">FindARide</router-link></span>
+            <span class = text-size><router-link to="/">findaride</router-link></span>
 
             <div class="right">
                 <router-link to="/">Home</router-link> |

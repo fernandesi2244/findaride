@@ -83,8 +83,8 @@
                     <td>{{ join.trip_request.user.first_name }} {{ join.trip_request.user.last_name }}</td>
                     <td>{{ join.trip_request.earliest_departure_time }}</td>
                     <td>{{ join.trip_request.latest_departure_time }}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ join.trip_request.departure_location }}</td>
+                    <td>{{ join.trip_request.arrival_location }}</td>
                     <td>{{ join.num_luggage_bags }}</td>
                     <!-- <td>{{ participant.email }}</td>
                     <td>{{ participant.phone }}</td> -->
