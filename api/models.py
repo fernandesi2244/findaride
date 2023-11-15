@@ -84,6 +84,18 @@ class JoinRequest(models.Model):
             # Don't delete the join request yet, since we need to display its status to the trip group based on the associated confirmation request
 
             # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
+    
+    def reject(self):
+        """
+        Remove this join request from the trip, decrement the number of join requests for the trip, and
+        add the user to the trip's blacklist.
+        """
+        trip = self.trip
+        trip.num_join_requests -= 1
+        trip.blacklisted_users.add(self.trip_request.user)
+        trip.save()
+
+        self.delete()
 
 class ConfirmationRequest(models.Model):
     join_request = models.OneToOneField(JoinRequest, on_delete=models.CASCADE)

@@ -173,12 +173,30 @@
     });
 
     function acceptJoinRequest(reqid) {
-        print(props.tripid, reqid);
+        console.log("I'm getting called");
+        const endpoint = `${endpoints["joinRequest"]}${reqid}/accept/`;
+        try {
+          axios.delete(endpoint);
+        //   getUserTrips();
+        //   getConfirmationRequests();
+        } catch (error) {
+          alert(formatError(error.response.data.error));
+          return;
+        }
     }
 
     function rejectJoinRequest(reqid) {
-        print(props.tripid, reqid);
+        const endpoint = `${endpoints["joinRequest"]}${reqid}/reject/`;
+        try {
+            axios.delete(endpoint);
+            // getUserTrips();
+            // getConfirmationRequests();
+        } catch (error) {
+            alert(formatError(error.response.data.error));
+            return;
+        }
     }
+
 </script>
 
 

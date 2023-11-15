@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import TripRequestModelViewSet, TripRequestAPIView, TripRequestListAPIView, UserTripsDetailAPIView, ConfirmationRequestAPIView
+from .views import TripRequestModelViewSet, TripRequestAPIView, TripRequestListAPIView, UserTripsDetailAPIView, ConfirmationRequestAPIView, JoinRequestAPIView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -12,6 +12,7 @@ urlpatterns = [
     path("delete-trip-request/<int:pk>/", TripRequestAPIView.as_view(), name="delete-trip-request"),
     path("confirmation-requests/", ConfirmationRequestAPIView.as_view(), name="confirmation-requests"),
     path("confirmation-request/<int:pk>/<str:action>/", ConfirmationRequestAPIView.as_view(), name="confirmation-request"),
+    path("join_request/<int:pk>/<str:action>/", JoinRequestAPIView.as_view(), name="join-request")
 ]
 
 urlpatterns += router.urls

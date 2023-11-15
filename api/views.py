@@ -46,6 +46,18 @@ class ConfirmationRequestAPIView(views.APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
         return Response(status=status.HTTP_200_OK)
 
+class JoinRequestAPIView(views.APIView):
+    def delete(self, request, pk, action):
+        join_request = JoinRequest.objects.get(pk=pk)
+        # TODO: Do all the logic for preventing users from typing random stuff in the URL
+        if action == "accept":
+            join_request.accept(self.request.user)
+        elif action == "reject":
+            join_request.reject()
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
+        return Response(status=status.HTTP_200_OK)
+
 class TripRequestAPIView(views.APIView):
     serializer_class = TripRequestSerializer
 
