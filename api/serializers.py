@@ -89,4 +89,4 @@ class UserTripsSerializer(serializers.ModelSerializer):
     trips = SimpleTripSerializer(many=True)
     class Meta:
         model = UserModel
-        fields = ('trip_requests', 'trips')
+        fields = ('trip_requests', 'trips', 'id')

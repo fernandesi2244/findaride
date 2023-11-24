@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div v-if="tripRequests.length==0">
+        <h4 class="mt-2">No trip requests yet.</h4>
+    </div>
+    <div v-else>
       <div class="accordion" id="accordion">
         <div v-for="tripRequest in tripRequests" :key="'tripRequest'+tripRequest.id" class="accordion-item">
           <h2 class="accordion-header">
@@ -69,8 +72,8 @@
                                     <td>{{ confirm.join_request.trip.num_luggage_bags }}</td>
                                     <td>{{ confirm.join_request.trip.num_participants }}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
-                                        <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
+                                        <button class="btn btn-primary btn-sm me-1" @click="acceptConfirmationRequest(confirm.id)">Accept</button>
+                                        <button class="btn btn-primary btn-sm ms-1" @click="rejectConfirmationRequest(confirm.id)">Reject</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -93,6 +96,31 @@ import { toRefs } from 'vue'
 
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
+
+function acceptConfirmationRequest(confirmationID) {
+    const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=accept`;
+    console.log(endpoint)
+    try {
+        axios.post(endpoint);
+    //   getUserTrips();
+    //   getConfirmationRequests();
+    } catch (error) {
+        alert(error);
+        return;
+    }
+}
+
+function rejectConfirmationRequest(confirmationID) {
+    const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=reject`;
+    try {
+        axios.post(endpoint);
+        // getUserTrips();
+        // getConfirmationRequests();
+    } catch (error) {
+        alert(error);
+        return;
+    }
+}
 </script>
 
 <style>

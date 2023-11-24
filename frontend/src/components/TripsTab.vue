@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div v-if="trips.length==0">
+        <h4 class="mt-2">No trips yet.</h4>
+    </div>
+    <div v-else>
       <div class="accordion" id="accordion">
         <div v-for="trip in trips" :key="trip.college+trip.id" class="accordion-item">
           <h2 class="accordion-header">
@@ -50,8 +53,13 @@
                                     <td>{{ cleanLocation(join.trip_request.arrival_location) }}</td>
                                     <td>{{ join.trip_request.num_luggage_bags }}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
-                                        <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
+                                        <div v-if="join.participants_that_accepted.includes(userID)">
+                                            Waiting on others to respond
+                                        </div>
+                                        <div v-else>
+                                            <button class="btn btn-primary btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
+                                            <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -72,8 +80,33 @@ import { axios } from '../common/axios_service.js'
 import { getDate, getDateTime, getTime, cleanLocation, nameList } from '../components/common.js'
 import { toRefs } from 'vue'
 
-const props = defineProps(['trips']);
-const { trips } = toRefs(props);
+const props = defineProps(['trips', 'userID']);
+const { trips, userID } = toRefs(props);
+
+function acceptJoinRequest(joinID) {
+    const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=accept`;
+    console.log(endpoint)
+    try {
+        axios.post(endpoint);
+    //   getUserTrips();
+    //   getConfirmationRequests();
+    } catch (error) {
+        alert(error);
+        return;
+    }
+}
+
+function rejectJoinRequest(joinID) {
+    const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
+    try {
+        axios.post(endpoint);
+        // getUserTrips();
+        // getConfirmationRequests();
+    } catch (error) {
+        alert(error);
+        return;
+    }
+}
 </script>
 
 <style>

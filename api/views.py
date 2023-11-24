@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from secrets import token_urlsafe
 from django.contrib.auth import get_user_model
 from datetime import timedelta, datetime
+from rest_framework.permissions import IsAuthenticated
 
 UserModel = get_user_model()
 
@@ -35,7 +36,8 @@ class ConfirmationRequestAPIView(views.APIView):
         serializer = SimpleConfirmationRequestSerializer(confirmation_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, pk, action):
+    def post(self, request, pk):
+        action = self.request.query_params.get("action", None)
         confirmation_request = ConfirmationRequest.objects.get(pk=pk)
         # TODO: Do all the logic for preventing users from typing random stuff in the URL
         if action == "accept":
@@ -52,6 +54,7 @@ class JoinRequestAPIView(views.APIView):
         join_request = JoinRequest.objects.get(pk=pk)
         # TODO: Do all the logic for preventing users from typing random stuff in the URL
         if action == "accept":
+            print("ACCEPT")
             join_request.accept(self.request.user)
         elif action == "reject":
             join_request.reject()
@@ -215,5 +218,6 @@ class TripRequestAPIView(views.APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
     
 class UserTripsDetailAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = UserModel.objects.all()
     serializer_class = UserTripsSerializer

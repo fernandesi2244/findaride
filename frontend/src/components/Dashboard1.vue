@@ -57,7 +57,7 @@
             role="tabpanel"
             aria-labelledby="v-pills-trips-tab"
             >
-                <TripsTab :trips="trips" />
+                <TripsTab :trips="trips" :userID="userID" />
             </div>
             <div
             class="tab-pane fade"
@@ -84,6 +84,7 @@ const user = reactive({ first_name: "", id: -1, })
 //const trips = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
 const trips = ref([]);
 const tripRequests = ref([]);
+const userID = ref(0);
 
 //const tripRequests = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
 
@@ -107,7 +108,9 @@ async function getUserTrips() {
     const response = await axios.get(endpoint);
     tripRequests.value = response.data.trip_requests;
     trips.value = response.data.trips;
-    console.log(tripRequests.value);
+    userID.value = response.data.id;
+    console.log(userID.value)
+    console.log(trips.value);
 }
 
 async function addTripRequest(newTripRequest) {

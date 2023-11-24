@@ -12,8 +12,7 @@ const endpoints = {
   userTrips: `${apiEndpoint}/user-trips/`,
   deleteTripRequest: `${apiEndpoint}/delete-trip-request/`,
   confirmationRequests: `${apiEndpoint}/confirmation-requests/`,
-  confirmationRequest: `${apiEndpoint}/confirmation-request/`,
-  joinRequest: `${apiEndpoint}/join-request/`,
+  joinRequests: `${apiEndpoint}/join-requests/`,
 };
 
 export { endpoints };

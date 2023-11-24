@@ -13,14 +13,14 @@ class Location(models.Model):
 class Trip(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     num_participants = models.IntegerField()
-    participant_list = models.ManyToManyField('users.CustomUser', related_name='trips') # can use user.trips.all() to get all trips for a user
+    participant_list = models.ManyToManyField('users.CustomUser', related_name='trips', blank=True) # can use user.trips.all() to get all trips for a user
     is_full = models.BooleanField()
     departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     num_join_requests = models.IntegerField()
-    blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips', null=True, blank=True) # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
+    blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips', blank=True) # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
     college = models.CharField(max_length=5)
 
     class Meta:
@@ -45,7 +45,7 @@ class JoinRequest(models.Model):
     # TODO: Use signals (Django) to delete this object when its associated trip or trip request is deleted
     # TODO: See any other relationships where this needs to be coded out
     num_participants_accepted = models.IntegerField(default=0) # members from specific trip being applied to that have accepted this applicant
-    participants_that_accepted = models.ManyToManyField('users.CustomUser', related_name='+')
+    participants_that_accepted = models.ManyToManyField('users.CustomUser', related_name='+', blank=True)
     trip_details_changed = models.BooleanField(default=False) # whether or not the trip details have changed since the request was made; relevant for notifying the user when they are confirming their acceptance
     trip_request = models.ForeignKey('TripRequest', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
     trip = models.ForeignKey('Trip', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
@@ -82,7 +82,7 @@ class JoinRequest(models.Model):
             )
 
             # Don't delete the join request yet, since we need to display its status to the trip group based on the associated confirmation request
-
+            
             # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
     
     def reject(self):
