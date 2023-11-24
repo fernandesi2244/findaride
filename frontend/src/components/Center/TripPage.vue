@@ -73,8 +73,6 @@
                         <th scope="col" class="column">Departure</th>
                         <th scope="col" class="column">Arrival</th>
                         <th scope="col" class="column">Luggage</th>
-                        <!-- <th scope="col" class="column">Email</th>
-                        <th scope="col" class="column">Phone Number</th> -->
                         <th scope="col" class="columnend"></th>
                     </tr>
                 </thead>
