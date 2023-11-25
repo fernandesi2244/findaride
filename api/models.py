@@ -97,6 +97,19 @@ class JoinRequest(models.Model):
 
         self.delete()
 
+        # If this was the last join request for the trip request, then create a new trip for the user
+        if self.trip_request.join_requests.count() == 0:
+            Trip.objects.create(
+                num_participants=1,
+                departure_location=self.trip_request.departure_location,
+                arrival_location=self.trip_request.arrival_location,
+                departure_time=self.trip_request.earliest_departure_time + (self.trip_request.latest_departure_time - self.trip_request.earliest_departure_time) / 2,
+                num_luggage_bags=self.trip_request.num_luggage_bags,
+                num_join_requests=0,
+                college=self.trip_request.user.college,
+                is_full=False
+            )
+
 class ConfirmationRequest(models.Model):
     join_request = models.OneToOneField(JoinRequest, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
