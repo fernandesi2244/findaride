@@ -3,6 +3,8 @@ from django.shortcuts import render
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
+from django.utils.timezone import make_aware
+
 from rest_framework import generics, status, views, viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -115,6 +117,9 @@ class TripRequestAPIView(views.APIView):
         earliest_departure_time = datetime.strptime(data['earliest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
         latest_departure_time = datetime.strptime(data['latest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
 
+        earliest_departure_time = make_aware(earliest_departure_time)
+        latest_departure_time = make_aware(latest_departure_time)
+
         trip_request = TripRequest.objects.create(
             user = user,
             departure_location = departure_location,
@@ -142,7 +147,6 @@ class TripRequestAPIView(views.APIView):
 
         # .exclude(id__in=user_trip_ids) # TODO: PUT THIS BACK IN AFTER TESTING!!!
 
-        print(pre_matching_trips)
         matching_trips = []
         from_coord = (departure_location.latitude, departure_location.longitude)
         to_coord = (arrival_location.latitude, arrival_location.longitude)
