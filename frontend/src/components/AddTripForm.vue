@@ -14,11 +14,11 @@
       </div>
       <!-- Time Fields -->
       <div class="form-group">
-        <label for="pickup-time">Pickup Time:</label>
+        <label for="pickup-time">Earliest Departure Time:</label>
         <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
       </div>
       <div class="form-group">
-        <label for="dropoff-time">Dropoff By:</label>
+        <label for="dropoff-time">Lastest Departure Time:</label>
         <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
       </div>
       <!-- Luggage Count -->
@@ -71,16 +71,16 @@
  
  
  function submit() {
- console.log("Submitting trip:", trip);
- emit('addTripRequest', { ...trip });
- resetForm();
+  console.log("Submitting trip:", trip);
+  emit('addTripRequest', { ...trip });
+  resetForm();
  }
  
  
  function closeModal() {
- emit('close');
- resetForm();
- //router.push('/dashboard');
+  emit('close');
+  resetForm();
+  //router.push('/dashboard');
  }
  
  

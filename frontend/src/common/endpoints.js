@@ -8,7 +8,7 @@ const endpoints = {
   activate: `${authEndpoint}/activate/`,
   me: `${authEndpoint}/me/`,
 
-  tripRequest: `${apiEndpoint}/trip-request/`,
+  tripRequest: `${apiEndpoint}/trip-requests/`,
   userTrips: `${apiEndpoint}/user-trips/`,
   deleteTripRequest: `${apiEndpoint}/delete-trip-request/`,
   confirmationRequests: `${apiEndpoint}/confirmation-requests/`,

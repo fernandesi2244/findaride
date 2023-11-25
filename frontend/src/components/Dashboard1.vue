@@ -10,26 +10,26 @@
           style="position: sticky; top: 90px"
         >
         <button
-          class="nav-link text-start"
+          class="nav-link active text-start"
           id="v-pills-addtrip-tab"
           data-bs-toggle="pill"
           data-bs-target="#v-pills-addtrip"
           type="button"
           role="tab"
           aria-controls="v-pills-addtrip"
-          aria-selected="false"
+          aria-selected="true"
         >
           New Trip Request
         </button>
         <button
-            class="nav-link active text-start"
+            class="nav-link text-start"
             id="v-pills-trips-tab"
             data-bs-toggle="pill"
             data-bs-target="#v-pills-trips"
             type="button"
             role="tab"
             aria-controls="v-pills-trips"
-            aria-selected="true"
+            aria-selected="false"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -80,16 +80,13 @@
               <TripRequestsTab :tripRequests="tripRequests" />
           </div>
           <div
-            class="tab-pane fade"
+            class="tab-pane fade show active"
             id="v-pills-addtrip"
             role="tabpanel"
             aria-labelledby="v-pills-addtrip-tab"
           >
-            <AddTripForm />
+            <AddTripForm @addTripRequest="addTripRequest" @close="showTripForm = false"/>
           </div>
-      </div>
-      <div>
-        <AddTripForm v-if="showTripForm" @addTripRequest="addTripRequest" @close="showTripForm = false" />
       </div>
     </div>
   </div>
@@ -117,7 +114,7 @@ const userID = ref(0);
 const centerDisplay = ref({ type: "default", id: 0 });
 const showTripForm = ref(false)
 function toggleTripForm() {
-showTripForm.value = !showTripForm.value;
+  showTripForm.value = !showTripForm.value;
 }
 
 onMounted(async () => {
@@ -135,11 +132,7 @@ async function getUserTrips() {
   const endpoint = `${endpoints["userTrips"]}${user.id}/`;
   const response = await axios.get(endpoint);
   tripRequests.value = response.data.trip_requests;
-  // trips.value = response.data.trips;
-  // Dummy object
-  trips.value = [
-  { id: 1, departure_location: "Location A", arrival_location: "Location B", departure_time: "2023-12-03T09:00:00", participant_list: [], join_requests: [] },
-];
+  trips.value = response.data.trips;
   userID.value = response.data.id;
   console.log(userID.value)
   console.log(trips.value);
@@ -157,7 +150,6 @@ async function addTripRequest(newTripRequest) {
       "postal_code": newTripRequest.toPostalCode,
   }
 
-  // NOTE: why are we taking the substring again?
   let earliest_departure_time = new Date(newTripRequest.earliestDepartureTime).toUTCString();
   let latest_departure_time = new Date(newTripRequest.latestDepartureTime).toUTCString();
 
@@ -172,10 +164,11 @@ async function addTripRequest(newTripRequest) {
   }
 
   const endpoint = endpoints["tripRequest"];
+  console.log(data)
   try {
       await axios.post(endpoint, data);
   } catch (error) {
-      alert(formatError(error.response.data.error));
+      alert(error.response.data.error);
       return;
   }
  
