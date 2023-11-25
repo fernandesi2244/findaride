@@ -73,8 +73,6 @@
                         <th scope="col" class="column">Departure</th>
                         <th scope="col" class="column">Arrival</th>
                         <th scope="col" class="column">Luggage</th>
-                        <!-- <th scope="col" class="column">Email</th>
-                        <th scope="col" class="column">Phone Number</th> -->
                         <th scope="col" class="columnend"></th>
                     </tr>
                 </thead>
@@ -174,10 +172,10 @@ import { axios } from '../../common/axios_service.js'
 
     });
 
-    function acceptJoinRequest(reqid) {
-        const endpoint = `${endpoints["joinRequest"]}${reqid}/accept/`;
+    function acceptJoinRequest(joinid) {
+        const endpoint = `${endpoints["joinRequest"]}${joinid}/?action=accept`;
         try {
-          axios.delete(endpoint);
+          axios.post(endpoint);
         //   getUserTrips();
         //   getConfirmationRequests();
         } catch (error) {
@@ -186,10 +184,10 @@ import { axios } from '../../common/axios_service.js'
         }
     }
 
-    function rejectJoinRequest(reqid) {
-        const endpoint = `${endpoints["joinRequest"]}${reqid}/reject/`;
+    function rejectJoinRequest(joinid) {
+        const endpoint = `${endpoints["joinRequest"]}${joinid}/?action=reject`;
         try {
-            axios.delete(endpoint);
+            axios.post(endpoint);
             // getUserTrips();
             // getConfirmationRequests();
         } catch (error) {

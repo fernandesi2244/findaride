@@ -25,7 +25,7 @@ class JoinRequestTripSerializer(serializers.ModelSerializer):
     class Meta:
         model = JoinRequest
         fields = '__all__'
-        fields = ('num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip')
+        fields = ('num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip', 'id')
 
 
 class SimpleConfirmationRequestSerializer(serializers.ModelSerializer):
@@ -70,7 +70,7 @@ class JoinRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = JoinRequest
         fields = '__all__'
-        fields = ('num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip_request')
+        fields = ('id', 'num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip_request')
 
 
 class SimpleTripSerializer(serializers.ModelSerializer):
@@ -89,4 +89,4 @@ class UserTripsSerializer(serializers.ModelSerializer):
     trips = SimpleTripSerializer(many=True)
     class Meta:
         model = UserModel
-        fields = ('trip_requests', 'trips')
+        fields = ('trip_requests', 'trips', 'id')
