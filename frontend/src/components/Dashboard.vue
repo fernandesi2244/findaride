@@ -4,9 +4,9 @@
       <div class="col-2">
         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical"
           style="position: sticky; top: 90px">
-          <button class="nav-link active text-start" id="v-pills-addtrip-tab" data-bs-toggle="pill"
+          <button class="nav-link text-start" id="v-pills-addtrip-tab" data-bs-toggle="pill"
             data-bs-target="#v-pills-addtrip" type="button" role="tab" aria-controls="v-pills-addtrip"
-            aria-selected="true">
+            aria-selected="false">
             New Trip Request
           </button>
           <button class="nav-link text-start" id="v-pills-trips-tab" data-bs-toggle="pill" data-bs-target="#v-pills-trips"
@@ -38,7 +38,7 @@
         <div class="tab-pane fade" id="v-pills-triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
           <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="getUserTrips" />
         </div>
-        <div class="tab-pane fade show active" id="v-pills-addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
+        <div class="tab-pane fade" id="v-pills-addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
           <AddTripForm @addTripRequest="addTripRequest" />
           <div id="add-trip-request-confirmation-modal" class="modal">
             <div class="modal-content">
@@ -80,7 +80,15 @@ function toggleTripForm() {
 onMounted(async () => {
   await getUserInfo();
   await getUserTrips();
-  //document.getElementById("post-submit-message");
+
+  // if the user already has a trip, show the trip tab
+  if (trips.value.length > 0) {
+    $("#v-pills-trips-tab").click();
+  } else if (tripRequests.value.length > 0) {
+    $("#v-pills-triprequests-tab").click();
+  } else {
+    $("#v-pills-addtrip-tab").click();
+  }
 });
 
 async function getUserInfo() {
@@ -215,6 +223,10 @@ function formatError(errorDict) {
 </script>
 
 <style>
+.col-2 {
+  margin-top: 1.1rem;
+}
+
 .dashboard {
   /* max-width: 1000px; */
   height: 100%;
