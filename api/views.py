@@ -1,5 +1,10 @@
 from django.shortcuts import render
 
+from geopy.geocoders import Nominatim
+from geopy.distance import geodesic
+
+from django.utils.timezone import make_aware
+
 from rest_framework import generics, status, views, viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -110,6 +115,9 @@ class TripRequestAPIView(views.APIView):
         earliest_departure_time = datetime.strptime(data['earliest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
         latest_departure_time = datetime.strptime(data['latest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
 
+        earliest_departure_time = make_aware(earliest_departure_time)
+        latest_departure_time = make_aware(latest_departure_time)
+
         trip_request = TripRequest.objects.create(
             user = user,
             departure_location = departure_location,
@@ -127,15 +135,22 @@ class TripRequestAPIView(views.APIView):
         user_trip_ids = user.trips.values('id')
 
         # Once we get lats/lons, update this. For now, just match on postal code.
-        matching_trips = Trip.objects.filter(
+        pre_matching_trips = Trip.objects.filter(
             college=user_college,
-            departure_location__postal_code=trip_request.departure_location.postal_code,
-            arrival_location__postal_code=trip_request.arrival_location.postal_code,
             departure_time__gte=trip_request.earliest_departure_time,
             departure_time__lte=trip_request.latest_departure_time,
             num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
             is_full=False,
         ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')[:5]
+
+        matching_trips = []
+        from_coord = (departure_location.latitude, departure_location.longitude)
+        to_coord = (arrival_location.latitude, arrival_location.longitude)
+        for trip in pre_matching_trips:
+            from_coord_2 = (trip.departure_location.latitude, trip.departure_location.longitude)
+            to_coord_2 = (trip.arrival_location.latitude, trip.arrival_location.longitude)
+            if geodesic(from_coord, from_coord_2).miles < 1 and geodesic(to_coord, to_coord_2).miles < 1:
+                matching_trips.append(trip)
 
         if len(matching_trips) == 0:
             # No trips to match to, so make a new trip for the user requesting a trip
@@ -176,12 +191,17 @@ class TripRequestAPIView(views.APIView):
     def __getLocationObjects(self, departure_location, arrival_location):
         # See if location table contains any rows with the same departure address. If so, fetch that row. Otherwise, create a new row.
         matching_departure_locations = Location.objects.filter(postal_code=departure_location['postal_code'])
+
+        geolocator = Nominatim(user_agent="findaride")
         if matching_departure_locations.exists():
             departure_location = matching_departure_locations[0]
         else:
+            location = geolocator.geocode({"postalcode": departure_location['postal_code']})
             departure_location = Location.objects.create(
                 address=departure_location['address'],
                 postal_code=departure_location['postal_code'],
+                latitude = location.latitude,
+                longitude = location.longitude,
             )
             departure_location.save()
         
@@ -190,9 +210,12 @@ class TripRequestAPIView(views.APIView):
         if matching_arrival_locations.exists():
             arrival_location = matching_arrival_locations[0]
         else:
+            location = geolocator.geocode({"postalcode": arrival_location['postal_code']})
             arrival_location = Location.objects.create(
                 address=arrival_location['address'],
                 postal_code=arrival_location['postal_code'],
+                latitude = location.latitude,
+                longitude = location.longitude,
             )
             arrival_location.save()
         

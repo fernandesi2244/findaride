@@ -1,0 +1,1 @@
+import{_ as e}from"./AddTripForm-d32a66fc.js";import{o as r,c as a,b as o}from"./vendor-7cc8a583.js";const s={__name:"AddTripFormView",setup(t){return(c,_)=>(r(),a("main",null,[o(e)]))}};export{s as default};

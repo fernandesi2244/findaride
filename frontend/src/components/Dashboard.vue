@@ -117,7 +117,6 @@ async function addTripRequest(newTripRequest) {
     "postal_code": newTripRequest.toPostalCode,
   }
 
-  // NOTE: why are we taking the substring again?
   let earliest_departure_time = new Date(newTripRequest.earliestDepartureTime).toUTCString();
   let latest_departure_time = new Date(newTripRequest.latestDepartureTime).toUTCString();
 
