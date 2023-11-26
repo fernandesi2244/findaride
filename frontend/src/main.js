@@ -5,4 +5,4 @@ import '@fortawesome/fontawesome-free/js/all'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 
-createApp(App).use(router).use(router).mount('#app')
+createApp(App).use(router).mount('#app')

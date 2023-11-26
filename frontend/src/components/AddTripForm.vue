@@ -1,18 +1,21 @@
 <template>
   <div class="trip-request-form">
-    <h3>Create a new trip request</h3>
+
+    <h3 class>Create a new trip request</h3>
+    <!-- to do: add tooltip -->
+    <!-- <h2 class="tooltip">Top Tooltip
+      <h3 class="tooltiptext">Top Tooltip</h3>
+    </h2> -->
+    
     <form @submit.prevent="submit" class="form-container">
-      <!-- Pickup Location -->
       <div class="form-group">
         <label for="from">Pickup Location:</label>
         <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
       </div>
-      <!-- Dropoff Location -->
       <div class="form-group">
         <label for="to">Dropoff Location:</label>
         <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
       </div>
-      <!-- Time Fields -->
       <div class="form-group">
         <label for="pickup-time">Earliest departure time:</label>
         <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
@@ -21,17 +24,22 @@
         <label for="dropoff-time">Latest departure time:</label>
         <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
       </div>
-      <!-- Luggage Count -->
+      <div class="form-group">
+        <label for="pickup-walking-distance">Maximum walking distance to pickup (in minutes):</label>
+        <input id="pickup-walking-distance" v-model.number="trip.pickupWalkingDistance" type="number" min="0" required />
+      </div>
+      <div class="form-group">
+        <label for="dropoff-walking-distance">Maximum walking distance from dropoff (in minutes):</label>
+        <input id="dropoff-walking-distance" v-model.number="trip.dropoffWalkingDistance" type="number" min="0" required />
+      </div>
       <div class="form-group">
         <label for="luggage-count">Number of luggage bags:</label>
         <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
       </div>
-      <!-- Additional Comments -->
       <div class="form-group">
         <label for="comments">Additional comments:</label>
         <textarea id="comments" v-model="trip.comment" placeholder="Any special accommodations, considerations, etc." maxlength="255"></textarea>
       </div>
-      <!-- Buttons -->
       <div class="form-actions">
         <button type="submit" class="btn primary">Create trip request</button>
         <button @click="closeModal" class="btn cancel-btn">Reset</button>
@@ -241,6 +249,33 @@ input:focus,
 textarea:focus {
   border-color: #007bff;
   outline: none;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 </style>
  

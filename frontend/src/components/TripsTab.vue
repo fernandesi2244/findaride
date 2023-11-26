@@ -4,7 +4,7 @@
     </div>
     <div v-else>
       <div class="accordion" id="accordion">
-        <div v-for="trip in trips" :key="trip.college+trip.id" class="accordion-item">
+        <div v-for="trip in sortedTrips" :key="trip.college+trip.id" class="accordion-item">
           <h2 class="accordion-header">
             <button
               class="accordion-button collapsed"
@@ -65,8 +65,9 @@
                                             </div>
                                         </div>
                                         <div class="button-div" v-else>
-                                            <button class="btn btn-primary btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
-                                            <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
+                                            <button class="btn btn-accept btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
+                                            <button class="btn btn-reject btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
+                                            <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove Trip</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -82,7 +83,7 @@
   </template>
 
 <script setup>
-import { defineProps, onMounted, reactive } from 'vue';
+import { defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { getDate, getDateTime, getTime, cleanLocation, nameEmail } from '../components/common.js'
@@ -91,7 +92,11 @@ import { toRefs } from 'vue'
 const emit = defineEmits(['refreshTrips']);
 const props = defineProps(['trips', 'userID']);
 const { trips, userID } = toRefs(props);
-
+const sortedTrips = computed(() => {
+    return [...trips.value].sort((a, b) => {
+        return new Date(a.departure_time) - new Date(b.departure_time);
+    });
+});
 function acceptJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=accept`;
     console.log(endpoint)
@@ -114,6 +119,19 @@ function rejectJoinRequest(joinID) {
         return;
     }
 }
+
+function removeTrip(tripRequestID) {
+    if (confirm('Are you sure you want to remove this trip?')) {
+        const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}`;
+        try {
+            axios.post(endpoint);
+            emit('refreshTrips');
+        } catch (error) {
+            alert(error);
+            return;
+        }
+    }
+}
 </script>
 
 <style>
@@ -122,5 +140,14 @@ function rejectJoinRequest(joinID) {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+}
+.btn-accept {
+    background-color: green;
+    color: white;
+}
+
+.btn-reject {
+    background-color: red;
+    color: white;
 }
 </style>
