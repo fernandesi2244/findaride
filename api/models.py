@@ -95,11 +95,10 @@ class JoinRequest(models.Model):
         trip.blacklisted_users.add(self.trip_request.user)
         trip.save()
 
-        self.delete()
-
         # If this was the last join request for the trip request, then create a new trip for the user
-        if self.trip_request.join_requests.count() == 0:
-            Trip.objects.create(
+        num_confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request_id=self.trip_request.id).count()
+        if self.trip_request.join_requests.count() == 1 and num_confirmation_requests == 0:
+            new_trip = Trip.objects.create(
                 num_participants=1,
                 departure_location=self.trip_request.departure_location,
                 arrival_location=self.trip_request.arrival_location,
@@ -109,6 +108,15 @@ class JoinRequest(models.Model):
                 college=self.trip_request.user.college,
                 is_full=False
             )
+            new_trip.participant_list.add(self.trip_request.user)
+
+            # delete the associated trip request
+            self.trip_request.delete()
+        
+        # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
+        # trips they can join, then we should create a new trip for them.
+
+        self.delete()
 
 class ConfirmationRequest(models.Model):
     join_request = models.OneToOneField(JoinRequest, on_delete=models.CASCADE)
@@ -140,7 +148,6 @@ class ConfirmationRequest(models.Model):
         # send email to team indicating confirmation and new trip details
 
     def reject(self):
-        # remove the user from the trip request and clean up the database
         tripRequest = self.join_request.trip_request
         user = tripRequest.user
 
@@ -152,3 +159,25 @@ class ConfirmationRequest(models.Model):
         self.join_request.delete()
 
         self.delete()
+
+        # if this was the last confirmation request for the trip request and there are no join requests, then create a new trip for the user
+        num_confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request_id=tripRequest.id).count()
+        if tripRequest.join_requests.count() == 0 and num_confirmation_requests == 0:
+            newTrip = Trip.objects.create(
+                num_participants=1,
+                departure_location=tripRequest.departure_location,
+                arrival_location=tripRequest.arrival_location,
+                departure_time=tripRequest.earliest_departure_time + (tripRequest.latest_departure_time - tripRequest.earliest_departure_time) / 2,
+                num_luggage_bags=tripRequest.num_luggage_bags,
+                num_join_requests=0,
+                college=tripRequest.user.college,
+                is_full=False
+            )
+            # add current user to the new trip's participant list
+            newTrip.participant_list.add(tripRequest.user)
+
+            # delete the associated trip request
+            tripRequest.delete()
+
+        # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
+        # trips they can join, then we should create a new trip for them.

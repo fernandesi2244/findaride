@@ -16,6 +16,10 @@ export function cleanLocation(location) {
     return tokens[0];
 }
 
+export function nameEmail(participant) {
+    return `${participant.first_name} ${participant.last_name} (${participant.email})`;
+}
+
 export function nameList(participants) {
     let names = [];
 

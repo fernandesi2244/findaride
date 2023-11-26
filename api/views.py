@@ -82,8 +82,6 @@ class TripRequestAPIView(views.APIView):
         
         if earliest_departure_time_parsed > latest_departure_time_parsed:
             validation_results['earliest_departure_time'] = 'Earliest departure time must be before latest departure time.'
-            validation_results['latest_departure_time'] = 'Latest departure time must be after earliest departure time.'
-
 
         # TODO: depending on what we do for stale requests later, we might impose a max limit on the departure_time
 
@@ -137,9 +135,7 @@ class TripRequestAPIView(views.APIView):
             departure_time__lte=trip_request.latest_departure_time,
             num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
             is_full=False,
-        ).exclude(id__in=blacklisted_trips_id).order_by('num_participants', 'num_luggage_bags')[:5]
-
-        # .exclude(id__in=user_trip_ids) # TODO: PUT THIS BACK IN AFTER TESTING!!!
+        ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')[:5]
 
         if len(matching_trips) == 0:
             # No trips to match to, so make a new trip for the user requesting a trip

@@ -12,8 +12,8 @@
               data-bs-toggle="collapse"
               :data-bs-target="'#tripRequest'+tripRequest.id"
             >
-              {{ cleanLocation(tripRequest.departure_location) }} &#8594; {{ cleanLocation(tripRequest.arrival_location) }} @
-              {{ getTime(tripRequest.earliest_departure_time) }} ~ {{ getTime(tripRequest.latest_departure_time) }},
+              {{ cleanLocation(tripRequest.departure_location) }} &#8594; {{ cleanLocation(tripRequest.arrival_location) }} between
+              {{ getTime(tripRequest.earliest_departure_time) }} and {{ getTime(tripRequest.latest_departure_time) }} on
               {{ getDate(tripRequest.latest_departure_time) }}
             </button>
           </h2>
@@ -24,7 +24,7 @@
           >
           <div class="accordion-body">
                 <div class='mb-2'>
-                    <h6 class="mt-2 text-start">Join Requests:</h6>
+                    <h5 class="mt-2 text-start">Join Requests:</h5>
                     <div v-if="tripRequest.join_requests.length==0">
                         <p class="text-start">No requests to join yet.</p>
                     </div>
@@ -32,8 +32,8 @@
                         <table class="table bdr">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="column">Time</th>
-                                    <th scope="col" class="column"># Luggages</th>
+                                    <th scope="col" class="column">Trip departure time</th>
+                                    <th scope="col" class="column"># Luggage bags</th>
                                     <th scope="col" class="column"># Riders</th>
                                     <th scope="col" class="column">Status</th>
                                     <th scope="col" class="columnend"></th>
@@ -52,7 +52,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <h6 class="mt-2 text-start">Cofirmation Requests:</h6>
+                    <h5 class="mt-2 text-start">Confirmation Requests:</h5>
                     <div v-if="tripRequest.confirmation_requests.length==0">
                         <p class="text-start">No confirmations yet.</p>
                     </div>
@@ -61,7 +61,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="column">Time</th>
-                                    <th scope="col" class="column"># Luggages</th>
+                                    <th scope="col" class="column"># Luggage bags</th>
                                     <th scope="col" class="column"># Riders</th>
                                     <th scope="col" class="columnend"></th>
                                 </tr>
@@ -94,6 +94,7 @@ import { axios } from '../common/axios_service.js'
 import { getDate, getDateTime, getTime, cleanLocation, nameList } from '../components/common.js'
 import { toRefs } from 'vue'
 
+const emit = defineEmits(['refreshTrips']);
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
 
@@ -102,8 +103,7 @@ function acceptConfirmationRequest(confirmationID) {
     console.log(endpoint)
     try {
         axios.post(endpoint);
-    //   getUserTrips();
-    //   getConfirmationRequests();
+        emit('refreshTrips');
     } catch (error) {
         alert(error);
         return;
@@ -114,8 +114,18 @@ function rejectConfirmationRequest(confirmationID) {
     const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=reject`;
     try {
         axios.post(endpoint);
-        // getUserTrips();
-        // getConfirmationRequests();
+        emit('refreshTrips');
+    } catch (error) {
+        alert(error);
+        return;
+    }
+}
+
+function rejectJoinRequest(joinID) {
+    const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
+    try {
+        axios.post(endpoint);
+        emit('refreshTrips');
     } catch (error) {
         alert(error);
         return;
