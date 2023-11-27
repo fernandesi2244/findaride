@@ -19,7 +19,7 @@
           <div
             :id="trip.college+trip.id"
             class="accordion-collapse collapse"
-            data-bs-parent="#accordion"
+            
           >
             <div class="accordion-body">
                 <div class='mb-2'>
@@ -43,18 +43,20 @@
                                     <th scope="col" class="column">Departure</th>
                                     <th scope="col" class="column">Arrival</th>
                                     <th scope="col" class="column">Bags</th>
-                                    <th scope="col" class="columnend"></th>
+                                    <th scope="col" class="column">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="join in trip.join_requests" :key="join.id">
-                                    <td>{{ join.trip_request.user.first_name }} {{ join.trip_request.user.last_name }}</td>
-                                    <td>{{ getTime(join.trip_request.earliest_departure_time) }}</td>
-                                    <td>{{ getTime(join.trip_request.latest_departure_time) }}</td>
-                                    <td>{{ cleanLocation(join.trip_request.departure_location) }}</td>
-                                    <td>{{ cleanLocation(join.trip_request.arrival_location) }}</td>
-                                    <td>{{ join.trip_request.num_luggage_bags }}</td>
-                                    <td>
+                                <template v-for="join in trip.join_requests" :key="join.id">
+
+                                <tr>
+                                    <td class="no-border">{{ join.trip_request.user.first_name }} {{ join.trip_request.user.last_name }}</td>
+                                    <td class="no-border">{{ getTime(join.trip_request.earliest_departure_time) }}</td>
+                                    <td class="no-border">{{ getTime(join.trip_request.latest_departure_time) }}</td>
+                                    <td class="no-border">{{ cleanLocation(join.trip_request.departure_location) }}</td>
+                                    <td class="no-border">{{ cleanLocation(join.trip_request.arrival_location) }}</td>
+                                    <td class="no-border">{{ join.trip_request.num_luggage_bags }}</td>
+                                    <td class="no-border">
                                         <div v-if="join.participants_that_accepted.includes(userID)">
                                             <!-- check if there are other members of the trip that need to approve the reqeust -->
                                             <div v-if="join.participants_that_accepted.length < trip.num_participants">
@@ -70,7 +72,18 @@
                                             <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove Trip</button>
                                         </div>
                                     </td>
+                                    
                                 </tr>
+                                <tr>
+                                    <td colspan="30">
+                                        <table class="text-muted">
+                                            &#x21B3; 
+                                            Comments: {{ join.trip_request.comment }}
+                                        </table>
+                                    </td>
+                                </tr>
+                                
+                            </template>
                             </tbody>
                         </table>
                     </div>
@@ -80,7 +93,7 @@
         </div>
       </div>
     </div>
-  </template>
+</template>
 
 <script setup>
 import { defineProps, onMounted, reactive, computed } from 'vue';
@@ -149,5 +162,9 @@ function removeTrip(tripRequestID) {
 .btn-reject {
     background-color: red;
     color: white;
+}
+
+.no-border {
+    border: none;
 }
 </style>
