@@ -190,32 +190,33 @@ class TripRequestAPIView(views.APIView):
     
     def __getLocationObjects(self, departure_location, arrival_location):
         # See if location table contains any rows with the same departure address. If so, fetch that row. Otherwise, create a new row.
-        matching_departure_locations = Location.objects.filter(postal_code=departure_location['postal_code'])
+        matching_departure_locations = Location.objects.filter(latitude=departure_location['latitude']).filter(longitude=departure_location['longitude'])
 
         geolocator = Nominatim(user_agent="findaride")
         if matching_departure_locations.exists():
             departure_location = matching_departure_locations[0]
         else:
-            location = geolocator.geocode({"postalcode": departure_location['postal_code']})
+            location = geolocator.reverse((departure_location['latitude'], departure_location['longitude']), addressdetails=True)
+            #location = geolocator.geocode({"postalcode": departure_location['postal_code']})
             departure_location = Location.objects.create(
-                address=departure_location['address'],
-                postal_code=departure_location['postal_code'],
-                latitude = location.latitude,
-                longitude = location.longitude,
+                address = departure_location['address'],
+                postal_code = location.raw['address']['postcode'],
+                latitude = departure_location['latitude'],
+                longitude = departure_location['longitude'],
             )
             departure_location.save()
         
         # Do the same for the arrival location
-        matching_arrival_locations = Location.objects.filter(postal_code=arrival_location['postal_code'])
+        matching_arrival_locations = Location.objects.filter(latitude=arrival_location['latitude']).filter(longitude=arrival_location['longitude'])
         if matching_arrival_locations.exists():
             arrival_location = matching_arrival_locations[0]
         else:
-            location = geolocator.geocode({"postalcode": arrival_location['postal_code']})
+            location = geolocator.reverse((arrival_location['latitude'], arrival_location['longitude']), addressdetails=True)
             arrival_location = Location.objects.create(
-                address=arrival_location['address'],
-                postal_code=arrival_location['postal_code'],
-                latitude = location.latitude,
-                longitude = location.longitude,
+                address = arrival_location['address'],
+                postal_code = location.raw['address']['postcode'],
+                latitude = arrival_location['latitude'],
+                longitude = arrival_location['longitude'],
             )
             arrival_location.save()
         
