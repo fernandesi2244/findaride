@@ -102,15 +102,9 @@ async function getUserTrips() {
   const response = await axios.get(endpoint);
   tripRequests.value = response.data.trip_requests;
   trips.value = response.data.trips;
-  tripRequests.value = response.data.trip_requests
+  tripRequests.value = response.data.trip_requests;
 
-  // Dummy object
-  // trips.value = [
-  // { id: 1, departure_location: "Location A", arrival_location: "Location B", departure_time: "2023-12-03T09:00:00", participant_list: [], join_requests: [] },
-  // ];
   userID.value = response.data.id;
-  console.log(userID.value)
-  console.log(trips.value);
 }
 
 async function addTripRequest(newTripRequest) {
@@ -118,11 +112,13 @@ async function addTripRequest(newTripRequest) {
 
   let departure = {
     "address": newTripRequest.from,
-    "postal_code": newTripRequest.fromPostalCode,
+    "longitude": newTripRequest.fromLong,
+    "latitude": newTripRequest.fromLat,
   }
   let arrival = {
     "address": newTripRequest.to,
-    "postal_code": newTripRequest.toPostalCode,
+    "longitude": newTripRequest.toLong,
+    "latitude": newTripRequest.toLat,
   }
 
   let earliest_departure_time = new Date(newTripRequest.earliestDepartureTime).toUTCString();

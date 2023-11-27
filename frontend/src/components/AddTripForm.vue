@@ -60,15 +60,11 @@ const toRef = ref();
 
 const trip = reactive({
   from: '',
-  fromPostalCode: '',
-  /*
   fromLat: 0,
-  fromLong: 0, */
+  fromLong: 0,
   to: '',
-  toPostalCode: '',
-  /*
   toLat: 0,
-  toLong: 0,*/
+  toLong: 0,
   departureDate: '',
   earliestDepartureTime: '',
   latestDepartureTime: '',
@@ -94,15 +90,11 @@ function closeModal() {
 
 function resetForm() {
   trip.from = '';
-  trip.fromPostalCode = '';
-  /*
   trip.fromLat = 0;
-  trip.fromLong = 0;*/
+  trip.fromLong = 0;
   trip.to = '';
-  trip.toPostalCode = '';
-  /*
   trip.toLat = 0;
-  trip.toLong = 0;*/
+  trip.toLong = 0;
   trip.departureDate = '';
   trip.earliestDepartureTime = '';
   trip.latestDepartureTime = '';
@@ -114,33 +106,28 @@ function resetForm() {
 onMounted(() => {
   const acFrom = new google.maps.places.Autocomplete(fromRef.value, {
     types: ["transit_station"],
-    fields: ["address_components"]
+    fields: ["geometry"]
   });
 
 
   const acTo = new google.maps.places.Autocomplete(toRef.value, {
     types: ["transit_station"],
-    fields: ["address_components"]
+    fields: ["geometry"]
   });
 
 
   google.maps.event.addListener(acFrom, "place_changed", () => {
-    console.log(acFrom.getPlace().address_components)
-    let postalCode = acFrom.getPlace().address_components.pop();
-    /*
+    let place = acFrom.getPlace().geometry.location;
     trip.fromLat = place.lat();
-    trip.fromLong = place.lng();*/
-    trip.fromPostalCode = postalCode.long_name;
+    trip.fromLong = place.lng();
     trip.from = document.getElementById('from').value;
   });
 
 
   google.maps.event.addListener(acTo, "place_changed", () => {
-    let postalCode = acTo.getPlace().address_components.pop();
-    /*
+    let place = acTo.getPlace().geometry.location;
     trip.toLat = place.lat();
-    trip.toLong = place.lng();*/
-    trip.toPostalCode = postalCode.long_name;
+    trip.toLong = place.lng();
     trip.to = document.getElementById('to').value;
   });
 });
