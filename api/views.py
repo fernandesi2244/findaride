@@ -3,6 +3,8 @@ from django.shortcuts import render
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
+from api.utils import send_join_email, send_confirm_email
+
 from django.utils.timezone import make_aware
 
 from rest_framework import generics, status, views, viewsets
@@ -59,7 +61,6 @@ class JoinRequestAPIView(views.APIView):
         join_request = JoinRequest.objects.get(pk=pk)
         # TODO: Do all the logic for preventing users from typing random stuff in the URL
         if action == "accept":
-            print("ACCEPT")
             join_request.accept(self.request.user)
         elif action == "reject":
             join_request.reject()
@@ -184,7 +185,7 @@ class TripRequestAPIView(views.APIView):
             trip.num_join_requests += 1
             trip.save()
 
-            # TODO: send email notification (or by preferred notification method) to trip participants that a new join request has been made
+            send_join_email(trip.participant_list, user)
 
         return Response(status=status.HTTP_200_OK)
     
