@@ -44,10 +44,10 @@
                             <tbody>
                                 <tr v-for="join in tripRequest.join_requests" :key="join.id" :class="{'join-request-orange': join.status === 'pending'}">
                                     <td>{{ getTime(join.trip.departure_time) }}</td>
-                                    <td>{{ luggageTotal[trip.id].totalLuggage }}</td>
+                                    <td>{{ join.trip.num_luggage_bags }}</td>
                                     <td>{{ join.trip.num_participants }}</td>
                                     <td>Status</td>
-                                    <div v-if="tripRequest.comments.length > 0" class="accordion-body">
+                                    <div v-if="tripRequest.comments" class="accordion-body">
                                         <h5 class="mt-2">Comments:</h5>
                                         <ul>
                                             <li v-for="comment in tripRequest.comments" :key="comment.id">{{ comment.text }}</li>
@@ -162,14 +162,18 @@ function rejectJoinRequest(joinID) {
     }
 }
 
-const luggageTotal = computed(() => {
-    return trips.value.map(trip => {
-        const totalLuggage = trip.participant_list.reduce((total, participant) => {
-            return total + participant.num_luggage_bags;
-        }, 0);
-        return { ...trip, totalLuggage };
-    });
-});
+// const luggageTotal = computed(() => {
+//     // get all trips from trip request join requests
+//     tripRequest.join_requests[0].trip
+//     const trips =  
+
+//     return trips.value.map(trip => {
+//         const totalLuggage = trip.participant_list.reduce((total, participant) => {
+//             return total + participant.num_luggage_bags;
+//         }, 0);
+//         return { ...trip, totalLuggage };
+//     });
+// });
 </script>
 
 <style>
