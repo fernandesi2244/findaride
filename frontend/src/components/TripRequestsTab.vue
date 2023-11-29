@@ -22,14 +22,14 @@
             data-bs-parent="#accordion"
           >
           <div class="accordion-body">
-                <div class="flex">
-                    <div class="hug-right">
-                        <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove</button>
-                    </div>
-                </div>
-
                 <div class='mb-2'>
-                    <h5 class="mt-2 text-start">Trip matches:</h5>
+                    <div class="flex">
+                        <h5 class="mt-2 text-start">Trip matches:</h5>
+                        <div class="hug-right">
+                            <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove</button>
+                        </div>
+                    </div>
+                    
                     <div v-if="tripRequest.join_requests.length==0">
                         <p class="text-start">No requests to join yet.</p>
                     </div>
