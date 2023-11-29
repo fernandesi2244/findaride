@@ -23,11 +23,18 @@
           >
             <div class="accordion-body">
                 <div class='mb-2'>
-                    <h5 class="text-start">Members:<br></h5>
-                    <!-- put each member on a separate line -->
-                    <h6 v-for="participant in trip.participant_list" class="text-start">
-                        {{ nameEmail(participant) }}
-                    </h6>
+                    <div class="flex">
+                        <div>
+                            <h5 class="text-start">Members:<br></h5>
+                            <!-- put each member on a separate line -->
+                            <h6 v-for="participant in trip.participant_list" class="text-start">
+                                {{ nameEmail(participant) }}
+                            </h6>
+                        </div>
+                        <div class="hug-right">
+                            <button class="btn btn-danger" @click="removeTrip(trip.id)">Leave</button>
+                        </div>
+                    </div>
 
                     <br>
                     <h5 class="text-start">Number of luggage bags: <span>{{ trip.num_luggage_bags }}</span></h5>
@@ -46,7 +53,7 @@
                                     <th scope="col" class="column">Departure</th>
                                     <th scope="col" class="column">Arrival</th>
                                     <th scope="col" class="column">Bags</th>
-                                    <th scope="col" class="column">Status</th>
+                                    <th scope="col" class="column"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,10 +76,9 @@
                                                 Waiting for response...
                                             </div>
                                         </div>
-                                        <div class="button-div" v-else>
+                                        <div class="" v-else>
                                             <button class="btn btn-accept btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
                                             <button class="btn btn-reject btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
-                                            <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove Trip</button>
                                         </div>
                                     </td>
                                     
@@ -137,6 +143,7 @@ function rejectJoinRequest(joinID) {
 }
 
 function removeTrip(tripRequestID) {
+    
     if (confirm('Are you sure you want to remove this trip?')) {
         const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}`;
         try {
@@ -151,6 +158,14 @@ function removeTrip(tripRequestID) {
 </script>
 
 <style>
+.flex {
+    display: flex;
+}
+
+.hug-right {
+    margin-left: auto;    
+}
+
 .button-div {
     display: flex;
     flex-direction: row;
@@ -164,7 +179,13 @@ function removeTrip(tripRequestID) {
 
 .btn-reject {
     background-color: red;
-    color: white;
+    /* color: red; */
+
+}
+.btn-reject:hover {
+    background-color: #a90505;
+    /* color: red; */
+    
 }
 
 .no-border {
