@@ -1,9 +1,11 @@
 from django.db import models
 from django.apps import apps
 
+import datetime
+
 class Location(models.Model):
     address = models.CharField(max_length=255)
-    postal_code = models.CharField(max_length=5, default='00000')
+    postal_code = models.CharField(max_length=12, default='00000') # see https://www.quora.com/What-is-the-maximum-number-of-digits-in-a-zipcode-postal-code-for-a-place-in-this-universe
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
@@ -17,7 +19,8 @@ class Trip(models.Model):
     is_full = models.BooleanField()
     departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
     arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
-    departure_time = models.DateTimeField()
+    earliest_departure_time = models.DateTimeField()
+    latest_departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     num_join_requests = models.IntegerField()
     blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips', blank=True) # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
@@ -25,6 +28,44 @@ class Trip(models.Model):
 
     class Meta:
         ordering = ['created_on']
+
+    def remove_user(self, user, curr_utc_time):
+        """
+        Remove the given user from the trip, and if the trip is now empty, delete it.
+        """
+        self.participant_list.remove(user)
+        self.num_participants -= 1
+        self.blacklisted_users.add(user)
+        
+        corresponding_trip_user_details = TripUserDetails.objects.get(trip=self, user=user)
+        self.num_luggage_bags -= corresponding_trip_user_details.num_luggage_bags
+        corresponding_trip_user_details.delete()
+
+        self.save()
+
+        if self.num_participants == 0:
+            # delete associated stuff like TripUserDetails
+            self.delete()
+            return
+    
+        # if the trip is less than 5 hours away, then don't change the trip timespan
+        if curr_utc_time is not None and curr_utc_time + datetime.timedelta(hours=3) > self.earliest_departure_time:
+            return
+
+        # get max min time and min max time of all users in trip to form new trip timespan
+        self.earliest_departure_time = TripUserDetails.objects.filter(trip=self).aggregate(models.Max('earliest_departure_time'))['earliest_departure_time__max']
+        self.latest_departure_time = TripUserDetails.objects.filter(trip=self).aggregate(models.Min('latest_departure_time'))['latest_departure_time__min']
+
+        self.save()
+
+class TripUserDetails(models.Model):
+    trip = models.ForeignKey('Trip', related_name='user_timespans', on_delete=models.CASCADE)
+    user = models.ForeignKey('users.CustomUser', related_name='trip_timespans', on_delete=models.CASCADE)
+
+    earliest_departure_time = models.DateTimeField()
+    latest_departure_time = models.DateTimeField()
+
+    num_luggage_bags = models.IntegerField()
     
 # created when a user submits the trip request form from the dashboard
 class TripRequest(models.Model):
@@ -48,7 +89,7 @@ class JoinRequest(models.Model):
     participants_that_accepted = models.ManyToManyField('users.CustomUser', related_name='+', blank=True)
     trip_details_changed = models.BooleanField(default=False) # whether or not the trip details have changed since the request was made; relevant for notifying the user when they are confirming their acceptance
     trip_request = models.ForeignKey('TripRequest', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
-    trip = models.ForeignKey('Trip', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
+    trip = models.ForeignKey('Trip', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE)
     
     def accept(self, user):
         """
@@ -102,13 +143,21 @@ class JoinRequest(models.Model):
                 num_participants=1,
                 departure_location=self.trip_request.departure_location,
                 arrival_location=self.trip_request.arrival_location,
-                departure_time=self.trip_request.earliest_departure_time + (self.trip_request.latest_departure_time - self.trip_request.earliest_departure_time) / 2,
+                earliest_departure_time=self.trip_request.earliest_departure_time,
+                latest_departure_time=self.trip_request.latest_departure_time,
                 num_luggage_bags=self.trip_request.num_luggage_bags,
                 num_join_requests=0,
                 college=self.trip_request.user.college,
                 is_full=False
             )
             new_trip.participant_list.add(self.trip_request.user)
+            TripUserDetails.objects.create(
+                trip=new_trip,
+                user=self.trip_request.user,
+                earliest_departure_time=self.trip_request.earliest_departure_time,
+                latest_departure_time=self.trip_request.latest_departure_time,
+                num_luggage_bags=self.trip_request.num_luggage_bags
+            )
 
             # delete the associated trip request
             self.trip_request.delete()
@@ -135,7 +184,19 @@ class ConfirmationRequest(models.Model):
         trip.participant_list.add(user)
         trip.num_luggage_bags += self.join_request.trip_request.num_luggage_bags
         trip.num_join_requests -= 1
+
+        # update the trip's timespan to be the intersection of the trip's timespan and the user's timespan (max possible overlap)
+        trip.earliest_departure_time = max(trip.earliest_departure_time, tripRequest.earliest_departure_time)
+        trip.latest_departure_time = min(trip.latest_departure_time, tripRequest.latest_departure_time)
         trip.save()
+
+        TripUserDetails.objects.create(
+            trip=trip,
+            user=user,
+            earliest_departure_time=tripRequest.earliest_departure_time,
+            latest_departure_time=tripRequest.latest_departure_time,
+            num_luggage_bags=tripRequest.num_luggage_bags
+        )
 
         # remove all join requests from the trip request
         for joinRequest in tripRequest.join_requests.all():
@@ -167,14 +228,21 @@ class ConfirmationRequest(models.Model):
                 num_participants=1,
                 departure_location=tripRequest.departure_location,
                 arrival_location=tripRequest.arrival_location,
-                departure_time=tripRequest.earliest_departure_time + (tripRequest.latest_departure_time - tripRequest.earliest_departure_time) / 2,
+                earliest_departure_time=tripRequest.earliest_departure_time,
+                latest_departure_time=tripRequest.latest_departure_time,
                 num_luggage_bags=tripRequest.num_luggage_bags,
                 num_join_requests=0,
                 college=tripRequest.user.college,
                 is_full=False
             )
-            # add current user to the new trip's participant list
             newTrip.participant_list.add(tripRequest.user)
+            TripUserDetails.objects.create(
+                trip=newTrip,
+                user=user,
+                earliest_departure_time=tripRequest.earliest_departure_time,
+                latest_departure_time=tripRequest.latest_departure_time,
+                num_luggage_bags=tripRequest.num_luggage_bags
+            )
 
             # delete the associated trip request
             tripRequest.delete()

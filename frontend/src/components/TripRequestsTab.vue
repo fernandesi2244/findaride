@@ -13,8 +13,7 @@
               :data-bs-target="'#tripRequest'+tripRequest.id"
             >
               {{ cleanLocation(tripRequest.departure_location) }} &#8594; {{ cleanLocation(tripRequest.arrival_location) }} between
-              {{ getTime(tripRequest.earliest_departure_time) }} and {{ getTime(tripRequest.latest_departure_time) }} on
-              {{ getDate(tripRequest.latest_departure_time) }}
+              {{ getTime(tripRequest.earliest_departure_time) }} and {{ getTime(tripRequest.latest_departure_time) }} {{ getDatePart(tripRequest.earliest_departure_time, tripRequest.latest_departure_time) }}
             </button>
             <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove Trip</button>
           </h2>
@@ -25,37 +24,32 @@
           >
           <div class="accordion-body">
                 <div class='mb-2'>
-                    <h5 class="mt-2 text-start">Join Requests:</h5>
+                    <h5 class="mt-2 text-start">Trip matches:</h5>
                     <div v-if="tripRequest.join_requests.length==0">
                         <p class="text-start">No requests to join yet.</p>
                     </div>
                     <div v-else class="table-responsive">
+                        <p class="text-start">Note: the following information represents the trips <strong>before</strong> your possible addition.</p>
                         <table class="table bdr">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="column">Trip departure time</th>
-                                    <th scope="col" class="column">Luggage Total</th>
-                                    <th scope="col" class="column"># Riders</th>
-                                    <th scope="col" class="column">Status</th>
-                                    <th scope="col" class="column">Comments</th>
+                                    <th scope="col" class="column">Departure location</th>
+                                    <th scope="col" class="column">Arrival location</th>
+                                    <th scope="col" class="column">Earliest departure time</th>
+                                    <th scope="col" class="column">Latest departure time</th>
+                                    <th scope="col" class="column">Luggage bag total</th>
+                                    <th scope="col" class="column">Number of riders</th>
                                     <th scope="col" class="columnend"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="join in tripRequest.join_requests" :key="join.id" :class="{'join-request-orange': join.status === 'pending'}">
-                                    <td>{{ getTime(join.trip.departure_time) }}</td>
+                                    <td>{{ cleanLocation(join.trip.departure_location) }}</td>
+                                    <td>{{ cleanLocation(join.trip.arrival_location) }}</td>
+                                    <td>{{ getTime(join.trip.earliest_departure_time) + " (" + getDate(join.trip.earliest_departure_time) + ")" }}</td>
+                                    <td>{{ getTime(join.trip.latest_departure_time) + " (" + getDate(join.trip.latest_departure_time) + ")" }}</td>
                                     <td>{{ join.trip.num_luggage_bags }}</td>
                                     <td>{{ join.trip.num_participants }}</td>
-                                    <td>Status</td>
-                                    <div v-if="tripRequest.comments" class="accordion-body">
-                                        <h5 class="mt-2">Comments:</h5>
-                                        <ul>
-                                            <li v-for="comment in tripRequest.comments" :key="comment.id">{{ comment.text }}</li>
-                                        </ul>
-                                    </div>
-                                    <div v-else>
-                                        <p>No comments yet.</p>
-                                    </div>
                                     <td>
                                         <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Withdraw Request</button>
                                     </td>
@@ -63,25 +57,32 @@
                             </tbody>
                         </table>
                     </div>
-                    <h5 class="mt-2 text-start">Confirmation Requests:</h5>
+                    <h5 class="mt-2 text-start">Confirmation requests:</h5>
                     <div v-if="tripRequest.confirmation_requests.length==0">
                         <p class="text-start">No confirmations yet.</p>
                     </div>
                     <div v-else class="table-responsive">
+                        <p class="text-start">Note: the following information represents the trips <strong>after</strong> your possible addition.</p>
                         <table class="table bdr">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="column">Time</th>
-                                    <th scope="col" class="column"># Luggage bags</th>
-                                    <th scope="col" class="column"># Riders</th>
+                                    <th scope="col" class="column">Departure location</th>
+                                    <th scope="col" class="column">Arrival location</th>
+                                    <th scope="col" class="column">Earliest departure time</th>
+                                    <th scope="col" class="column">Latest departure time</th>
+                                    <th scope="col" class="column">Luggage bag total</th>
+                                    <th scope="col" class="column">Number of riders</th>
                                     <th scope="col" class="columnend"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="confirm in tripRequest.confirmation_requests" :key="confirm.id" :class="{'confirmation-request-green': confirm.status === 'confirmed'}">
-                                    <td>{{ getTime(confirm.join_request.trip.departure_time) }}</td>
-                                    <td>{{ confirm.join_request.trip.num_luggage_bags }}</td>
-                                    <td>{{ confirm.join_request.trip.num_participants }}</td>
+                                    <td>{{ cleanLocation(confirm.join_request.trip.departure_location) }}</td>
+                                    <td>{{ cleanLocation(confirm.join_request.trip.arrival_location) }}</td>
+                                    <td>{{ getTime(confirm.join_request.trip.earliest_departure_time) + " (" + getDate(confirm.join_request.trip.earliest_departure_time) + ")"  }}</td>
+                                    <td>{{ getTime(confirm.join_request.trip.latest_departure_time) + " (" + getDate(confirm.join_request.trip.latest_departure_time) + ")"  }}</td>
+                                    <td>{{ confirm.join_request.trip.num_luggage_bags + tripRequest.num_luggage_bags }}</td>
+                                    <td>{{ confirm.join_request.trip.num_participants + 1}}</td>
                                     <td>
                                         <button class="btn btn-accept btn-sm me-1" @click="acceptConfirmationRequest(confirm.id)">Accept</button>
                                         <button class="btn btn-reject btn-sm ms-1" @click="rejectConfirmationRequest(confirm.id)">Reject</button>
@@ -102,10 +103,10 @@
 import { defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import { getDate, getDateTime, getTime, cleanLocation, nameList } from '../components/common.js'
+import { getDate, getDatePart, getTime, cleanLocation, nameList } from '../components/common.js'
 import { toRefs } from 'vue'
 
-const emit = defineEmits(['refreshTrips']);
+const emit = defineEmits(['refreshTrips', 'goToTripsTab']);
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
 
@@ -121,6 +122,7 @@ function acceptConfirmationRequest(confirmationID) {
     try {
         axios.post(endpoint);
         emit('refreshTrips');
+        emit('goToTripsTab')
     } catch (error) {
         alert(error);
         return;

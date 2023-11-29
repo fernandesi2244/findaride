@@ -30,34 +30,7 @@ const routes = [
     name: 'dashboard',
     component: () => import('../views/DashboardView.vue'),
     
-  },
-  {
-    path: '/addtripform/',
-    name: 'addtripform',
-    component: () => import('../views/AddTripFormView.vue')
-  },
-  {
-    path: '/frontpage/',
-    name: 'frontpage',
-    component: () => import('../components/center/FrontPage.vue'),
-    
-  },
-  {
-    path: '/trips/',
-    name: 'trips',
-    component: () => import('../components/center/TripPage.vue'),
-  },
-  {
-    path: '/triprequest/',
-    name: 'triprequest',
-    component: () => import('../components/center/TripRequestPage.vue'),
   }
-  /*,
-  {
-    path: '/confirmationrequest/',
-    name: 'confirmationrequest',
-    component: () => import('../components/center/ConfirmationRequest.vue'),
-  }*/
 ]
 async function isLoggedIn() {
   const endpoint = endpoints['isLoggedIn'];

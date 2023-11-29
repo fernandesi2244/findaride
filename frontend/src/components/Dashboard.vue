@@ -10,7 +10,7 @@
             New Trip Request
           </button>
           <button class="nav-link text-start" id="v-pills-trips-tab" data-bs-toggle="pill" data-bs-target="#v-pills-trips"
-            type="button" role="tab" aria-controls="v-pills-trips" aria-selected="false">
+            type="button" role="tab" aria-controls="v-pills-trips" aria-selected="false" @click="refreshData">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" class="mb-1" fill="currentColor"
               viewBox="0 0 16 16">
               <path
@@ -20,7 +20,7 @@
           </button>
           <button class="nav-link text-start" id="v-pills-triprequests-tab" data-bs-toggle="pill"
             data-bs-target="#v-pills-triprequests" type="button" role="tab" aria-controls="v-pills-triprequests"
-            aria-selected="false">
+            aria-selected="false" @click="refreshData">
             <svg class="mb-1" xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="currentColor"
               viewBox="0 0 20 20">
               <path
@@ -33,10 +33,10 @@
       </div>
       <div class="col-10 tab-content px-4" id="v-pills-tabContent">
         <div class="tab-pane fade" id="v-pills-trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
-          <TripsTab :trips="trips" :userID="userID" @refreshTrips="getUserTrips" />
+          <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="v-pills-triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="getUserTrips" />
+          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" />
         </div>
         <div class="tab-pane fade" id="v-pills-addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
           <AddTripForm @addTripRequest="addTripRequest" />
@@ -77,6 +77,11 @@ function toggleTripForm() {
   showTripForm.value = !showTripForm.value;
 }
 
+async function refreshData() {
+  getUserInfo();
+  getUserTrips();
+}
+
 onMounted(async () => {
   await getUserInfo();
   await getUserTrips();
@@ -90,6 +95,10 @@ onMounted(async () => {
     $("#v-pills-addtrip-tab").click();
   }
 });
+
+function goToTripsTab() {
+  $("#v-pills-trips-tab").click();
+}
 
 async function getUserInfo() {
   const endpoint = endpoints["me"];
@@ -139,7 +148,7 @@ async function addTripRequest(newTripRequest) {
     await axios.post(endpoint, data);
   } catch (error) {
     // create modal dialog indicating the error that has occurred and to retry
-    $("#add-trip-request-submit-message").text("Error submitting trip request:\n" + formatError(error.response.data.error));
+    $("#add-trip-request-submit-message").text("Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText));
     $("#add-trip-request-close-button").text("Retry");
     $("#add-trip-request-confirmation-modal").css("display", "block");
     $("#add-trip-request-close-button").click(function () {
@@ -150,14 +159,22 @@ async function addTripRequest(newTripRequest) {
 
   showTripForm.value = false;
 
-  getUserTrips();
+  await getUserTrips(); // force to wait before showing confirmation modal
 
   // create modal dialog indicating that the trip request has been added
   $("#add-trip-request-submit-message").text("Trip request successfully created!");
-  $("#add-trip-request-close-button").text("View trips");
+  if (trips.value.length > 0) {
+    $("#add-trip-request-close-button").text("View trips");
+  } else {
+    $("#add-trip-request-close-button").text("View trip requests");
+  }
   $("#add-trip-request-confirmation-modal").css("display", "block");
   $("#add-trip-request-close-button").click(function () {
-    $("#v-pills-trips-tab").click();
+    if (trips.value.length > 0) {
+      $("#v-pills-trips-tab").click();
+    } else {
+      $("#v-pills-triprequests-tab").click();
+    }
     $("#add-trip-request-confirmation-modal").css("display", "none");
   });
 }

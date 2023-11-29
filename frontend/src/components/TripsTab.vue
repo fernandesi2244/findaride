@@ -12,8 +12,8 @@
               data-bs-toggle="collapse"
               :data-bs-target="'#'+trip.college+trip.id"
             >
-              {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }} @
-              {{ getTime(trip.departure_time) }} on {{ getDate(trip.departure_time) }}
+              {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }} between
+              {{ getTime(trip.earliest_departure_time) }} and {{ getTime(trip.latest_departure_time) }} {{ getDatePart(trip.earliest_departure_time, trip.latest_departure_time) }}
             </button>
           </h2>
           <div
@@ -29,6 +29,9 @@
                         {{ nameEmail(participant) }}
                     </h6>
 
+                    <br>
+                    <h5 class="text-start">Number of luggage bags: <span>{{ trip.num_luggage_bags }}</span></h5>
+
                     <h5 class="mt-4 text-start">Join requests:</h5>
                     <div v-if="trip.join_requests.length==0">
                         <h6 class="text-start">No requests to join yet.</h6>
@@ -38,8 +41,8 @@
                             <thead>
                                 <tr>
                                     <th scope="col" class="column">Name</th>
-                                    <th scope="col" class="column">Min time</th>
-                                    <th scope="col" class="column">Max time</th>
+                                    <th scope="col" class="column">Earliest time</th>
+                                    <th scope="col" class="column">Latest time</th>
                                     <th scope="col" class="column">Departure</th>
                                     <th scope="col" class="column">Arrival</th>
                                     <th scope="col" class="column">Bags</th>
@@ -51,8 +54,8 @@
 
                                 <tr>
                                     <td class="no-border">{{ join.trip_request.user.first_name }} {{ join.trip_request.user.last_name }}</td>
-                                    <td class="no-border">{{ getTime(join.trip_request.earliest_departure_time) }}</td>
-                                    <td class="no-border">{{ getTime(join.trip_request.latest_departure_time) }}</td>
+                                    <td class="no-border">{{ getTime(join.trip_request.earliest_departure_time) + " (" + getDate(join.trip_request.earliest_departure_time) + ")" }}</td>
+                                    <td class="no-border">{{ getTime(join.trip_request.latest_departure_time) + " (" + getDate(join.trip_request.latest_departure_time) + ")" }}</td>
                                     <td class="no-border">{{ cleanLocation(join.trip_request.departure_location) }}</td>
                                     <td class="no-border">{{ cleanLocation(join.trip_request.arrival_location) }}</td>
                                     <td class="no-border">{{ join.trip_request.num_luggage_bags }}</td>
@@ -99,7 +102,7 @@
 import { defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import { getDate, getDateTime, getTime, cleanLocation, nameEmail } from '../components/common.js'
+import { getDatePart, getDate, getTime, cleanLocation, nameEmail } from '../components/common.js'
 import { toRefs } from 'vue'
 
 const emit = defineEmits(['refreshTrips']);
@@ -107,7 +110,7 @@ const props = defineProps(['trips', 'userID']);
 const { trips, userID } = toRefs(props);
 const sortedTrips = computed(() => {
     return [...trips.value].sort((a, b) => {
-        return new Date(a.departure_time) - new Date(b.departure_time);
+        return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time);
     });
 });
 function acceptJoinRequest(joinID) {

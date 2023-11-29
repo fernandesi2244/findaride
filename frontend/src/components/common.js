@@ -1,18 +1,29 @@
 export function getDate(dateString) {
     return new Date(dateString).toLocaleDateString();
-  }
-  
+}
+
+export function getDatePart(firstDateString, secondDateString) {
+    // if the two dates are the same, just return the date
+    if (getDate(firstDateString) === getDate(secondDateString)) {
+        return "on " + getDate(firstDateString);
+    }
+
+    // otherwise, return the date range
+    return `(${getDate(firstDateString)}-${getDate(secondDateString)})`;
+
+}
+
 export function getTime(dateString) {
     return new Date(dateString).toLocaleTimeString();
 }
-  
+
 export function getDateTime(dateString) {
     return new Date(dateString).toLocaleString();
 }
-  
+
 export function cleanLocation(location) {
     let tokens = location.split(",");
-  
+
     return tokens[0];
 }
 

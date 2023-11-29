@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 
 UserModel = get_user_model()
 
-from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest
+from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest, TripUserDetails
 from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleConfirmationRequestSerializer
 
 # TODO: see if any permissions need to be changed
@@ -130,15 +130,14 @@ class TripRequestAPIView(views.APIView):
 
          # logic for finding matching trips
         user_college = trip_request.user.college
-        
         blacklisted_trips_id = user.blacklisted_trips.values('id')
         user_trip_ids = user.trips.values('id')
 
         # Once we get lats/lons, update this. For now, just match on postal code.
         pre_matching_trips = Trip.objects.filter(
             college=user_college,
-            departure_time__gte=trip_request.earliest_departure_time,
-            departure_time__lte=trip_request.latest_departure_time,
+            earliest_departure_time__lte=trip_request.latest_departure_time,
+            latest_departure_time__gte=trip_request.earliest_departure_time,
             num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
             is_full=False,
         ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')[:5]
@@ -159,7 +158,8 @@ class TripRequestAPIView(views.APIView):
                 college=user_college,
                 departure_location=trip_request.departure_location,
                 arrival_location=trip_request.arrival_location,
-                departure_time=trip_request.earliest_departure_time + (trip_request.latest_departure_time - trip_request.earliest_departure_time) / 2,
+                earliest_departure_time=trip_request.earliest_departure_time,
+                latest_departure_time=trip_request.latest_departure_time,
                 num_luggage_bags=trip_request.num_luggage_bags,
                 num_participants=1,
                 is_full=False,
@@ -167,6 +167,14 @@ class TripRequestAPIView(views.APIView):
             )
             trip.participant_list.add(trip_request.user)
             trip.save()
+
+            TripUserDetails.objects.create(
+                user=user,
+                trip=trip,
+                earliest_departure_time=trip_request.earliest_departure_time,
+                latest_departure_time=trip_request.latest_departure_time,
+                num_luggage_bags=trip_request.num_luggage_bags,
+            )
 
             trip_request.delete()
 
