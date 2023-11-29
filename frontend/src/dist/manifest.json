@@ -1,66 +1,6 @@
 {
-  "AddTripForm.css": {
-    "file": "assets/AddTripForm-dbf46f4b.css",
-    "src": "AddTripForm.css"
-  },
-  "_AddTripForm-66c75e61.js": {
-    "css": [
-      "assets/AddTripForm-dbf46f4b.css"
-    ],
-    "file": "assets/AddTripForm-66c75e61.js",
-    "imports": [
-      "_vendor-3f2a5fa8.js"
-    ]
-  },
-  "_axios_service-99fb1a93.js": {
-    "file": "assets/axios_service-99fb1a93.js",
-    "imports": [
-      "_vendor-3f2a5fa8.js"
-    ]
-  },
-  "_vendor-3f2a5fa8.js": {
-    "file": "assets/vendor-3f2a5fa8.js"
-  },
-  "components/Center/FrontPage.vue": {
-    "file": "assets/FrontPage-482d1372.js",
-    "imports": [
-      "_vendor-3f2a5fa8.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "components/Center/FrontPage.vue"
-  },
-  "components/Center/TripPage.css": {
-    "file": "assets/TripPage-c04ad5f1.css",
-    "src": "components/Center/TripPage.css"
-  },
-  "components/Center/TripPage.vue": {
-    "css": [
-      "assets/TripPage-c04ad5f1.css"
-    ],
-    "file": "assets/TripPage-ca9c1ed6.js",
-    "imports": [
-      "index.html",
-      "_axios_service-99fb1a93.js",
-      "_vendor-3f2a5fa8.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "components/Center/TripPage.vue"
-  },
-  "components/Center/TripRequestPage.css": {
-    "file": "assets/TripRequestPage-eb65c3dc.css",
-    "src": "components/Center/TripRequestPage.css"
-  },
-  "components/Center/TripRequestPage.vue": {
-    "css": [
-      "assets/TripRequestPage-eb65c3dc.css"
-    ],
-    "file": "assets/TripRequestPage-911db107.js",
-    "imports": [
-      "index.html",
-      "_vendor-3f2a5fa8.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "components/Center/TripRequestPage.vue"
+  "_vendor-e0192287.js": {
+    "file": "assets/vendor-e0192287.js"
   },
   "index.css": {
     "file": "assets/index-4ad9633f.css",
@@ -73,74 +13,59 @@
     "dynamicImports": [
       "views/HomeView.vue",
       "views/AboutView.vue",
-      "views/DashboardView.vue",
-      "views/AddTripFormView.vue",
-      "components/Center/FrontPage.vue",
-      "components/Center/TripPage.vue",
-      "components/Center/TripRequestPage.vue"
+      "views/DashboardView.vue"
     ],
-    "file": "assets/index-66a6d3e5.js",
+    "file": "assets/index-37b9a4ce.js",
     "imports": [
-      "_vendor-3f2a5fa8.js"
+      "_vendor-e0192287.js"
     ],
     "isEntry": true,
     "src": "index.html"
   },
   "views/AboutView.css": {
-    "file": "assets/AboutView-c8e40055.css",
+    "file": "assets/AboutView-88d07890.css",
     "src": "views/AboutView.css"
   },
   "views/AboutView.vue": {
     "css": [
-      "assets/AboutView-c8e40055.css"
+      "assets/AboutView-88d07890.css"
     ],
-    "file": "assets/AboutView-ad9f0e57.js",
+    "file": "assets/AboutView-0603f332.js",
     "imports": [
       "index.html",
-      "_vendor-3f2a5fa8.js"
+      "_vendor-e0192287.js"
     ],
     "isDynamicEntry": true,
     "src": "views/AboutView.vue"
   },
-  "views/AddTripFormView.vue": {
-    "file": "assets/AddTripFormView-def30982.js",
-    "imports": [
-      "_AddTripForm-66c75e61.js",
-      "_vendor-3f2a5fa8.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "views/AddTripFormView.vue"
-  },
   "views/DashboardView.css": {
-    "file": "assets/DashboardView-cdbd87ab.css",
+    "file": "assets/DashboardView-1dca0055.css",
     "src": "views/DashboardView.css"
   },
   "views/DashboardView.vue": {
     "css": [
-      "assets/DashboardView-cdbd87ab.css"
+      "assets/DashboardView-1dca0055.css"
     ],
-    "file": "assets/DashboardView-ae18c294.js",
+    "file": "assets/DashboardView-c608673b.js",
     "imports": [
       "index.html",
-      "_axios_service-99fb1a93.js",
-      "_vendor-3f2a5fa8.js",
-      "_AddTripForm-66c75e61.js"
+      "_vendor-e0192287.js"
     ],
     "isDynamicEntry": true,
     "src": "views/DashboardView.vue"
   },
   "views/HomeView.css": {
-    "file": "assets/HomeView-b53f6a04.css",
+    "file": "assets/HomeView-80a45266.css",
     "src": "views/HomeView.css"
   },
   "views/HomeView.vue": {
     "css": [
-      "assets/HomeView-b53f6a04.css"
+      "assets/HomeView-80a45266.css"
     ],
-    "file": "assets/HomeView-93b13574.js",
+    "file": "assets/HomeView-6ef40f06.js",
     "imports": [
       "index.html",
-      "_vendor-3f2a5fa8.js"
+      "_vendor-e0192287.js"
     ],
     "isDynamicEntry": true,
     "src": "views/HomeView.vue"
