@@ -32,7 +32,7 @@
                             </h6>
                         </div>
                         <div class="hug-right">
-                            <button class="btn btn-danger" @click="removeTrip(trip.id)">Leave</button>
+                            <button class="btn btn-danger" @click="leaveTrip(trip.id)">Leave</button>
                         </div>
                     </div>
 
@@ -77,7 +77,7 @@
                                             </div>
                                         </div>
                                         <div class="" v-else>
-                                            <button class="btn btn-accept btn-sm me-1" @click="acceptJoinRequest(join.id)">Accept</button>
+                                            <button class="btn btn-accept btn-sm ms-1" @click="acceptJoinRequest(join.id)">Accept</button>
                                             <button class="btn btn-reject btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
                                         </div>
                                     </td>
@@ -142,12 +142,16 @@ function rejectJoinRequest(joinID) {
     }
 }
 
-function removeTrip(tripRequestID) {
-    
-    if (confirm('Are you sure you want to remove this trip?')) {
-        const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}/`;
+function leaveTrip(tripID) {
+    if (confirm('Are you sure you want to leave this trip?')) {
+        const endpoint = `${endpoints["trip"]}${tripID}/`;
         try {
-            axios.delete(endpoint);
+            // TODO: How do these parameters compare to the ones directly in the endpoint URL?
+            axios.patch(endpoint, null, {
+                params: {
+                    action: 'removeUser'
+                }
+            });
             emit('refreshTrips');
         } catch (error) {
             alert(error);

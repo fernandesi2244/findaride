@@ -48,7 +48,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="join in tripRequest.join_requests" :key="join.id" :class="{'join-request-orange': join.status === 'pending'}">
+                                <!-- TODO: Fix display when there are no join requests as a result of the filter check on the next line. -->
+                                <tr v-for="join in tripRequest.join_requests.filter(joinRequest => !hasConfirmationRequest(tripRequest, joinRequest))" :key="join.id" :class="{'join-request-orange': join.status === 'pending'}">
                                     <td>{{ cleanLocation(join.trip.departure_location) }}</td>
                                     <td>{{ cleanLocation(join.trip.arrival_location) }}</td>
                                     <td>{{ getTime(join.trip.earliest_departure_time) + " (" + getDate(join.trip.earliest_departure_time) + ")" }}</td>
@@ -134,7 +135,7 @@ import { axios } from '../common/axios_service.js'
 import { getDate, getDatePart, getTime, cleanLocation, nameList } from '../components/common.js'
 import { toRefs } from 'vue'
 import Popup from '../components/Popup.vue';
-const emit = defineEmits(['refreshTrips', 'goToTripsTab']);
+const emit = defineEmits(['refreshTrips', 'goToTripsTab', 'goToTripRequestsTab']);
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
 const popupTriggers = ref({
@@ -163,11 +164,16 @@ function acceptConfirmationRequest(confirmationID) {
     }
 }
 
+function hasConfirmationRequest(tripRequest, joinRequest) {
+    return tripRequest.confirmation_requests.some(confirmationRequest => confirmationRequest.join_request.id === joinRequest.id);
+}
+
 function rejectConfirmationRequest(confirmationID) {
     const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=reject`;
     try {
         axios.post(endpoint);
         emit('refreshTrips');
+        emit('goToTripsTab')  // temp fix to refresh confirmation requests; TODO: STAY ON PAGE unless there are no more confirmation requests
     } catch (error) {
         alert(error);
         return;

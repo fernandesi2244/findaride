@@ -86,6 +86,7 @@
 <script setup>
 import { ref, reactive, defineEmits, onMounted } from 'vue';
 import Popup from '../components/Popup.vue';
+const emit = defineEmits(['addTripRequest', 'close']);
 const popupTriggers = ref({
   buttonTrigger: false,
   timedTrigger: false

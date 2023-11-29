@@ -1,5 +1,6 @@
 from django.db import models
 from django.apps import apps
+from django.utils.timezone import make_aware
 from api.utils import send_confirm_email
 
 import datetime
@@ -30,7 +31,7 @@ class Trip(models.Model):
     class Meta:
         ordering = ['created_on']
 
-    def remove_user(self, user, curr_utc_time):
+    def remove_user(self, user):
         """
         Remove the given user from the trip, and if the trip is now empty, delete it.
         """
@@ -48,9 +49,13 @@ class Trip(models.Model):
             # delete associated stuff like TripUserDetails
             self.delete()
             return
-    
-        # if the trip is less than 5 hours away, then don't change the trip timespan
-        if curr_utc_time is not None and curr_utc_time + datetime.timedelta(hours=3) > self.earliest_departure_time:
+
+        curr_utc_time = make_aware(datetime.datetime.utcnow())
+        print(curr_utc_time)
+        print(self.earliest_departure_time)
+
+        # if the trip is less than 3 hours away, then don't change the trip timespan
+        if curr_utc_time + datetime.timedelta(hours=3) > self.earliest_departure_time:
             return
 
         # get max min time and min max time of all users in trip to form new trip timespan

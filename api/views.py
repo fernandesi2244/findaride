@@ -18,7 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 UserModel = get_user_model()
 
 from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest, TripUserDetails
-from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleConfirmationRequestSerializer
+from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleConfirmationRequestSerializer, SimpleTripSerializer
 
 # TODO: see if any permissions need to be changed
 
@@ -250,3 +250,19 @@ class UserTripsDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     queryset = UserModel.objects.all()
     serializer_class = UserTripsSerializer
+
+class TripAPIView(views.APIView):
+    serializer_class = SimpleTripSerializer
+
+    def patch(self, request, pk):
+        action = self.request.query_params.get("action", None)
+        if action is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "No action provided."})
+
+        trip = Trip.objects.get(pk=pk)
+
+        if action == "removeUser":
+            trip.remove_user(self.request.user)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})

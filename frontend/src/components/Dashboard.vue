@@ -36,7 +36,7 @@
           <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="v-pills-triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" />
+          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
         </div>
         <div class="tab-pane fade" id="v-pills-addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
           <AddTripForm @addTripRequest="addTripRequest" />
@@ -98,6 +98,10 @@ onMounted(async () => {
 
 function goToTripsTab() {
   $("#v-pills-trips-tab").click();
+}
+
+function goToTripRequestsTab() {
+  $("#v-pills-triprequests-tab").click();
 }
 
 async function getUserInfo() {

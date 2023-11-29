@@ -6,7 +6,7 @@
 
     <section class="concept">
         <p>
-            Findaride is an innovative platform designed to take
+            findaride is an innovative platform designed to take
             the hassle out of student travel. Recognizing the
             struggles with costly fares and the endless search
             through chaotic forums and bulletin boards, we offer
