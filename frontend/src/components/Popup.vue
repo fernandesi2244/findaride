@@ -1,22 +1,46 @@
 <template>
-    <div class="popup" @click="TogglePopup">
-        <div class="popup-inner" @click.stop>
-            <slot />
-            <button class="popup-close" @click="TogglePopup">
-                Close
-            </button>
+    <transition name="fade">
+        <div class="popup" v-if="isVisible">
+            <div class="popup-inner" @click.stop>
+                <slot />
+                <button class="popup-close">
+                    Close
+                </button>
+            </div>
         </div>
-    </div>
+    </transition>
 </template>
 
 
 <script>
 export default {
-	props: ['TogglePopup']
+	props: ['TogglePopup'],
+    data: () => ({
+        isVisible: false,
+    }),
+  
+    methods: {
+        open() {
+            this.isVisible = true;
+        },
+
+        close() {
+            this.isVisible = false;
+        },
+    }
 }
 </script>
 
 <style lang="scss" scoped>
+/* css class for the transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 .popup {
     position: fixed;
     top: 0;

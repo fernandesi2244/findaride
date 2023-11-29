@@ -29,6 +29,10 @@
   color: #2c3e50;
 }
 
+.modal.show {
+  z-index: 10000;
+}
+
 .box {
   display: flex;
   flex-flow: column;

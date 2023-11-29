@@ -102,29 +102,8 @@
           </div>
         </div>
       </div>
-      <button @click="() => TogglePopup('buttonTrigger')" class="need-help-btn">Need Help</button>
-		<Popup 
-			v-if="popupTriggers.buttonTrigger" 
-			:TogglePopup="() => TogglePopup('buttonTrigger')">
-            <h2>Help</h2>
-            <p>
-				Welcome to your trip request management tab! Here's a quick guide on how to navigate<br>
-                through trip matches and confirmation requests:<br><br>
-                Trip Matches: These are potential trips that match your preferences. You'll see details<br>
-                like departure and arrival locations, times, luggage totals, and number of riders. Please<br>
-                note, these details represent the trip status before your addition.<br><br>
-                To remove yourself from a trip match, simply click the "Withdraw" button next to the <br>
-                respective trip.<br><br>
-                Confirmation Requests: These are trips where your addition has been proposed, and you <br>
-                need to confirm your participation. Details here represent the trip status after your <br>
-                potential addition.<br><br>
-                To join a trip, click the "Accept" button. This will confirm your participation and <br>
-                update the trip details. If the trip no longer suits you, click the "Reject" button <br>
-                to decline the offer.<br>
-                <br>
-                Remember, your decisions affect the trip dynamics, so please choose carefully!
-            </p>
-		</Popup>
+      <button @click="toggleHelp" class="need-help-btn">Need Help</button>
+      <TripRequestsHelpModal ref="tripRequestsHelpModal"></TripRequestsHelpModal>
     </div>
   </template>
 
@@ -134,17 +113,14 @@ import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { getDate, getDatePart, getTime, cleanLocation, nameList } from '../components/common.js'
 import { toRefs } from 'vue'
-import Popup from '../components/Popup.vue';
+
 const emit = defineEmits(['refreshTrips', 'goToTripsTab', 'goToTripRequestsTab']);
+import TripRequestsHelpModal from '../components/TripRequestsHelpModal.vue';
+
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
-const popupTriggers = ref({
-  buttonTrigger: false,
-  timedTrigger: false
-});
-const TogglePopup = (trigger) => {
-  popupTriggers.value[trigger] = !popupTriggers.value[trigger]
-}
+const tripRequestsHelpModal = ref(null)
+
 const sortedTripRequests = computed(() => {
     return [...tripRequests.value].sort((a, b) => {
         return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time);
@@ -166,6 +142,10 @@ function acceptConfirmationRequest(confirmationID) {
 
 function hasConfirmationRequest(tripRequest, joinRequest) {
     return tripRequest.confirmation_requests.some(confirmationRequest => confirmationRequest.join_request.id === joinRequest.id);
+}
+
+function toggleHelp() {
+    tripRequestsHelpModal.value.show();
 }
 
 function rejectConfirmationRequest(confirmationID) {

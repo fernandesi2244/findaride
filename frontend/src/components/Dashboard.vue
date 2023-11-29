@@ -1,44 +1,64 @@
 <template>
+  <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
   <div class="container-xl pt-4">
-    <div class="row">
-      <div class="col-2">
-        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical"
-          style="position: sticky; top: 90px">
-          <button class="nav-link text-start" id="v-pills-addtrip-tab" data-bs-toggle="pill"
-            data-bs-target="#v-pills-addtrip" type="button" role="tab" aria-controls="v-pills-addtrip"
-            aria-selected="false">
-            New Trip Request
-          </button>
-          <button class="nav-link text-start" id="v-pills-trips-tab" data-bs-toggle="pill" data-bs-target="#v-pills-trips"
-            type="button" role="tab" aria-controls="v-pills-trips" aria-selected="false" @click="refreshData">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" class="mb-1" fill="currentColor"
-              viewBox="0 0 16 16">
-              <path
-                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-            </svg>
-            Trips
-          </button>
-          <button class="nav-link text-start" id="v-pills-triprequests-tab" data-bs-toggle="pill"
-            data-bs-target="#v-pills-triprequests" type="button" role="tab" aria-controls="v-pills-triprequests"
-            aria-selected="false" @click="refreshData">
-            <svg class="mb-1" xmlns="http://www.w3.org/2000/svg" height="18" width="18" fill="currentColor"
-              viewBox="0 0 20 20">
-              <path
-                d="M16.254,3.399h-0.695V3.052c0-0.576-0.467-1.042-1.041-1.042c-0.576,0-1.043,0.467-1.043,1.042v0.347H6.526V3.052c0-0.576-0.467-1.042-1.042-1.042S4.441,2.476,4.441,3.052v0.347H3.747c-0.768,0-1.39,0.622-1.39,1.39v11.813c0,0.768,0.622,1.39,1.39,1.39h12.507c0.768,0,1.391-0.622,1.391-1.39V4.789C17.645,4.021,17.021,3.399,16.254,3.399z M14.17,3.052c0-0.192,0.154-0.348,0.348-0.348c0.191,0,0.348,0.156,0.348,0.348v0.347H14.17V3.052z M5.136,3.052c0-0.192,0.156-0.348,0.348-0.348S5.831,2.86,5.831,3.052v0.347H5.136V3.052z M16.949,16.602c0,0.384-0.311,0.694-0.695,0.694H3.747c-0.384,0-0.695-0.311-0.695-0.694V7.568h13.897V16.602z M16.949,6.874H3.052V4.789c0-0.383,0.311-0.695,0.695-0.695h12.507c0.385,0,0.695,0.312,0.695,0.695V6.874z M5.484,11.737c0.576,0,1.042-0.467,1.042-1.042c0-0.576-0.467-1.043-1.042-1.043s-1.042,0.467-1.042,1.043C4.441,11.271,4.908,11.737,5.484,11.737z M5.484,10.348c0.192,0,0.347,0.155,0.347,0.348c0,0.191-0.155,0.348-0.347,0.348s-0.348-0.156-0.348-0.348C5.136,10.503,5.292,10.348,5.484,10.348z M14.518,11.737c0.574,0,1.041-0.467,1.041-1.042c0-0.576-0.467-1.043-1.041-1.043c-0.576,0-1.043,0.467-1.043,1.043C13.475,11.271,13.941,11.737,14.518,11.737z M14.518,10.348c0.191,0,0.348,0.155,0.348,0.348c0,0.191-0.156,0.348-0.348,0.348c-0.193,0-0.348-0.156-0.348-0.348C14.17,10.503,14.324,10.348,14.518,10.348z M14.518,15.212c0.574,0,1.041-0.467,1.041-1.043c0-0.575-0.467-1.042-1.041-1.042c-0.576,0-1.043,0.467-1.043,1.042C13.475,14.745,13.941,15.212,14.518,15.212z M14.518,13.822c0.191,0,0.348,0.155,0.348,0.347c0,0.192-0.156,0.348-0.348,0.348c-0.193,0-0.348-0.155-0.348-0.348C14.17,13.978,14.324,13.822,14.518,13.822z M10,15.212c0.575,0,1.042-0.467,1.042-1.043c0-0.575-0.467-1.042-1.042-1.042c-0.576,0-1.042,0.467-1.042,1.042C8.958,14.745,9.425,15.212,10,15.212z M10,13.822c0.192,0,0.348,0.155,0.348,0.347c0,0.192-0.156,0.348-0.348,0.348s-0.348-0.155-0.348-0.348C9.653,13.978,9.809,13.822,10,13.822z M5.484,15.212c0.576,0,1.042-0.467,1.042-1.043c0-0.575-0.467-1.042-1.042-1.042s-1.042,0.467-1.042,1.042C4.441,14.745,4.908,15.212,5.484,15.212z M5.484,13.822c0.192,0,0.347,0.155,0.347,0.347c0,0.192-0.155,0.348-0.347,0.348s-0.348-0.155-0.348-0.348C5.136,13.978,5.292,13.822,5.484,13.822z M10,11.737c0.575,0,1.042-0.467,1.042-1.042c0-0.576-0.467-1.043-1.042-1.043c-0.576,0-1.042,0.467-1.042,1.043C8.958,11.271,9.425,11.737,10,11.737z M10,10.348c0.192,0,0.348,0.155,0.348,0.348c0,0.191-0.156,0.348-0.348,0.348s-0.348-0.156-0.348-0.348C9.653,10.503,9.809,10.348,10,10.348z">
-              </path>
-            </svg>
-            Trip Requests
-          </button>
-        </div>
+    <div class="narrow-container">
+      <div class="d-flex justify-content-between">
+        <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
+        <button @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
+        <AddTripModal @addTripRequest="addTripRequest" ref="addTripModal"></AddTripModal>
       </div>
-      <div class="col-10 tab-content px-4" id="v-pills-tabContent">
-        <div class="tab-pane fade" id="v-pills-trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
+
+      <ul class="mt-2 nav nav-pills" role="tablist">
+        <!--
+        <li class="nav-item" role="presentation">
+            <button
+                class="nav-link active"
+                id="addtrip-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#addtrip"
+                type="button"
+                role="tab"
+                aria-selected="true"
+            >
+                Plan a new trip
+            </button>
+        </li>-->
+        <li class="nav-item" role="presentation">
+            <button
+                class="nav-link active"
+                id="trips-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#trips"
+                type="button"
+                role="tab"
+                aria-selected="false"
+            >
+                My confirmed trips
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button
+                class="nav-link"
+                id="triprequests-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#triprequests"
+                type="button"
+                role="tab"
+                aria-selected="false"
+            >
+                My pending trips
+            </button>
+        </li>
+    </ul>
+      <div class="col-10 tab-content mx-auto px-4 pt-4" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
           <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
         </div>
-        <div class="tab-pane fade" id="v-pills-triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
+        <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
           <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
         </div>
-        <div class="tab-pane fade" id="v-pills-addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
+        <!--
+        <div class="tab-pane fade show active" id="addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
           <AddTripForm @addTripRequest="addTripRequest" />
           <div id="add-trip-request-confirmation-modal" class="modal">
             <div class="modal-content">
@@ -46,7 +66,7 @@
               <button id="add-trip-request-close-button" class="btn cancel-btn"></button>
             </div>
           </div>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
@@ -58,7 +78,8 @@ import TripsTab from '../components/TripsTab.vue';
 import TripRequestsTab from '../components/TripRequestsTab.vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import AddTripForm from '../components/AddTripForm.vue';
+import AddTripModal from '../components/AddTripModal.vue';
+import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import $ from "jquery";
 
 // ground truth data
@@ -73,8 +94,12 @@ const userID = ref(0);
 // display vars
 const centerDisplay = ref({ type: "default", id: 0 });
 const showTripForm = ref(false)
-function toggleTripForm() {
-  showTripForm.value = !showTripForm.value;
+
+const addTripModal = ref(null)
+const confirmDialogue = ref(null);
+
+function toggleTripModal() {
+  addTripModal.value.show();
 }
 
 async function refreshData() {
@@ -88,7 +113,7 @@ onMounted(async () => {
 
   // if the user already has a trip, show the trip tab
   if (trips.value.length > 0) {
-    $("#v-pills-trips-tab").click();
+    $("#trips-tab").click();
   } else if (tripRequests.value.length > 0) {
     $("#v-pills-triprequests-tab").click();
   } else {
@@ -97,11 +122,11 @@ onMounted(async () => {
 });
 
 function goToTripsTab() {
-  $("#v-pills-trips-tab").click();
+  $("#trips-tab").click();
 }
 
 function goToTripRequestsTab() {
-  $("#v-pills-triprequests-tab").click();
+  $("#triprequests-tab").click();
 }
 
 async function getUserInfo() {
@@ -152,12 +177,11 @@ async function addTripRequest(newTripRequest) {
     await axios.post(endpoint, data);
   } catch (error) {
     // create modal dialog indicating the error that has occurred and to retry
-    $("#add-trip-request-submit-message").text("Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText));
-    $("#add-trip-request-close-button").text("Retry");
-    $("#add-trip-request-confirmation-modal").css("display", "block");
-    $("#add-trip-request-close-button").click(function () {
-      $("#add-trip-request-confirmation-modal").css("display", "none");
-    });
+      confirmDialogue.value.show({
+        title: "Error",
+        message: "Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+        cancelButton: "Close",
+      });
     return;
   }
 
@@ -229,7 +253,7 @@ function formatError(errorDict) {
     let errorString = "";
     let errorNum = 1;
     for (const [key, value] of Object.entries(errorDict)) {
-      errorString += `${errorNum++}) ${value}\n`;
+      errorString += `${errorNum++} ${value}\n`;
     }
     return errorString;
   } catch (error) {
@@ -266,37 +290,9 @@ function formatError(errorDict) {
   border-radius: 20px;
 }
 
-/* The Modal (background) */
-.modal {
-  display: none;
-  /* Hidden by default */
-  position: fixed;
-  /* Stay in place */
-  z-index: 1;
-  /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%;
-  /* Full width */
-  height: 100%;
-  /* Full height */
-  overflow: auto;
-  /* Enable scroll if needed */
-  background-color: rgb(0, 0, 0);
-  /* Fallback color */
-  background-color: rgba(0, 0, 0, 0.4);
-  /* Black w/ opacity */
-  white-space: pre;
-}
-
-/* Modal Content/Box */
-.modal-content {
-  background-color: #fefefe;
-  margin: 20% auto;
-  /* 20% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
+.narrow-container {
+  max-width: 750px;
+  margin: 0 auto;
 }
 
 /* The Close Button */
