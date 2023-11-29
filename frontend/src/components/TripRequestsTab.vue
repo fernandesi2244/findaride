@@ -15,7 +15,6 @@
               {{ cleanLocation(tripRequest.departure_location) }} &#8594; {{ cleanLocation(tripRequest.arrival_location) }} between
               {{ getTime(tripRequest.earliest_departure_time) }} and {{ getTime(tripRequest.latest_departure_time) }} {{ getDatePart(tripRequest.earliest_departure_time, tripRequest.latest_departure_time) }}
             </button>
-            <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove Trip</button>
           </h2>
           <div
             :id="'tripRequest'+tripRequest.id"
@@ -23,6 +22,12 @@
             data-bs-parent="#accordion"
           >
           <div class="accordion-body">
+                <div class="flex">
+                    <div class="hug-right">
+                        <button class="btn btn-danger btn-sm ms-1" @click="removeTripRequest(tripRequest.id)">Remove</button>
+                    </div>
+                </div>
+
                 <div class='mb-2'>
                     <h5 class="mt-2 text-start">Trip matches:</h5>
                     <div v-if="tripRequest.join_requests.length==0">
@@ -51,7 +56,7 @@
                                     <td>{{ join.trip.num_luggage_bags }}</td>
                                     <td>{{ join.trip.num_participants }}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Withdraw Request</button>
+                                        <button class="btn btn-primary btn-sm ms-1" @click="rejectJoinRequest(join.id)">Withdraw</button>
                                     </td>
                                     </tr>
                             </tbody>
@@ -198,5 +203,13 @@ function rejectJoinRequest(joinID) {
 
 .confirmation-request-green {
     background-color: green;
+}
+
+.flex {
+    display: flex;
+}
+
+.hug-right {
+    margin-left: auto;    
 }
 </style>
