@@ -1,5 +1,6 @@
 from django.db import models
 from django.apps import apps
+from api.utils import send_confirm_email
 
 import datetime
 
@@ -121,6 +122,7 @@ class JoinRequest(models.Model):
             ConfirmationRequest.objects.create(
                 join_request=self
             )
+            send_confirm_email(self.trip_request.user, self.trip)
 
             # Don't delete the join request yet, since we need to display its status to the trip group based on the associated confirmation request
             
