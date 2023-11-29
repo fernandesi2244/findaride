@@ -105,7 +105,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted, reactive, computed } from 'vue';
+import {ref, defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { getDatePart, getDate, getTime, cleanLocation, nameEmail } from '../components/common.js'
@@ -145,9 +145,9 @@ function rejectJoinRequest(joinID) {
 function removeTrip(tripRequestID) {
     
     if (confirm('Are you sure you want to remove this trip?')) {
-        const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}`;
+        const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}/`;
         try {
-            axios.post(endpoint);
+            axios.delete(endpoint);
             emit('refreshTrips');
         } catch (error) {
             alert(error);

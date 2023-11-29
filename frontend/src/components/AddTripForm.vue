@@ -1,19 +1,53 @@
 <template>
   <div class="trip-request-form">
 
-    <h3 class>Create a new trip request</h3>
-    <!-- to do: add tooltip -->
-    <!-- <h2 class="tooltip">Top Tooltip
-      <h3 class="tooltiptext">Top Tooltip</h3>
-    </h2> -->
-    
+    <div class="header-container">
+      <h3>Create a new trip request</h3>
+      <button @click="() => TogglePopup('buttonTrigger')" class="need-help-btn">Need Help</button>
+    </div>
+		<Popup 
+			v-if="popupTriggers.buttonTrigger" 
+			:TogglePopup="() => TogglePopup('buttonTrigger')">
+      <h2>Tutorial</h2>
+      <p class="popup-text">
+        Creating a Trip Request<br>
+        - To start, click 'Create a new trip request'. This opens the form to input your trip details.<br>
+        Filling Out the Form<br>
+        - Pickup Location: Enter your start location in the 'Pickup Location' field, using suggestions<br> 
+        that appear as you type.<br>
+        - Dropoff Location: Similarly, input your end location in the 'Dropoff Location' field.<br>
+        - Departure Times: Choose your 'Earliest Departure Time' and 'Latest Departure Time' using <br>
+        the datetime pickers.<br>
+        - Walking Distance: Specify your maximum walking distance to and from pickup and dropoff <br>
+        points in minutes.<br>
+        - Luggage: Indicate the number of luggage bags.<br>
+        - Additional Comments: Use the 'Additional comments' section for special requests or <br>
+        considerations.<br>
+        This could include preferences like a child seat, assistance for <br>
+        differently-abled passengers, etc. There's a character limit to ensure concise <br>
+        communication.<br>
+        Submitting the Form<br>
+        - Click 'Create trip request' to submit. Use the 'Reset' button to clear all fields if needed.<br>
+        - After Submission - You'll receive an email notification about the status of your trip request <br>
+        after submission.<br>
+        - Accessing Trip Requests: Navigate to the 'Trip Requests' tab to view your submitted requests.<br>
+        - Trip Request Details: Each request is listed with details like departure and arrival locations, <br>
+        and departure times.<br>
+        Status and Actions:<br>
+        - Each request shows its current status (e.g., pending, confirmed).<br>
+        - You can withdraw a request or accept/reject join requests for your trip.<br>
+        - After Submission - You'll receive an email notification about the status of your trip request 
+        <br>after submission.
+      </p>
+      </Popup>
+		
     <form @submit.prevent="submit" class="form-container">
       <div class="form-group">
-        <label for="from">Pickup Location:</label>
+        <label for="from">Pickup location:</label>
         <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
       </div>
       <div class="form-group">
-        <label for="to">Dropoff Location:</label>
+        <label for="to">Dropoff location:</label>
         <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
       </div>
       <div class="form-group">
@@ -51,7 +85,14 @@
  
 <script setup>
 import { ref, reactive, defineEmits, onMounted } from 'vue';
-const emit = defineEmits(['addTripRequest', 'close']);
+import Popup from '../components/Popup.vue';
+const popupTriggers = ref({
+  buttonTrigger: false,
+  timedTrigger: false
+});
+const TogglePopup = (trigger) => {
+  popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+}
 
 
 const fromRef = ref();
@@ -238,33 +279,24 @@ textarea:focus {
   outline: none;
 }
 
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
+.need-help-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  
-  /* Position the tooltip */
-  position: absolute;
-  z-index: 1;
-  bottom: 100%;
-  left: 50%;
-  margin-left: -60px;
+.need-help-btn:hover {
+  background-color: darken(var(--primary-color), 10%);
+}
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-}
 </style>
- 
- 
- 

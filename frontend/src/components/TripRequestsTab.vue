@@ -101,20 +101,49 @@
           </div>
         </div>
       </div>
+      <button @click="() => TogglePopup('buttonTrigger')" class="need-help-btn">Need Help</button>
+		<Popup 
+			v-if="popupTriggers.buttonTrigger" 
+			:TogglePopup="() => TogglePopup('buttonTrigger')">
+            <h2>Help</h2>
+            <p>
+				Welcome to your trip request management tab! Here's a quick guide on how to navigate<br>
+                through trip matches and confirmation requests:<br><br>
+                Trip Matches: These are potential trips that match your preferences. You'll see details<br>
+                like departure and arrival locations, times, luggage totals, and number of riders. Please<br>
+                note, these details represent the trip status before your addition.<br><br>
+                To remove yourself from a trip match, simply click the "Withdraw" button next to the <br>
+                respective trip.<br><br>
+                Confirmation Requests: These are trips where your addition has been proposed, and you <br>
+                need to confirm your participation. Details here represent the trip status after your <br>
+                potential addition.<br><br>
+                To join a trip, click the "Accept" button. This will confirm your participation and <br>
+                update the trip details. If the trip no longer suits you, click the "Reject" button <br>
+                to decline the offer.<br>
+                <br>
+                Remember, your decisions affect the trip dynamics, so please choose carefully!
+            </p>
+		</Popup>
     </div>
   </template>
 
 <script setup>
-import { defineProps, onMounted, reactive, computed } from 'vue';
+import { ref, defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { getDate, getDatePart, getTime, cleanLocation, nameList } from '../components/common.js'
 import { toRefs } from 'vue'
-
+import Popup from '../components/Popup.vue';
 const emit = defineEmits(['refreshTrips', 'goToTripsTab']);
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
-
+const popupTriggers = ref({
+  buttonTrigger: false,
+  timedTrigger: false
+});
+const TogglePopup = (trigger) => {
+  popupTriggers.value[trigger] = !popupTriggers.value[trigger]
+}
 const sortedTripRequests = computed(() => {
     return [...tripRequests.value].sort((a, b) => {
         return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time);
@@ -158,9 +187,9 @@ function rejectJoinRequest(joinID) {
 
  async function removeTripRequest(tripRequestID) {
     if (confirm('Are you sure you want to remove this trip request?')) {
-        const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}`;
+        const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}/`;
         try {
-            await axios.post(endpoint);
+            await axios.delete(endpoint);
             emit('refreshTrips');
         } catch (error) {
             alert(error);
@@ -168,19 +197,6 @@ function rejectJoinRequest(joinID) {
         }
     }
 }
-
-// const luggageTotal = computed(() => {
-//     // get all trips from trip request join requests
-//     tripRequest.join_requests[0].trip
-//     const trips =  
-
-//     return trips.value.map(trip => {
-//         const totalLuggage = trip.participant_list.reduce((total, participant) => {
-//             return total + participant.num_luggage_bags;
-//         }, 0);
-//         return { ...trip, totalLuggage };
-//     });
-// });
 </script>
 
 <style>
@@ -212,4 +228,18 @@ function rejectJoinRequest(joinID) {
 .hug-right {
     margin-left: auto;    
 }
+.need-help-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.accordion + .need-help-btn {
+    display: block;
+    margin-left: auto;
+    margin-top: 15px;
+  }
 </style>
