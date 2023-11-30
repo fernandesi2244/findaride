@@ -1,5 +1,5 @@
 <template>
-    <popup-modal ref="popup" medium>
+    <popup-modal ref="popup" small>
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">{{ title }}</h5>

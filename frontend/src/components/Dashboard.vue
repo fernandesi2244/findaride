@@ -50,7 +50,7 @@
             </button>
         </li>
     </ul>
-      <div class="col-10 tab-content mx-auto px-4 pt-4" id="v-pills-tabContent">
+      <div class="col-10 tab-content mx-auto pt-4" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
           <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
         </div>
@@ -84,12 +84,9 @@ import $ from "jquery";
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
-//const trips = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
 const trips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
-
-//const tripRequests = ref([{id: 0, data: data, participants: participants, joinRequests: joinRequests, confirmationRequests: confirmationRequests}]);
 
 // display vars
 const centerDisplay = ref({ type: "default", id: 0 });
@@ -189,21 +186,10 @@ async function addTripRequest(newTripRequest) {
 
   await getUserTrips(); // force to wait before showing confirmation modal
 
-  // create modal dialog indicating that the trip request has been added
-  $("#add-trip-request-submit-message").text("Trip request successfully created!");
-  if (trips.value.length > 0) {
-    $("#add-trip-request-close-button").text("View trips");
-  } else {
-    $("#add-trip-request-close-button").text("View trip requests");
-  }
-  $("#add-trip-request-confirmation-modal").css("display", "block");
-  $("#add-trip-request-close-button").click(function () {
-    if (trips.value.length > 0) {
-      $("#v-pills-trips-tab").click();
-    } else {
-      $("#v-pills-triprequests-tab").click();
-    }
-    $("#add-trip-request-confirmation-modal").css("display", "none");
+  const confirm = await confirmDialogue.value.show({
+    title: "Created",
+    message: "Trip request successfully created!",
+    cancelButton: "Close"
   });
 }
 
@@ -269,10 +255,7 @@ function formatError(errorDict) {
 }
 
 .dashboard {
-  /* max-width: 1000px; */
   height: 100%;
-  /* margin: 40px auto; */
-  /* padding: 20px; */
   font-family: 'Roboto', sans-serif;
 }
 
@@ -291,7 +274,7 @@ function formatError(errorDict) {
 }
 
 .narrow-container {
-  max-width: 750px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
