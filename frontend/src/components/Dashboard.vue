@@ -55,7 +55,7 @@
           <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
+          <TripRequestsTab :tripRequests="activeTripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
         </div>
         <!--
         <div class="tab-pane fade show active" id="addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
