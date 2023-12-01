@@ -13,18 +13,11 @@ const routes = [
     name: 'about',
     component: () => import('../views/AboutView.vue')
   },
-/*
   {
-    path: '/login/',
-    name: 'login',
-    component: () => import('../views/LoginView.vue')
+    path: '/profile/',
+    name: 'profile',
+    component: () => import('../views/ProfileView.vue')
   },
-  {
-    path: '/signup/',
-    name: 'signup',
-    component: () => import('../views/SignUpView.vue')
-  },
-*/
   {
     path: '/dashboard/',
     name: 'dashboard',
@@ -40,6 +33,7 @@ async function isLoggedIn() {
 
 const protectedRoutes = [
   "dashboard",
+  "profile",
 ]
 
 /*const skippableRoutes = [
@@ -66,7 +60,6 @@ router.beforeEach(async (to, from, next) => {
     }
   }*/
 
-  console.log(isProtected)
   if (isProtected) {
     const isloggedin = await isLoggedIn();
     console.log(isloggedin)

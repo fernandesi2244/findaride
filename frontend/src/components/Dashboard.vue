@@ -57,16 +57,6 @@
         <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
           <TripRequestsTab :tripRequests="activeTripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
         </div>
-        <!--
-        <div class="tab-pane fade show active" id="addtrip" role="tabpanel" aria-labelledby="v-pills-addtrip-tab">
-          <AddTripForm @addTripRequest="addTripRequest" />
-          <div id="add-trip-request-confirmation-modal" class="modal">
-            <div class="modal-content">
-              <p id="add-trip-request-submit-message"></p>
-              <button id="add-trip-request-close-button" class="btn cancel-btn"></button>
-            </div>
-          </div>
-        </div>-->
       </div>
     </div>
   </div>
@@ -149,7 +139,6 @@ async function getUserTrips() {
   const response = await axios.get(endpoint);
   tripRequests.value = response.data.trip_requests;
   trips.value = response.data.trips;
-  tripRequests.value = response.data.trip_requests;
 
   userID.value = response.data.id;
 }

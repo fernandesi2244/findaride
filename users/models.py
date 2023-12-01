@@ -5,12 +5,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 from datetime import timedelta
 from django.utils import timezone
 
-from api.models import ConfirmationRequest
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     PRINCETON = "PU"
     COLLEGE_CHOICES = [
-        (PRINCETON, "Princeton"),
+        (PRINCETON, "Princeton University"),
     ]
 
     email = models.EmailField(

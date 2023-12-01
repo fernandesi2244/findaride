@@ -84,6 +84,11 @@ class SignUpSerializer(serializers.ModelSerializer):
         return user
     
 class UserSerializer(serializers.ModelSerializer):
+    college_display = serializers.SerializerMethodField()
+
+    def get_college_display(self, obj):
+        return obj.get_college_display()
+    
     class Meta:
         model = UserModel 
         fields = '__all__'
