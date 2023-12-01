@@ -52,7 +52,7 @@
     </ul>
       <div class="col-10 tab-content mx-auto pt-4" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
-          <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
+          <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
           <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed} from 'vue';
 import TripsTab from '../components/TripsTab.vue';
 import TripRequestsTab from '../components/TripRequestsTab.vue';
 import { endpoints } from '../common/endpoints.js';
@@ -87,6 +87,18 @@ const user = reactive({ first_name: "", id: -1, })
 const trips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
+
+const activeTrips = computed(() => {
+  return trips.value.filter((item) => {
+    return item.is_active;
+  });
+})
+
+const activeTripRequests = computed(() => {
+  return tripRequests.value.filter((item) => {
+    return item.is_active;
+  });
+})
 
 // display vars
 const centerDisplay = ref({ type: "default", id: 0 });

@@ -51,8 +51,6 @@ class Trip(models.Model):
             return
 
         curr_utc_time = make_aware(datetime.datetime.utcnow())
-        print(curr_utc_time)
-        print(self.earliest_departure_time)
 
         # if the trip is less than 3 hours away, then don't change the trip timespan
         if curr_utc_time + datetime.timedelta(hours=3) > self.earliest_departure_time:
@@ -63,6 +61,10 @@ class Trip(models.Model):
         self.latest_departure_time = TripUserDetails.objects.filter(trip=self).aggregate(models.Min('latest_departure_time'))['latest_departure_time__min']
 
         self.save()
+
+    @property
+    def is_active(self):
+        return self.latest_departure_time > make_aware(datetime.datetime.utcnow())
 
 class TripUserDetails(models.Model):
     trip = models.ForeignKey('Trip', related_name='user_timespans', on_delete=models.CASCADE)
@@ -83,6 +85,10 @@ class TripRequest(models.Model):
     latest_departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     comment = models.CharField(max_length=255, blank=True)
+
+    @property
+    def is_active(self):
+        return self.latest_departure_time > make_aware(datetime.datetime.utcnow())
 
     class Meta:
         ordering = ['created_on']

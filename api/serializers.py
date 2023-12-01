@@ -1,12 +1,6 @@
-from django.contrib.auth import authenticate
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from rest_framework.validators import UniqueValidator
 from users.serializers import SimpleUserSerializer
-from django.contrib.auth.password_validation import validate_password
-
-from datetime import timedelta
-import datetime
 
 from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest
 
@@ -41,6 +35,8 @@ class TripRequestSerializer(serializers.ModelSerializer):
     join_requests = JoinRequestTripSerializer(many=True)
 
     confirmation_requests = serializers.SerializerMethodField('get_confirmation_requests')
+
+    is_active = serializers.ReadOnlyField()
     
     def get_confirmation_requests(self, obj):
         confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request_id=obj.id)
@@ -78,6 +74,7 @@ class SimpleTripSerializer(serializers.ModelSerializer):
     departure_location = serializers.StringRelatedField()
     participant_list = SimpleUserSerializer(many=True)
     join_requests = JoinRequestSerializer(many=True)
+    is_active = serializers.ReadOnlyField()
 
     class Meta:
         model = Trip
