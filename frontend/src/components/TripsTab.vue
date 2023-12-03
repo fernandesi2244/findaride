@@ -25,7 +25,16 @@
                 <div class='mb-2'>
                     <div class="flex">
                         <div>
-                            <h5 class="text-start">Members:<br></h5>
+                            <div class="flex">
+                                <h5 class="text-start margin-right header-border">Members<br></h5>
+                                <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
+                                <div class="tooltip">
+                                    <button type="button" 
+                                            class="btn-text"
+                                            @click="copyEmailsOf(trip.participant_list, trip.id)">Copy emails</button>
+                                    <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to clipboard</span>
+                                </div>
+                            </div>
                             <!-- put each member on a separate line -->
                             <h6 v-for="participant in trip.participant_list" class="text-start">
                                 {{ nameEmail(participant) }}
@@ -35,10 +44,6 @@
                             <button class="btn btn-danger" @click="leaveTrip(trip.id)">Leave</button>
                         </div>
                     </div>
-
-                    <br>
-                    <h5 class="text-start">Number of luggage bags: <span>{{ trip.num_luggage_bags }}</span></h5>
-
                     <h5 class="mt-4 text-start">Join requests:</h5>
                     <div v-if="trip.join_requests.length==0">
                         <h6 class="text-start">No requests to join yet.</h6>
@@ -76,15 +81,15 @@
                                                 Waiting for response...
                                             </div>
                                         </div>
-                                        <div class="" v-else>
-                                            <button class="btn btn-accept btn-sm ms-1" @click="acceptJoinRequest(join.id)">Accept</button>
-                                            <button class="btn btn-reject btn-sm ms-1" @click="rejectJoinRequest(join.id)">Reject</button>
+                                        <div class="flex" v-else>
+                                            <button class="btn-text accept" role="button" @click="acceptJoinRequest(join.id)">Accept</button>
+                                            <button class="btn-text reject" role="button" @click="rejectJoinRequest(join.id)">Reject</button>
                                         </div>
                                     </td>
                                     
                                 </tr>
-                                <tr>
-                                    <td colspan="30">
+                                <tr v-if="join.trip_request.comment">
+                                    <td colspan="30" class="no-border">
                                         <table class="text-muted">
                                             &#x21B3; 
                                             Comments: {{ join.trip_request.comment }}
@@ -159,11 +164,156 @@ function leaveTrip(tripID) {
         }
     }
 }
+
+
+function setTooltip(tooltip) {
+  tooltip('hide')
+    // .attr('data-original-title', message)
+    .tooltip('show');
+}
+
+function hideTooltip(btn) {
+  setTimeout(function() {
+    btn.tooltip('hide');
+  }, 1000);
+}
+
+function showTooltip(id) {
+    var tooltip = document.getElementById(id);
+    tooltip.style.opacity = 1
+    
+    setTimeout(function() {
+        tooltip.style.opacity = 0
+    }, 1000)
+}
+
+function copyEmailsOf(participants, id) {
+    const emails = participants.map(p => p.email).join(",")
+    navigator.clipboard.writeText(emails)
+    console.log("copyTooltip" + id)
+    showTooltip("copyTooltip" + id)
+}
+
 </script>
 
 <style>
+.header-border {
+    border-right: 1px;
+    border-bottom: 1px;
+}
+
+.margin-right {
+    margin-right: 50px;
+}
+
+.btn-text {
+    border:none;
+    margin:0;
+    padding: 0px 1px 0px 1px;
+    cursor: pointer;
+    white-space: nowrap;
+    /* box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2); */
+
+}
+.btn-text:hover {
+    transform: translateY(-1px);
+} 
+.btn-text:active {
+    transform: translateY(0);
+}
+
+.button-39 {
+  background-color: #FFFFFF;
+  border: 1px solid rgb(209,213,219);
+  /* border: 1px solid green; */
+
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-family: "Inter var",ui-sans-serif,system-ui,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: .75rem 1rem;
+  text-align: center;
+  text-decoration: none #D1D5DB solid;
+  text-decoration-thickness: auto;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-39:hover {
+  background-color: rgb(249,250,251);
+}
+
+.button-39:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.button-39:focus-visible {
+  box-shadow: none;
+}
+
+.accept {
+    background-color: rgb(153, 227, 153);
+}
+.accept:hover {
+    background-color: rgb(136, 200, 136);
+}
+
+.reject {
+    background-color: rgb(236, 150, 150);
+}
+.reject:hover {
+    background-color: rgb(212, 135, 135);
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    opacity: 1;
+}
+
+.tooltip .tooltiptext {
+    /* visibility: hidden; */
+    width: 140px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -75px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+} */
 .flex {
     display: flex;
+    gap: 20px;
+    justify-content: center;
 }
 
 .hug-right {
