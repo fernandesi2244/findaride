@@ -30,9 +30,9 @@
                                 <h5 class="text-start margin-right header-border">Members<br></h5>
                                 <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
                                 <div class="tooltip">
-                                    <div class="btn-text accept" role="button" @click="copyEmailsOf(trip.participant_list, trip.id)">
+                                    <button class="btn-text" @click="copyEmailsOf(trip.participant_list, trip.id)">
                                         Copy emails
-                                    </div>
+                                    </button>
                                     <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to clipboard</span>
                                 </div>
                             </div>
@@ -242,7 +242,6 @@ function copyEmailsOf(participants, id) {
     position: relative;
     display: inline-block;
     opacity: 1;
-    --bs-tooltip-zindex: 0;
 }
 
 .tooltip .tooltiptext {
@@ -254,6 +253,7 @@ function copyEmailsOf(participants, id) {
     border-radius: 6px;
     padding: 5px;
     position: absolute;
+    z-index: 1;
     bottom: 150%;
     left: 50%;
     margin-left: -75px;
