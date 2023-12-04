@@ -1,4 +1,5 @@
 <template>
+    <ConfirmDialogue ref="confirmDialogue"></ConfirmDialogue>
     <div v-if="trips.length==0">
         <h4 class="mt-2">No trips yet.</h4>
     </div>
@@ -29,9 +30,9 @@
                                 <h5 class="text-start margin-right header-border">Members<br></h5>
                                 <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
                                 <div class="tooltip">
-                                    <button type="button" 
-                                            class="btn-text"
-                                            @click="copyEmailsOf(trip.participant_list, trip.id)">Copy emails</button>
+                                    <div class="btn-text accept" role="button" @click="copyEmailsOf(trip.participant_list, trip.id)">
+                                        Copy emails
+                                    </div>
                                     <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to clipboard</span>
                                 </div>
                             </div>
@@ -110,15 +111,17 @@
 </template>
 
 <script setup>
+import ConfirmDialogue from "./ConfirmDialogue.vue"
 import {ref, defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import { getDatePart, getDate, getTime, cleanLocation, nameEmail } from '../components/common.js'
+import { getDatePart, getDate, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
 import { toRefs } from 'vue'
 
 const emit = defineEmits(['refreshTrips']);
 const props = defineProps(['trips', 'userID']);
 const { trips, userID } = toRefs(props);
+const confirmDialogue = ref(null);
 const sortedTrips = computed(() => {
     return [...trips.value].sort((a, b) => {
         return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time);
@@ -148,8 +151,14 @@ function rejectJoinRequest(joinID) {
 }
 
 function leaveTrip(tripID) {
-    if (confirm('Are you sure you want to leave this trip?')) {
-        const endpoint = `${endpoints["trip"]}${tripID}/`;
+    const confirm = confirmDialogue.value.show({
+            title: "Confirm",
+            message: "Are you sure you want to leave this trip?",
+            cancelButton: "Close",
+            okButton: "Leave"
+    });
+    if (confirm) {
+    const endpoint = `${endpoints["trip"]}${tripID}/`;
         try {
             // TODO: How do these parameters compare to the ones directly in the endpoint URL?
             axios.patch(endpoint, null, {
@@ -159,23 +168,14 @@ function leaveTrip(tripID) {
             });
             emit('refreshTrips');
         } catch (error) {
-            alert(error);
+            confirmDialogue.value.show({
+                title: "Error",
+                message: "Error leaving trip:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+                cancelButton: "Close",
+            });
             return;
         }
     }
-}
-
-
-function setTooltip(tooltip) {
-  tooltip('hide')
-    // .attr('data-original-title', message)
-    .tooltip('show');
-}
-
-function hideTooltip(btn) {
-  setTimeout(function() {
-    btn.tooltip('hide');
-  }, 1000);
 }
 
 function showTooltip(id) {
@@ -222,42 +222,8 @@ function copyEmailsOf(participants, id) {
     transform: translateY(0);
 }
 
-.button-39 {
-  background-color: #FFFFFF;
-  border: 1px solid rgb(209,213,219);
-  /* border: 1px solid green; */
 
-  border-radius: .5rem;
-  box-sizing: border-box;
-  color: #111827;
-  font-family: "Inter var",ui-sans-serif,system-ui,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-  font-size: .875rem;
-  font-weight: 600;
-  line-height: 1.25rem;
-  padding: .75rem 1rem;
-  text-align: center;
-  text-decoration: none #D1D5DB solid;
-  text-decoration-thickness: auto;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button-39:hover {
-  background-color: rgb(249,250,251);
-}
-
-.button-39:focus {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
-.button-39:focus-visible {
-  box-shadow: none;
-}
-
+ 
 .accept {
     background-color: rgb(153, 227, 153);
 }
@@ -276,6 +242,7 @@ function copyEmailsOf(participants, id) {
     position: relative;
     display: inline-block;
     opacity: 1;
+    --bs-tooltip-zindex: 0;
 }
 
 .tooltip .tooltiptext {
@@ -287,7 +254,6 @@ function copyEmailsOf(participants, id) {
     border-radius: 6px;
     padding: 5px;
     position: absolute;
-    z-index: 1;
     bottom: 150%;
     left: 50%;
     margin-left: -75px;

@@ -1,3 +1,19 @@
+export function formatError(errorDict) {
+    if (typeof errorDict === "string") {
+      return errorDict;
+    }
+    try {
+      let errorString = "";
+      let errorNum = 1;
+      for (const [key, value] of Object.entries(errorDict)) {
+        errorString += `${errorNum++} ${value}\n`;
+      }
+      return errorString;
+    } catch (error) {
+      return JSON.stringify(errorDict);
+    }
+  }
+
 export function getDate(dateString) {
     return new Date(dateString).toLocaleDateString();
 }
