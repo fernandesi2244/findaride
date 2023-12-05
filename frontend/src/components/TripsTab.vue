@@ -86,10 +86,10 @@
                                                         </div>
                                                     </div>
                                                     <div class="flex" v-else>
-                                                        <button class="btn-text accept" role="button"
-                                                            @click="acceptJoinRequest(join.id)">Accept</button>
-                                                        <button class="btn-text reject" role="button"
-                                                            @click="rejectJoinRequest(join.id)">Reject</button>
+                                                        <button class="btn-text accept copy-emails-btn" role="button"
+                                                            style="width:65px" @click="acceptJoinRequest(join.id)">Accept</button>
+                                                        <button class="btn-text reject copy-emails-btn" role="button"
+                                                            style="width:65px" @click="rejectJoinRequest(join.id)">Reject</button>
                                                     </div>
                                                 </td>
 
