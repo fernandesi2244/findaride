@@ -145,7 +145,7 @@ export default {
         alert('Please select a valid dropoff location.');
         return;
       }
-      console.log("Submitting trip:", this.trip);
+      console.log("Submitting trip:", { ...this.trip });
       this.$emit('addTripRequest', { ...this.trip });
       this.resetForm();
       this._close();
