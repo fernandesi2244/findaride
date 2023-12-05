@@ -157,11 +157,10 @@ async function addTripRequest(newTripRequest) {
     "comment": newTripRequest.comment,
   }
 
-  console.log(data)
-
   const endpoint = endpoints["tripRequest"];
   try {
     await axios.post(endpoint, data);
+
   } catch (error) {
     // create modal dialog indicating the error that has occurred and to retry
     confirmDialogue.value.show({
@@ -174,9 +173,9 @@ async function addTripRequest(newTripRequest) {
 
   showTripForm.value = false;
 
-  await getUserTrips(); // force to wait before showing confirmation modal
+  await refreshData(); // force to wait before showing confirmation modal
 
-  const confirm = await confirmDialogue.value.show({
+  await confirmDialogue.value.show({
     title: "Created",
     message: "Trip request successfully created!",
     cancelButton: "Close"

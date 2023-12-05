@@ -22,7 +22,7 @@
       "views/ProfileView.vue",
       "views/DashboardView.vue"
     ],
-    "file": "assets/index-650adce1.js",
+    "file": "assets/index-a345880a.js",
     "imports": [
       "_vendor-51ff1aab.js"
     ],
@@ -37,7 +37,7 @@
     "css": [
       "assets/AboutView-fdafa8db.css"
     ],
-    "file": "assets/AboutView-83c69040.js",
+    "file": "assets/AboutView-a9d7605e.js",
     "imports": [
       "index.html",
       "_vendor-51ff1aab.js"
@@ -53,7 +53,7 @@
     "css": [
       "assets/DashboardView-283db216.css"
     ],
-    "file": "assets/DashboardView-43ac93f2.js",
+    "file": "assets/DashboardView-8002f98e.js",
     "imports": [
       "_vendor-51ff1aab.js",
       "index.html",
@@ -70,7 +70,7 @@
     "css": [
       "assets/HomeView-b53f6a04.css"
     ],
-    "file": "assets/HomeView-b1f5ea67.js",
+    "file": "assets/HomeView-647f49c9.js",
     "imports": [
       "index.html",
       "_vendor-51ff1aab.js"
@@ -86,7 +86,7 @@
     "css": [
       "assets/ProfileView-2e67ea94.css"
     ],
-    "file": "assets/ProfileView-83d337dc.js",
+    "file": "assets/ProfileView-e587c241.js",
     "imports": [
       "_axios_service-69da3fda.js",
       "index.html",

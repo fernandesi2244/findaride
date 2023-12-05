@@ -107,7 +107,7 @@ class TripRequestAPIView(views.APIView):
         user = UserModel.objects.get(pk=data['user'])
 
         # if the user already has 2 pending trip requests, raise an error indicating that they cannot make any more requests at this time
-        if TripRequest.objects.filter(user=user).count() >= 2:
+        if TripRequest.objects.filter(user=user).filter(latest_departure_time__gte=datetime.utcnow()).count() >= 2:
             # return 400 Response indicating why the request failed
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "You cannot make more than 2 pending trip requests at a time."})
 
