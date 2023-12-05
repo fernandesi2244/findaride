@@ -4,7 +4,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">New trip</h4>
-        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small;">?</button>
+        <button @click="toggleHelp" class="btn btn-primary" style="background-color: #95a1ac; border-radius: 50%; font-size:small;">?</button>
       </div>
       <div class="modal-body">
         <form @submit.prevent="submit" class="form-container">
@@ -37,6 +37,19 @@
             <button type="submit" class="btn primary">Create trip request</button>
             <button type="button" @click="_close" class="btn cancel-btn">Close</button>
           </div>
+          <div v-if="showInvalidLocationModal" class="overlay"></div>
+          <div v-if="showInvalidLocationModal" class="invalid-location-modal">
+            <div class="modal-header">
+              <h4 class="modal-title">Invalid Location</h4>
+              <button @click="closeInvalidLocationModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+              <p>Please select a valid {{ invalidLocationType }} location from the suggestions.</p>
+            </div>
+            <div class="modal-footer">
+              <button @click="closeInvalidLocationModal" class="btn primary">OK</button>
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -58,6 +71,8 @@ export default {
   },
   data() {
     return {
+      showInvalidLocationModal: false,
+      invalidLocationType: '',
       trip: {
         from: '',
         fromLat: '',
@@ -136,13 +151,21 @@ export default {
       this.trip.luggageCount = 0;
       this.trip.comment = '';
     },
+    showInvalidLocationAlert(locationType) {
+      this.invalidLocationType = locationType;
+      this.showInvalidLocationModal = true;
+    },
+
+    closeInvalidLocationModal() {
+      this.showInvalidLocationModal = false;
+    },
     submit() {
-      if (fromLocationWasSelected === false) {
-        alert('Please select a valid pickup location.');
+      if (!fromLocationWasSelected) {
+        this.showInvalidLocationAlert('pickup');
         return;
       }
-      if (toLocationWasSelected === false) {
-        alert('Please select a valid dropoff location.');
+      if (!toLocationWasSelected) {
+        this.showInvalidLocationAlert('dropoff');
         return;
       }
       console.log("Submitting trip:", { ...this.trip });
@@ -184,6 +207,7 @@ export default {
 /* Style for form groups */
 .form-group {
   margin-bottom: 15px;
+  text-align:left;
 }
 
 
@@ -269,4 +293,49 @@ textarea:focus {
   justify-content: space-between;
   align-items: center;
 }
+
+.invalid-location-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 80%;
+  max-width: 400px;
+}
+
+.invalid-location-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.invalid-location-modal .modal-header .close-btn {
+  border: none;
+  background: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.invalid-location-modal .modal-body p {
+  color: #333;
+}
+
+.invalid-location-modal .modal-footer {
+  text-align: right;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  }
 </style>

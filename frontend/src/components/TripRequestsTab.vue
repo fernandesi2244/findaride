@@ -110,7 +110,7 @@
                 </div>
             </div>
         </div>
-        <button @click="toggleHelp" class="need-help-btn">Need Help</button>
+        <!-- <button @click="toggleHelp" class="need-help-btn">Need Help</button> -->
         <TripRequestsHelpModal ref="tripRequestsHelpModal"></TripRequestsHelpModal>
     </div>
 </template>
