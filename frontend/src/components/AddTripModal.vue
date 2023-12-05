@@ -1,134 +1,156 @@
 <template>
-<popup-modal ref="popup" medium>
+  <popup-modal ref="popup" medium>
     <TripFormHelpModal ref="tripFormHelpModal"></TripFormHelpModal>
     <div class="modal-content">
-        <div class="modal-header">
-            <h4 class="modal-title">New trip</h4>
-            <button @click="toggleHelp" class="need-help-btn">Need Help</button>
-        </div>
-        <div class="modal-body">
-            <form @submit.prevent="submit" class="form-container">
-                <div class="form-group">
-                    <label for="from">Pickup location:</label>
-                    <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
-                </div>
-                <div class="form-group">
-                    <label for="to">Dropoff location:</label>
-                    <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
-                </div>
-                <div class="form-group">
-                    <label for="pickup-time">Earliest departure time:</label>
-                    <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
-                </div>
-                <div class="form-group">
-                    <label for="dropoff-time">Latest departure time:</label>
-                    <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
-                </div>
-                <div class="form-group">
-                    <label for="luggage-count">Number of luggage bags:</label>
-                    <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
-                </div>
-                <div class="form-group">
-                    <label for="comments">Additional comments:</label>
-                    <textarea id="comments" v-model="trip.comment" placeholder="Any special accommodations, considerations, etc." maxlength="255"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn primary">Create trip request</button>
-                    <button @click="_close" class="btn cancel-btn">Close</button>
-                </div>
-            </form>
-        </div>
+      <div class="modal-header">
+        <h4 class="modal-title">New trip</h4>
+        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small;">?</button>
+      </div>
+      <div class="modal-body">
+        <form @submit.prevent="submit" class="form-container">
+          <div class="form-group">
+            <label class="text-start" for="from">Pickup location:</label>
+            <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="to">Dropoff location:</label>
+            <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="pickup-time">Earliest departure time:</label>
+            <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="dropoff-time">Latest departure time:</label>
+            <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="luggage-count">Number of luggage bags:</label>
+            <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="comments">Additional comments:</label>
+            <textarea id="comments" v-model="trip.comment" placeholder="Any special accommodations, considerations, etc."
+              maxlength="255"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Create trip request</button>
+            <button type="button" @click="_close" class="btn cancel-btn">Close</button>
+          </div>
+        </form>
+      </div>
     </div>
-</popup-modal>
+  </popup-modal>
 </template>
 
 <script>
 import TripFormHelpModal from '../components/TripFormHelpModal.vue';
 import PopupModal from "./PopupModal.vue";
 
+let fromLocationWasSelected = false;
+let toLocationWasSelected = false;
+
 export default {
-    name: "AddTripModal",
-    components: {
-        PopupModal,
-        TripFormHelpModal,
-    },
-    data() {
-        return {
-            trip: {
-                from: '',
-                fromLat: 0,
-                fromLong: 0,
-                to: '',
-                toLat: 0,
-                toLong: 0,
-                departureDate: '',
-                earliestDepartureTime: '',
-                latestDepartureTime: '',
-                luggageCount: 0,
-                comment: '',
-                status: 'Pending',
-            },   
-        }
-    },
-    methods:{ 
-        show() {
-            this.$refs.popup.open();
-
-            this.$nextTick(()=>{
-                const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
-                    types: ["transit_station"],
-                    fields: ["geometry"]
-                });
-
-                const acTo = new google.maps.places.Autocomplete(this.$refs.toRef, {
-                    types: ["transit_station"],
-                    fields: ["geometry"]
-                });
-
-                google.maps.event.addListener(acFrom, "place_changed", () => {
-                    let place = acFrom.getPlace().geometry.location;
-                    this.trip.fromLat = place.lat();
-                    this.trip.fromLong = place.lng();
-                    this.trip.from = document.getElementById('from').value;
-                });
-
-                google.maps.event.addListener(acTo, "place_changed", () => {
-                    let place = acTo.getPlace().geometry.location;
-                    this.trip.toLat = place.lat();
-                    this.trip.toLong = place.lng();
-                    this.trip.to = document.getElementById('to').value;
-                });
-
-                this.listenersMounted = true;
-            });
-        },
-        _close() {
-            this.$refs.popup.close();
-        },
-        toggleHelp() {
-            console.log(this.$refs.tripFormHelpModal)
-            this.$refs.tripFormHelpModal.show();
-        },
-        resetForm() {
-            this.trip.from = '';
-            this.trip.fromLat = 0;
-            this.trip.fromLong = 0;
-            this.trip.to = '';
-            this.trip.toLat = 0;
-            this.trip.toLong = 0;
-            this.trip.departureDate = '';
-            this.trip.earliestDepartureTime = '';
-            this.trip.latestDepartureTime = '';
-            this.trip.luggageCount = 0;
-            this.trip.comment = '';
-        },
-        submit() {
-            console.log("Submitting trip:", this.trip);
-            this.$emit('addTripRequest', { ...this.trip });
-            this.resetForm();
-            this._close();
-        }
+  name: "AddTripModal",
+  components: {
+    PopupModal,
+    TripFormHelpModal,
+  },
+  data() {
+    return {
+      trip: {
+        from: '',
+        fromLat: '',
+        fromLong: '',
+        to: '',
+        toLat: '',
+        toLong: '',
+        departureDate: '',
+        earliestDepartureTime: '',
+        latestDepartureTime: '',
+        luggageCount: 0,
+        comment: '',
+        status: 'Pending',
+      },
     }
+  },
+  methods: {
+    show() {
+      this.$refs.popup.open();
+
+      this.$nextTick(() => {
+        const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
+          types: ["transit_station"],
+          fields: ["geometry"]
+        });
+
+        const acTo = new google.maps.places.Autocomplete(this.$refs.toRef, {
+          types: ["transit_station"],
+          fields: ["geometry"]
+        });
+
+        google.maps.event.addListener(acFrom, "place_changed", () => {
+          let place = acFrom.getPlace().geometry.location;
+          this.trip.fromLat = place.lat();
+          this.trip.fromLong = place.lng();
+          this.trip.from = document.getElementById('from').value;
+          fromLocationWasSelected = true;
+        });
+
+        google.maps.event.addListener(acTo, "place_changed", () => {
+          let place = acTo.getPlace().geometry.location;
+          this.trip.toLat = place.lat();
+          this.trip.toLong = place.lng();
+          this.trip.to = document.getElementById('to').value;
+          toLocationWasSelected = true;
+        });
+
+        document.getElementById('from').addEventListener('input', () => {
+          fromLocationWasSelected = false;
+        });
+
+        document.getElementById('to').addEventListener('input', () => {
+          toLocationWasSelected = false;
+        });
+
+        this.listenersMounted = true;
+      });
+    },
+    _close() {
+      this.$refs.popup.close();
+    },
+    toggleHelp() {
+      console.log(this.$refs.tripFormHelpModal)
+      this.$refs.tripFormHelpModal.show();
+    },
+    resetForm() {
+      this.trip.from = '';
+      this.trip.fromLat = '';
+      this.trip.fromLong = '';
+      this.trip.to = '';
+      this.trip.toLat = '';
+      this.trip.toLong = '';
+      this.trip.departureDate = '';
+      this.trip.earliestDepartureTime = '';
+      this.trip.latestDepartureTime = '';
+      this.trip.luggageCount = 0;
+      this.trip.comment = '';
+    },
+    submit() {
+      if (fromLocationWasSelected === false) {
+        alert('Please select a valid pickup location.');
+        return;
+      }
+      if (toLocationWasSelected === false) {
+        alert('Please select a valid dropoff location.');
+        return;
+      }
+      console.log("Submitting trip:", this.trip);
+      this.$emit('addTripRequest', { ...this.trip });
+      this.resetForm();
+      this._close();
+    }
+  }
 }
 </script>
 <style>
@@ -237,24 +259,14 @@ textarea:focus {
   outline: none;
 }
 
-.need-help-btn {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.btn {
+  border-radius: 30px;
 }
 
-.need-help-btn:hover {
-  background-color: darken(var(--primary-color), 10%);
-}
+
 .header-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-
 </style>

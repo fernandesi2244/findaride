@@ -1,118 +1,123 @@
 <template>
     <ConfirmDialogue ref="confirmDialogue"></ConfirmDialogue>
-    <div v-if="trips.length==0">
+    <div v-if="trips.length == 0">
         <h4 class="mt-2">No trips yet.</h4>
     </div>
     <div v-else>
-      <div class="accordion" id="accordion">
-        <div v-for="trip in sortedTrips" :key="trip.college+trip.id" class="accordion-item">
-          <h2 class="accordion-header">
-            <button
-              class="accordion-button collapsed"
-              type="button"
-              data-bs-toggle="collapse"
-              :data-bs-target="'#'+trip.college+trip.id"
-            >
-              {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }} between
-              {{ getTime(trip.earliest_departure_time) }} and {{ getTime(trip.latest_departure_time) }} {{ getDatePart(trip.earliest_departure_time, trip.latest_departure_time) }}
-            </button>
-          </h2>
-          <div
-            :id="trip.college+trip.id"
-            class="accordion-collapse collapse"
-            
-          >
-            <div class="accordion-body">
-                <div class='mb-2'>
-                    <div class="flex">
-                        <div>
+        <div class="accordion" id="accordion">
+            <div v-for="trip in sortedTrips" :key="trip.college + trip.id" class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        :data-bs-target="'#' + trip.college + trip.id">
+                        {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }}
+                        between
+                        {{ getTime(trip.earliest_departure_time) }} and {{ getTime(trip.latest_departure_time) }} {{
+                            getDatePart(trip.earliest_departure_time, trip.latest_departure_time) }}
+                    </button>
+                </h2>
+                <div :id="trip.college + trip.id" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class='mb-2'>
                             <div class="flex">
-                                <h5 class="text-start margin-right header-border">Members<br></h5>
-                                <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
-                                <div class="tooltip">
-                                    <button class="btn-text" @click="copyEmailsOf(trip.participant_list, trip.id)">
+                                <div>
+                                    <div class="flex">
+                                        <h5 class="text-start margin-right header-border">Members<br></h5>
+                                        <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
+                                    </div>
+                                    <!-- put each member on a separate line -->
+                                    <h6 v-for="participant in trip.participant_list" class="text-start">
+                                        {{ nameEmail(participant) }}
+                                    </h6>
+                                    <button class="btn-text copy-emails-btn"
+                                        @click="copyEmailsOf(trip.participant_list, trip.id)">
                                         Copy emails
                                     </button>
-                                    <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to clipboard</span>
+                                    <div class="tooltip">
+                                        <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to
+                                            clipboard</span>
+                                    </div>
+                                </div>
+                                <div class="hug-right">
+                                    <button class="btn btn-danger" @click="leaveTrip(trip.id)">Leave</button>
                                 </div>
                             </div>
-                            <!-- put each member on a separate line -->
-                            <h6 v-for="participant in trip.participant_list" class="text-start">
-                                {{ nameEmail(participant) }}
-                            </h6>
-                        </div>
-                        <div class="hug-right">
-                            <button class="btn btn-danger" @click="leaveTrip(trip.id)">Leave</button>
-                        </div>
-                    </div>
-                    <h5 class="mt-4 text-start">Join requests:</h5>
-                    <div v-if="trip.join_requests.length==0">
-                        <h6 class="text-start">No requests to join yet.</h6>
-                    </div>
-                    <div v-else class="table-responsive">
-                        <table class="table bdr">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="column">Name</th>
-                                    <th scope="col" class="column">Earliest time</th>
-                                    <th scope="col" class="column">Latest time</th>
-                                    <th scope="col" class="column">Departure</th>
-                                    <th scope="col" class="column">Arrival</th>
-                                    <th scope="col" class="column">Bags</th>
-                                    <th scope="col" class="column"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template v-for="join in trip.join_requests" :key="join.id">
+                            <h5 class="mt-4 text-start">Join requests:</h5>
+                            <div v-if="trip.join_requests.length == 0">
+                                <h6 class="text-start">No requests to join yet.</h6>
+                            </div>
+                            <div v-else class="table-responsive">
+                                <table class="table bdr">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="column">Name</th>
+                                            <th scope="col" class="column">Earliest time</th>
+                                            <th scope="col" class="column">Latest time</th>
+                                            <th scope="col" class="column">Departure</th>
+                                            <th scope="col" class="column">Arrival</th>
+                                            <th scope="col" class="column">Bags</th>
+                                            <th scope="col" class="column"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template v-for="join in trip.join_requests" :key="join.id">
 
-                                <tr>
-                                    <td class="no-border">{{ join.trip_request.user.first_name }} {{ join.trip_request.user.last_name }}</td>
-                                    <td class="no-border">{{ getTime(join.trip_request.earliest_departure_time) + " (" + getDate(join.trip_request.earliest_departure_time) + ")" }}</td>
-                                    <td class="no-border">{{ getTime(join.trip_request.latest_departure_time) + " (" + getDate(join.trip_request.latest_departure_time) + ")" }}</td>
-                                    <td class="no-border">{{ cleanLocation(join.trip_request.departure_location) }}</td>
-                                    <td class="no-border">{{ cleanLocation(join.trip_request.arrival_location) }}</td>
-                                    <td class="no-border">{{ join.trip_request.num_luggage_bags }}</td>
-                                    <td class="no-border">
-                                        <div v-if="join.participants_that_accepted.includes(userID)">
-                                            <!-- check if there are other members of the trip that need to approve the reqeust -->
-                                            <div v-if="join.participants_that_accepted.length < trip.num_participants">
-                                                Waiting for other members...
-                                            </div>
-                                            <div v-else>
-                                                Waiting for response...
-                                            </div>
-                                        </div>
-                                        <div class="flex" v-else>
-                                            <button class="btn-text accept" role="button" @click="acceptJoinRequest(join.id)">Accept</button>
-                                            <button class="btn-text reject" role="button" @click="rejectJoinRequest(join.id)">Reject</button>
-                                        </div>
-                                    </td>
-                                    
-                                </tr>
-                                <tr v-if="join.trip_request.comment">
-                                    <td colspan="30" class="no-border">
-                                        <table class="text-muted">
-                                            &#x21B3; 
-                                            Comments: {{ join.trip_request.comment }}
-                                        </table>
-                                    </td>
-                                </tr>
-                                
-                            </template>
-                            </tbody>
-                        </table>
+                                            <tr>
+                                                <td class="no-border">{{ join.trip_request.user.first_name }} {{
+                                                    join.trip_request.user.last_name }}</td>
+                                                <td class="no-border">{{ getTime(join.trip_request.earliest_departure_time)
+                                                    + " (" + getDate(join.trip_request.earliest_departure_time) + ")" }}
+                                                </td>
+                                                <td class="no-border">{{ getTime(join.trip_request.latest_departure_time) +
+                                                    " (" + getDate(join.trip_request.latest_departure_time) + ")" }}</td>
+                                                <td class="no-border">{{ cleanLocation(join.trip_request.departure_location)
+                                                }}</td>
+                                                <td class="no-border">{{ cleanLocation(join.trip_request.arrival_location)
+                                                }}</td>
+                                                <td class="no-border">{{ join.trip_request.num_luggage_bags }}</td>
+                                                <td class="no-border">
+                                                    <div v-if="join.participants_that_accepted.includes(userID)">
+                                                        <!-- check if there are other members of the trip that need to approve the reqeust -->
+                                                        <div
+                                                            v-if="join.participants_that_accepted.length < trip.num_participants">
+                                                            Waiting for other members...
+                                                        </div>
+                                                        <div v-else>
+                                                            Waiting for response...
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex" v-else>
+                                                        <button class="btn-text accept" role="button"
+                                                            @click="acceptJoinRequest(join.id)">Accept</button>
+                                                        <button class="btn-text reject" role="button"
+                                                            @click="rejectJoinRequest(join.id)">Reject</button>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                            <tr v-if="join.trip_request.comment">
+                                                <td colspan="30" class="no-border">
+                                                    <table class="text-muted">
+                                                        &#x21B3;
+                                                        Comments: {{ join.trip_request.comment }}
+                                                    </table>
+                                                </td>
+                                            </tr>
+
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
 </template>
 
 <script setup>
 import ConfirmDialogue from "./ConfirmDialogue.vue"
-import {ref, defineProps, onMounted, reactive, computed } from 'vue';
+import { ref, defineProps, onMounted, reactive, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { getDatePart, getDate, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
@@ -152,13 +157,13 @@ function rejectJoinRequest(joinID) {
 
 function leaveTrip(tripID) {
     const confirm = confirmDialogue.value.show({
-            title: "Confirm",
-            message: "Are you sure you want to leave this trip?",
-            cancelButton: "Close",
-            okButton: "Leave"
+        title: "Confirm",
+        message: "Are you sure you want to leave this trip?",
+        cancelButton: "Close",
+        okButton: "Leave"
     });
     if (confirm) {
-    const endpoint = `${endpoints["trip"]}${tripID}/`;
+        const endpoint = `${endpoints["trip"]}${tripID}/`;
         try {
             // TODO: How do these parameters compare to the ones directly in the endpoint URL?
             axios.patch(endpoint, null, {
@@ -181,8 +186,8 @@ function leaveTrip(tripID) {
 function showTooltip(id) {
     var tooltip = document.getElementById(id);
     tooltip.style.opacity = 1
-    
-    setTimeout(function() {
+
+    setTimeout(function () {
         tooltip.style.opacity = 0
     }, 1000)
 }
@@ -207,26 +212,29 @@ function copyEmailsOf(participants, id) {
 }
 
 .btn-text {
-    border:none;
-    margin:0;
+    border: none;
+    margin: 0;
     padding: 0px 1px 0px 1px;
     cursor: pointer;
     white-space: nowrap;
     /* box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2); */
 
 }
+
 .btn-text:hover {
     transform: translateY(-1px);
-} 
+}
+
 .btn-text:active {
     transform: translateY(0);
 }
 
 
- 
+
 .accept {
     background-color: rgb(153, 227, 153);
 }
+
 .accept:hover {
     background-color: rgb(136, 200, 136);
 }
@@ -234,8 +242,18 @@ function copyEmailsOf(participants, id) {
 .reject {
     background-color: rgb(236, 150, 150);
 }
+
 .reject:hover {
     background-color: rgb(212, 135, 135);
+}
+
+.copy-emails-btn {
+    border-radius: 6px;
+    padding: 1px;
+    width: 100px;
+    /* align with left of screen */
+    display: flex;
+    justify-content: center;
 }
 
 .tooltip {
@@ -254,11 +272,14 @@ function copyEmailsOf(participants, id) {
     padding: 5px;
     position: absolute;
     z-index: 1;
-    bottom: 150%;
-    left: 50%;
-    margin-left: -75px;
     opacity: 0;
     transition: opacity 0.3s;
+
+    /* Position the tooltip above the .copy-emails-btn */
+    margin-left: -150px;
+    margin-top: -80px;
+    
+
 }
 
 .tooltip .tooltiptext::after {
@@ -283,7 +304,7 @@ function copyEmailsOf(participants, id) {
 }
 
 .hug-right {
-    margin-left: auto;    
+    margin-left: auto;
 }
 
 .button-div {
@@ -292,6 +313,7 @@ function copyEmailsOf(participants, id) {
     justify-content: flex-start;
     align-items: center;
 }
+
 .btn-accept {
     background-color: green;
     color: white;
@@ -302,10 +324,11 @@ function copyEmailsOf(participants, id) {
     /* color: red; */
 
 }
+
 .btn-reject:hover {
     background-color: #a90505;
     /* color: red; */
-    
+
 }
 
 .no-border {

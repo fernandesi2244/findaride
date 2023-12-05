@@ -24,38 +24,25 @@
             </button>
         </li>-->
         <li class="nav-item" role="presentation">
-            <button
-                class="nav-link active"
-                id="trips-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#trips"
-                type="button"
-                role="tab"
-                aria-selected="false"
-            >
-                My confirmed trips
-            </button>
+          <button class="nav-link active" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
+            role="tab" aria-selected="false">
+            My confirmed trips
+          </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button
-                class="nav-link"
-                id="triprequests-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#triprequests"
-                type="button"
-                role="tab"
-                aria-selected="false"
-            >
-                My pending trips
-            </button>
+          <button class="nav-link" id="triprequests-tab" data-bs-toggle="tab" data-bs-target="#triprequests" type="button"
+            role="tab" aria-selected="false">
+            My pending trips
+          </button>
         </li>
-    </ul>
-      <div class="col-10 tab-content mx-auto pt-4" id="v-pills-tabContent">
+      </ul>
+      <div class="col-12 tab-content mx-auto pt-4" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
           <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-          <TripRequestsTab :tripRequests="activeTripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab" @goToTripRequestsTab="goToTripRequestsTab" />
+          <TripRequestsTab :tripRequests="activeTripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab"
+            @goToTripRequestsTab="goToTripRequestsTab" />
         </div>
       </div>
     </div>
@@ -63,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed} from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 import TripsTab from '../components/TripsTab.vue';
 import TripRequestsTab from '../components/TripRequestsTab.vue';
 import { endpoints } from '../common/endpoints.js';
@@ -175,11 +162,11 @@ async function addTripRequest(newTripRequest) {
     await axios.post(endpoint, data);
   } catch (error) {
     // create modal dialog indicating the error that has occurred and to retry
-      confirmDialogue.value.show({
-        title: "Error",
-        message: "Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
-        cancelButton: "Close",
-      });
+    confirmDialogue.value.show({
+      title: "Error",
+      message: "Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+      cancelButton: "Close",
+    });
     return;
   }
 
@@ -292,4 +279,9 @@ function formatError(errorDict) {
   color: black;
   text-decoration: none;
   cursor: pointer;
-}</style>
+}
+
+.btn {
+  border-radius: 30px;
+}
+</style>

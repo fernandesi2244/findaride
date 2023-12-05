@@ -111,7 +111,10 @@ class TripRequestAPIView(views.APIView):
             # return 400 Response indicating why the request failed
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "You cannot make more than 2 pending trip requests at a time."})
 
-        departure_location, arrival_location = self.__getLocationObjects(data['departure_location'], data['arrival_location'])
+        try:
+            departure_location, arrival_location = self.__getLocationObjects(data['departure_location'], data['arrival_location'])
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "One of the provided locations is currently not supported. Please see the following error: " + str(e)})
 
         earliest_departure_time = datetime.strptime(data['earliest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
         latest_departure_time = datetime.strptime(data['latest_departure_time'], '%a, %d %b %Y %H:%M:%S %Z')
