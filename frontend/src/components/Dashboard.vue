@@ -157,6 +157,8 @@ async function addTripRequest(newTripRequest) {
     "comment": newTripRequest.comment,
   }
 
+  console.log(data)
+
   const endpoint = endpoints["tripRequest"];
   try {
     await axios.post(endpoint, data);
