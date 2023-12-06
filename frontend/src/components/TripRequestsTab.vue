@@ -26,7 +26,7 @@
                                 </div>
                             </div>
 
-                            <div v-if="tripRequest.join_requests.length == 0">
+                            <div v-if="tripRequest.join_requests.filter(joinRequest => !hasConfirmationRequest(tripRequest, joinRequest)).length == 0">
                                 <p class="text-start">No requests to join yet.</p>
                             </div>
                             <div v-else class="table-responsive">
@@ -35,19 +35,20 @@
                                 <table class="table bdr">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="column">Departure location</th>
-                                            <th scope="col" class="column">Arrival location</th>
-                                            <th scope="col" class="column">Earliest departure time</th>
-                                            <th scope="col" class="column">Latest departure time</th>
-                                            <th scope="col" class="column">Luggage bag total</th>
                                             <th scope="col" class="column">Number of riders</th>
-                                            <th scope="col" class="columnend"></th>
+                                            <th scope="col" class="column">Departure</th>
+                                            <th scope="col" class="column">Arrival</th>
+                                            <th scope="col" class="column">Earliest time</th>
+                                            <th scope="col" class="column">Latest time</th>
+                                            <th scope="col" class="column">Bags</th>
+                                            <th scope="col" class="column"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <!-- TODO: Fix display when there are no join requests as a result of the filter check on the next line. -->
                                         <tr v-for="join in tripRequest.join_requests.filter(joinRequest => !hasConfirmationRequest(tripRequest, joinRequest))"
                                             :key="join.id" :class="{ 'join-request-orange': join.status === 'pending' }">
+                                            <td>{{ join.trip.num_participants }}</td>
                                             <td>{{ cleanLocation(join.trip.departure_location) }}</td>
                                             <td>{{ cleanLocation(join.trip.arrival_location) }}</td>
                                             <td>{{ getTime(join.trip.earliest_departure_time) + " (" +
@@ -55,7 +56,6 @@
                                             <td>{{ getTime(join.trip.latest_departure_time) + " (" +
                                                 getDate(join.trip.latest_departure_time) + ")" }}</td>
                                             <td>{{ join.trip.num_luggage_bags }}</td>
-                                            <td>{{ join.trip.num_participants }}</td>
                                             <td>
                                                 <button class="btn-text withdraw-btn in-row-btn"
                                                     @click="rejectJoinRequest(join.id)">Withdraw</button>
@@ -74,18 +74,20 @@
                                 <table class="table bdr">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="column">Departure location</th>
-                                            <th scope="col" class="column">Arrival location</th>
-                                            <th scope="col" class="column">Earliest departure time</th>
-                                            <th scope="col" class="column">Latest departure time</th>
-                                            <th scope="col" class="column">Luggage bag total</th>
                                             <th scope="col" class="column">Number of riders</th>
+                                            <th scope="col" class="column">Departure</th>
+                                            <th scope="col" class="column">Arrival</th>
+                                            <th scope="col" class="column">Earliest time</th>
+                                            <th scope="col" class="column">Latest time</th>
+                                            <th scope="col" class="column">Bags</th>
                                             <th scope="col" class="columnend"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="confirm in tripRequest.confirmation_requests" :key="confirm.id"
                                             :class="{ 'confirmation-request-green': confirm.status === 'confirmed' }">
+                                           
+                                            <td>{{ confirm.join_request.trip.num_participants + 1 }}</td>
                                             <td>{{ cleanLocation(confirm.join_request.trip.departure_location) }}</td>
                                             <td>{{ cleanLocation(confirm.join_request.trip.arrival_location) }}</td>
                                             <td>{{ getTime(confirm.join_request.trip.earliest_departure_time) + " (" +
@@ -94,7 +96,6 @@
                                                 getDate(confirm.join_request.trip.latest_departure_time) + ")" }}</td>
                                             <td>{{ confirm.join_request.trip.num_luggage_bags + tripRequest.num_luggage_bags
                                             }}</td>
-                                            <td>{{ confirm.join_request.trip.num_participants + 1 }}</td>
                                             <td>
                                                 <button class="btn-text btn-accept in-row-btn"
                                                     @click="acceptConfirmationRequest(confirm.id)">Accept</button>
@@ -116,7 +117,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted, reactive, computed } from 'vue';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { getDate, getDatePart, getTime, cleanLocation, nameList } from '../components/common.js'

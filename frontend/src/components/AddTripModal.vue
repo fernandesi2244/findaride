@@ -170,6 +170,7 @@ export default {
       }
       console.log("Submitting trip:", { ...this.trip });
       this.$emit('addTripRequest', { ...this.trip });
+      this.$emit('refreshTrips');
       this.resetForm();
       this._close();
     }

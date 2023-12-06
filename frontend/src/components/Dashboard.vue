@@ -5,7 +5,7 @@
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
         <button @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
-        <AddTripModal @addTripRequest="addTripRequest" ref="addTripModal"></AddTripModal>
+        <AddTripModal @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripModal>
       </div>
       <ul class="mt-2 nav nav-pills" role="tablist">
         <!--
@@ -36,8 +36,8 @@
         </li>
         <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small;">?</button>
         <TripHelpModal ref="tripHelpModalRef"></TripHelpModal>
-      </ul>
-      <div class="col-12 tab-content mx-auto pt-4" id="v-pills-tabContent">
+    </ul>
+      <div class="col-10 tab-content fill pt-4" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
           <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
         </div>
@@ -61,6 +61,7 @@ import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import $ from "jquery";
 import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from "./PopupModal.vue";
+import { formatError } from './common.js';
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
@@ -83,7 +84,6 @@ const activeTripRequests = computed(() => {
 })
 
 // display vars
-const centerDisplay = ref({ type: "default", id: 0 });
 const showTripForm = ref(false)
 
 const addTripModal = ref(null)
@@ -205,47 +205,6 @@ async function removeTripRequest(id) {
     }
   }
 }
-
-function selectTrip(id) {
-  centerDisplay.value.type = 'trip';
-  centerDisplay.value.id = id
-}
-
-function selectTripRequest(id) {
-  centerDisplay.value.type = 'request';
-  centerDisplay.value.id = id
-}
-
-function getTrip(id) {
-  const index = trips.value.findIndex(trip => trip.id === id);
-  if (index != -1) {
-    return trips.value[index]
-  }
-}
-
-function getTripRequest(id) {
-  const index = tripRequests.value.findIndex(tripReq => tripReq.id === id);
-  if (index != -1) {
-    return tripRequests.value[index]
-  }
-}
-
-function formatError(errorDict) {
-  if (typeof errorDict === "string") {
-    return errorDict;
-  }
-  try {
-    let errorString = "";
-    let errorNum = 1;
-    for (const [key, value] of Object.entries(errorDict)) {
-      errorString += `${errorNum++} ${value}\n`;
-    }
-    return errorString;
-  } catch (error) {
-    return JSON.stringify(errorDict);
-  }
-}
-
 </script>
 
 <style>
@@ -263,17 +222,14 @@ function formatError(errorDict) {
   border-color: #DCDCDC;
 }
 
-.padding {
-  padding: 10px;
+.fill {
   width: 100%;
   height: 100%;
-  /* box-sizing: border-box; */
-  display: flex;
-  border-radius: 20px;
 }
 
 .narrow-container {
-  max-width: 800px;
+  /* max-width: 1000px; */
+  padding: 20px;
   margin: 0 auto;
 }
 
