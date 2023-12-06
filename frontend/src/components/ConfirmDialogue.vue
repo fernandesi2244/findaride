@@ -42,7 +42,7 @@
     }),
   
     methods: {
-      show(opts = {}) {
+      async show(opts = {}) {
         this.title = opts.title;
         this.message = opts.message;
         this.okButton = opts.okButton;

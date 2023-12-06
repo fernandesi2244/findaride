@@ -4,7 +4,7 @@
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
-        <button @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
+        <button id="add-trip-btn" @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
         <AddTripModal @addTripRequest="addTripRequest" ref="addTripModal"></AddTripModal>
       </div>
 
@@ -24,20 +24,20 @@
             </button>
         </li>-->
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
-            role="tab" aria-selected="false">
+          <button class="nav-link" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
+            role="tab" aria-selected="false" @click="refreshData">
             My confirmed trips
           </button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="triprequests-tab" data-bs-toggle="tab" data-bs-target="#triprequests" type="button"
-            role="tab" aria-selected="false">
+            role="tab" aria-selected="false" @click="refreshData">
             My pending trips
           </button>
         </li>
       </ul>
       <div class="col-12 tab-content mx-auto pt-4" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
+        <div class="tab-pane fade" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
           <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
@@ -101,9 +101,9 @@ onMounted(async () => {
   if (trips.value.length > 0) {
     $("#trips-tab").click();
   } else if (tripRequests.value.length > 0) {
-    $("#v-pills-triprequests-tab").click();
+    $("#triprequests-tab").click();
   } else {
-    $("#v-pills-addtrip-tab").click();
+    $("#add-trip-btn").click();
   }
 });
 
