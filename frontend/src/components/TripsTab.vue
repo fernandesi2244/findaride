@@ -190,8 +190,8 @@ function rejectJoinRequest(joinID) {
     }
 }
 
-function leaveTrip(tripID) {
-    const confirm = confirmDialogue.value.show({
+async function leaveTrip(tripID) {
+    const confirm = await confirmDialogue.value.show({
         title: "Confirm",
         message: "Are you sure you want to leave this trip?",
         cancelButton: "Close",
