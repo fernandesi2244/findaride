@@ -7,7 +7,6 @@
         <button id="add-trip-btn" @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
         <AddTripModal @addTripRequest="addTripRequest" ref="addTripModal"></AddTripModal>
       </div>
-
       <ul class="mt-2 nav nav-pills" role="tablist">
         <!--
         <li class="nav-item" role="presentation">
@@ -35,6 +34,8 @@
             My pending trips
           </button>
         </li>
+        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small;">?</button>
+        <TripHelpModal ref="tripHelpModalRef"></TripHelpModal>
       </ul>
       <div class="col-12 tab-content mx-auto pt-4" id="v-pills-tabContent">
         <div class="tab-pane fade" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
@@ -58,12 +59,16 @@ import { axios } from '../common/axios_service.js'
 import AddTripModal from '../components/AddTripModal.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import $ from "jquery";
+import TripHelpModal from '../components/TripHelpModal.vue';
+import PopupModal from "./PopupModal.vue";
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
 const trips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
+const tripHelpModalRef = ref(null);
+
 
 const activeTrips = computed(() => {
   return trips.value.filter((item) => {
@@ -86,6 +91,11 @@ const confirmDialogue = ref(null);
 
 function toggleTripModal() {
   addTripModal.value.show();
+}
+function toggleHelp() {
+  if (tripHelpModalRef.value) {
+    tripHelpModalRef.value.show();
+  }
 }
 
 async function refreshData() {
@@ -160,6 +170,7 @@ async function addTripRequest(newTripRequest) {
   const endpoint = endpoints["tripRequest"];
   try {
     await axios.post(endpoint, data);
+
   } catch (error) {
     // create modal dialog indicating the error that has occurred and to retry
     confirmDialogue.value.show({
@@ -172,9 +183,9 @@ async function addTripRequest(newTripRequest) {
 
   showTripForm.value = false;
 
-  await getUserTrips(); // force to wait before showing confirmation modal
+  await refreshData(); // force to wait before showing confirmation modal
 
-  const confirm = await confirmDialogue.value.show({
+  await confirmDialogue.value.show({
     title: "Created",
     message: "Trip request successfully created!",
     cancelButton: "Close"
