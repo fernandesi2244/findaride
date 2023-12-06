@@ -34,7 +34,7 @@
             My pending trips
           </button>
         </li>
-        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small;">?</button>
+        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small; margin-left: 1em">?</button>
         <TripHelpModal ref="tripHelpModalRef"></TripHelpModal>
       </ul>
       <div class="col-12 tab-content mx-auto pt-4" id="v-pills-tabContent">
@@ -113,6 +113,7 @@ onMounted(async () => {
   } else if (tripRequests.value.length > 0) {
     $("#triprequests-tab").click();
   } else {
+    $("#triprequests-tab").click();
     $("#add-trip-btn").click();
   }
 });
