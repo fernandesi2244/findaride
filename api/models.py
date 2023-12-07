@@ -38,19 +38,6 @@ class Trip(models.Model):
         self.participant_list.remove(user)
         self.num_participants -= 1
         self.blacklisted_users.add(user)
-
-        user_stats = user.user_stats
-
-        user_stats.number_trips -= 1
-        from_coord = (self.departure_location.latitude, self.departure_location.longitude)
-        to_coord = (self.arrival_location.latitude, self.arrival_location.longitude)
-        user_stats.miles_ridden -= int(geodesic(from_coord, to_coord).miles)
-
-        # lol this lowkey doesn't work
-        for participant in self.participant_list.all():
-            user_stats.past_riders.remove(participant)
-
-        user_stats.save()
         
         corresponding_trip_user_details = TripUserDetails.objects.get(trip=self, user=user)
         self.num_luggage_bags -= corresponding_trip_user_details.num_luggage_bags
@@ -226,15 +213,6 @@ class ConfirmationRequest(models.Model):
             latest_departure_time=tripRequest.latest_departure_time,
             num_luggage_bags=tripRequest.num_luggage_bags
         )
-
-        user_stats = user.user_stats
-
-        user_stats.number_trips += 1
-        from_coord = (trip.departure_location.latitude, trip.departure_location.longitude)
-        to_coord = (trip.arrival_location.latitude, trip.arrival_location.longitude)
-        user_stats.miles_ridden += int(geodesic(from_coord, to_coord).miles)
-
-        user_stats.save()
 
         # remove all join requests from the trip request
         for joinRequest in tripRequest.join_requests.all():
