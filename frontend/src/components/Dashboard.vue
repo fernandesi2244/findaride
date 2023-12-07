@@ -22,14 +22,14 @@
                 Plan a new trip
             </button>
         </li>-->
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
+        <li class="nav-item" role="presentation" style="margin-right: 10px;">
+          <button class="nav-link active btn-sm" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
             role="tab" aria-selected="false" @click="refreshData">
             My confirmed trips
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="triprequests-tab" data-bs-toggle="tab" data-bs-target="#triprequests" type="button"
+          <button class="nav-link btn-sm" id="triprequests-tab" data-bs-toggle="tab" data-bs-target="#triprequests" type="button"
             role="tab" aria-selected="false" @click="refreshData">
             My pending trips
           </button>
@@ -72,15 +72,15 @@ const tripHelpModalRef = ref(null);
 
 
 const activeTrips = computed(() => {
-  return trips.value.filter((item) => {
-    return item.is_active;
-  });
+    return trips.value.filter((item) => {
+return item.is_active;
+});
 })
 
 const activeTripRequests = computed(() => {
-  return tripRequests.value.filter((item) => {
-    return item.is_active;
-  });
+    return tripRequests.value.filter((item) => {
+return item.is_active;
+});
 })
 
 // display vars
@@ -209,6 +209,19 @@ async function removeTripRequest(id) {
 </script>
 
 <style>
+.nav-link {
+    --bs-nav-link-color: #3B3B3B;
+    --bs-nav-pills-link-active-color: #fff;
+    --bs-nav-pills-link-active-bg: #3B3B3B;
+    --bs-nav-pills-border-radius: 30px;
+    --bs-nav-link-hover-color: none;
+    border: 2px solid #1A1A1A;
+    display: inline-block;
+    padding: 10px;
+    text-align: center;
+    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+}
+
 .col-2 {
   margin-top: 1.1rem;
 }

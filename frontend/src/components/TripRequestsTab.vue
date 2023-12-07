@@ -41,7 +41,7 @@
                                             <th scope="col" class="column">Earliest time</th>
                                             <th scope="col" class="column">Latest time</th>
                                             <th scope="col" class="column">Bags</th>
-                                            <th scope="col" class="column"></th>
+                                            <th scope="col" class="column" style="max-width: 125px;"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -57,7 +57,7 @@
                                                 getDate(join.trip.latest_departure_time) + ")" }}</td>
                                             <td>{{ join.trip.num_luggage_bags }}</td>
                                             <td>
-                                                <button class="btn-text withdraw-btn in-row-btn"
+                                                <button class="btn-text withdraw-btn"
                                                     @click="rejectJoinRequest(join.id)">Withdraw</button>
                                             </td>
                                         </tr>
@@ -96,10 +96,11 @@
                                                 getDate(confirm.join_request.trip.latest_departure_time) + ")" }}</td>
                                             <td>{{ confirm.join_request.trip.num_luggage_bags + tripRequest.num_luggage_bags
                                             }}</td>
-                                            <td>
-                                                <button class="btn-text btn-accept in-row-btn"
+                                            <td style="max-width: 125px;">
+
+                                                <button class="btn-text accept " style="width:60px; margin-right: 5px;"
                                                     @click="acceptConfirmationRequest(confirm.id)">Accept</button>
-                                                <button class="btn-text btn-reject in-row-btn"
+                                                <button class="btn-text reject " style="width:60px"
                                                     @click="rejectConfirmationRequest(confirm.id)">Reject</button>
                                             </td>
                                         </tr>
@@ -220,6 +221,22 @@ async function removeTripRequest(tripRequestID) {
     cursor: pointer;
     white-space: nowrap;
     /* box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2); */
+}
+
+.accept {
+    background-color: rgb(153, 227, 153);
+}
+
+.accept:hover {
+    background-color: rgb(136, 200, 136);
+}
+
+.reject {
+    background-color: rgb(236, 150, 150);
+}
+
+.reject:hover {
+    background-color: rgb(212, 135, 135);
 }
 
 .in-row-btn {

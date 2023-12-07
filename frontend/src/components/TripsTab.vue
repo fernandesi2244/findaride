@@ -45,7 +45,7 @@
                                     </div>
                                 </div>
                                 <div class="hug-right">
-                                    <button class="btn btn-danger" @click="leaveTrip(trip.id)">Leave</button>
+                                    <button class="btn btn-danger btn-sm" @click="leaveTrip(trip.id)">Leave</button>
                                 </div>
                             </div>
                             <h5 class="text-start">Join requests:</h5>
@@ -91,11 +91,11 @@
                                                             Waiting for response...
                                                         </div>
                                                     </div>
-                                                    <div class="flex" v-else>
-                                                        <button class="btn-text accept copy-emails-btn" role="button"
-                                                            style="width:65px" @click="acceptJoinRequest(join.id)">Accept</button>
-                                                        <button class="btn-text reject copy-emails-btn" role="button"
-                                                            style="width:65px" @click="rejectJoinRequest(join.id)">Reject</button>
+                                                    <div v-else>
+                                                        <button class="btn-text accept" role="button"
+                                                            style="width:60px; margin-right:5px" @click="acceptJoinRequest(join.id)">Accept</button>
+                                                        <button class="btn-text reject" role="button"
+                                                            style="width:60px" @click="rejectJoinRequest(join.id)">Reject</button>
                                                     </div>
                                                 </td>
 
@@ -107,9 +107,6 @@
                                                         Comments: {{ join.trip_request.comment }}
                                                     </table>
                                                 </td>
-                                            </tr>
-                                            <tr v-else>
-                                                <td colspan="10" class="no-padding"></td>
                                             </tr>
 
                                         </template>
