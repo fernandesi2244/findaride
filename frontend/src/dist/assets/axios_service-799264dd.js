@@ -1,2 +1,2 @@
-import{g as r}from"./vendor-8f8ce56d.js";function u(e){if(typeof e=="string")return e;try{let t="",o=1;for(const[f,a]of Object.entries(e))t+=`${o++} ${a}
+import{a as r}from"./vendor-ef93eb73.js";function u(e){if(typeof e=="string")return e;try{let t="",a=1;for(const[f,o]of Object.entries(e))t+=`${a++} ${o}
 `;return t}catch{return JSON.stringify(e)}}function n(e){return new Date(e).toLocaleDateString()}function i(e,t){return n(e)===n(t)?"on "+n(e):`(${n(e)}-${n(t)})`}function l(e){return new Date(e).toLocaleTimeString()}function m(e){return e.split(",")[0]}function c(e){return`${e.first_name} ${e.last_name} (${e.email})`}r.defaults.xsrfCookieName="csrftoken";r.defaults.xsrfHeaderName="X-CSRFTOKEN";export{l as a,i as b,m as c,u as f,n as g,c as n};

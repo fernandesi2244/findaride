@@ -1,12 +1,12 @@
 {
-  "_axios_service-0f53f40b.js": {
-    "file": "assets/axios_service-0f53f40b.js",
+  "_axios_service-799264dd.js": {
+    "file": "assets/axios_service-799264dd.js",
     "imports": [
-      "_vendor-8f8ce56d.js"
+      "_vendor-ef93eb73.js"
     ]
   },
-  "_vendor-8f8ce56d.js": {
-    "file": "assets/vendor-8f8ce56d.js"
+  "_vendor-ef93eb73.js": {
+    "file": "assets/vendor-ef93eb73.js"
   },
   "index.css": {
     "file": "assets/index-3099610c.css",
@@ -22,9 +22,9 @@
       "views/ProfileView.vue",
       "views/DashboardView.vue"
     ],
-    "file": "assets/index-bbcb4f68.js",
+    "file": "assets/index-d23e1351.js",
     "imports": [
-      "_vendor-8f8ce56d.js"
+      "_vendor-ef93eb73.js"
     ],
     "isEntry": true,
     "src": "index.html"
@@ -37,10 +37,10 @@
     "css": [
       "assets/AboutView-e8d30713.css"
     ],
-    "file": "assets/AboutView-27b42b6c.js",
+    "file": "assets/AboutView-5390050a.js",
     "imports": [
       "index.html",
-      "_vendor-8f8ce56d.js"
+      "_vendor-ef93eb73.js"
     ],
     "isDynamicEntry": true,
     "src": "views/AboutView.vue"
@@ -53,27 +53,27 @@
     "css": [
       "assets/DashboardView-ba59a742.css"
     ],
-    "file": "assets/DashboardView-47bfd4f8.js",
+    "file": "assets/DashboardView-2aeec1c4.js",
     "imports": [
-      "_vendor-8f8ce56d.js",
+      "_vendor-ef93eb73.js",
       "index.html",
-      "_axios_service-0f53f40b.js"
+      "_axios_service-799264dd.js"
     ],
     "isDynamicEntry": true,
     "src": "views/DashboardView.vue"
   },
   "views/HomeView.css": {
-    "file": "assets/HomeView-b53f6a04.css",
+    "file": "assets/HomeView-e3cd28bc.css",
     "src": "views/HomeView.css"
   },
   "views/HomeView.vue": {
     "css": [
-      "assets/HomeView-b53f6a04.css"
+      "assets/HomeView-e3cd28bc.css"
     ],
-    "file": "assets/HomeView-bf1de3c4.js",
+    "file": "assets/HomeView-64bee808.js",
     "imports": [
       "index.html",
-      "_vendor-8f8ce56d.js"
+      "_vendor-ef93eb73.js"
     ],
     "isDynamicEntry": true,
     "src": "views/HomeView.vue"
@@ -86,11 +86,11 @@
     "css": [
       "assets/ProfileView-f1392103.css"
     ],
-    "file": "assets/ProfileView-e177ff16.js",
+    "file": "assets/ProfileView-330f2e0d.js",
     "imports": [
-      "_axios_service-0f53f40b.js",
+      "_axios_service-799264dd.js",
       "index.html",
-      "_vendor-8f8ce56d.js"
+      "_vendor-ef93eb73.js"
     ],
     "isDynamicEntry": true,
     "src": "views/ProfileView.vue"

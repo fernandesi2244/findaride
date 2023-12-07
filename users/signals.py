@@ -16,6 +16,7 @@ def cas_user_authenticated_callback(sender, user, created, attributes, **kwargs)
         user.save()
 
         user_stats = UserStats()
+        user_stats.save()
         user.user_stats = user_stats
         user.save()
         print(f'created user: {names[1]} {names[0]}, email: {user.email}')
