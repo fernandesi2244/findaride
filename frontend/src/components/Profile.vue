@@ -11,7 +11,7 @@
             During your time with us, you have
           </h5>
         </div>
-        <div class="row mt-3">
+        <div class="row mt-4 mb-3">
           <div class="col-4 px-4">
             <p class="text-start">
               been on
@@ -47,7 +47,7 @@
           </div>
         </div>
         <h4>Your past trips</h4>
-        <div v-if="pastTrips.length > 0" class="accordion" id="accordion">
+        <div v-if="pastTrips.length > 0" class="past-trips accordion" id="accordion">
             <div v-for="trip in pastTrips" :key="trip.college+trip.id" class="accordion-item">
             <h2 class="accordion-header">
                 <button
@@ -130,7 +130,7 @@
     const endpoint = endpoints["me"];
     const response = await axios.get(endpoint);
     Object.assign(user, response.data);
-    Object.assign(userStast, response.data.user_stats);
+    Object.assign(userStats, response.data.user_stats);
   }
   
   async function getUserTrips() {
@@ -207,7 +207,7 @@
     font-size: 16px;
   }
   
-  .accordion {
+  .past-trips {
     height: 500px;
     overflow-y: scroll;
     border: 2px solid rgb(203, 203, 203);
