@@ -1,6 +1,6 @@
 <template>
 <div id="app" class="box">
-    <nav>
+    <nav style="margin-bottom: 20px;">
         <div class="nav-content">
             <span class = text-size><router-link to="/">findaride</router-link></span>
 
@@ -11,7 +11,8 @@
                 <a href="/accounts/logout/">Logout</a> |
                 <router-link to="/login">Login</router-link> |
                 <router-link to="/signup">Sign Up</router-link>| ---->
-                <router-link to="/dashboard">Dashboard</router-link>
+                <router-link to="/dashboard">Dashboard</router-link> |
+                <router-link to="/profile">Profile</router-link>
             </div>
         </div>
     </nav>

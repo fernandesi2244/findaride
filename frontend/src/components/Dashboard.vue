@@ -1,6 +1,6 @@
 <template>
   <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
-  <div class="container-xl pt-4">
+  <div class="container-xl" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
@@ -72,15 +72,15 @@ const tripHelpModalRef = ref(null);
 
 
 const activeTrips = computed(() => {
-    return trips.value.filter((item) => {
-return item.is_active;
-});
+  return trips.value.filter((item) => {
+    return item.is_active;
+  });
 })
 
 const activeTripRequests = computed(() => {
-    return tripRequests.value.filter((item) => {
-return item.is_active;
-});
+  return tripRequests.value.filter((item) => {
+    return item.is_active;
+  });
 })
 
 // display vars
@@ -242,8 +242,8 @@ async function removeTripRequest(id) {
 }
 
 .narrow-container {
-  /* max-width: 1000px; */
-  padding: 20px;
+  max-width: 1000px;
+  /* padding: 20px; */
   margin: 0 auto;
 }
 

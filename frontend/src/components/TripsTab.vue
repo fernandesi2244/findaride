@@ -35,14 +35,15 @@
                                     <h6 v-for="participant in trip.participant_list" class="text-start">
                                         {{ nameEmail(participant) }}
                                     </h6>
-                                    <button class="btn-text copy-emails-btn"
-                                        @click="copyEmailsOf(trip.participant_list, trip.id)">
-                                        Copy emails
-                                    </button>
-                                    <div class="tooltip">
+                                    <div class="tooltip" style="margin-bottom: 10px;">
+                                        <button class="btn-text copy-emails-btn"
+                                            @click="copyEmailsOf(trip.participant_list, trip.id)">
+                                            Copy emails
+                                        </button>
                                         <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to
                                             clipboard</span>
                                     </div>
+
                                 </div>
                                 <div class="hug-right">
                                     <button class="btn btn-danger btn-sm" @click="leaveTrip(trip.id)">Leave</button>
@@ -193,7 +194,7 @@ async function leaveTrip(tripID) {
     const confirm = await confirmDialogue.value.show({
         title: "Confirm",
         message: "Are you sure you want to leave this trip?",
-        cancelButton: "Close",
+        cancelButton: "Cancel",
         okButton: "Leave",
         okClass: "btn btn-danger",
     });
@@ -306,12 +307,13 @@ function copyEmailsOf(participants, id) {
 
 .tooltip {
     position: relative;
-    display: inline-block;
+    --bs-tooltip-zindex: 0;
+    /* display: inline-block; */
     opacity: 1;
+    width: 100px;
 }
 
 .tooltip .tooltiptext {
-    /* visibility: hidden; */
     width: 140px;
     background-color: #555;
     color: #fff;
@@ -319,15 +321,18 @@ function copyEmailsOf(participants, id) {
     border-radius: 6px;
     padding: 5px;
     position: absolute;
-    z-index: 1;
+    /* z-index: 1; */
     opacity: 0;
     transition: opacity 0.3s;
 
     /* Position the tooltip above the .copy-emails-btn */
-    margin-left: -150px;
-    margin-top: -80px;
-    
-
+    /* margin-left: -150px;
+    margin-top: -80px; */
+    /* left: 100%;
+    top: -6px */
+    bottom: 150%;
+    left: 50%;
+    margin-left: -72px;
 }
 
 .tooltip .tooltiptext::after {

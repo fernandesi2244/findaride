@@ -1,4 +1,5 @@
 <template>
+    <ConfirmDialogue ref="confirmDialogue" cancel-color="red"></ConfirmDialogue>
     <div v-if="tripRequests.length == 0">
         <h4 class="mt-2">No trip requests yet.</h4>
     </div>
@@ -118,10 +119,11 @@
 </template>
 
 <script setup>
+import ConfirmDialogue from "./ConfirmDialogue.vue"
 import { ref, defineProps, defineEmits, computed } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import { getDate, getDatePart, getTime, cleanLocation, nameList } from '../components/common.js'
+import { getDate, getDatePart, getTime, cleanLocation, formatError } from '../components/common.js'
 import { toRefs } from 'vue'
 
 const emit = defineEmits(['refreshTrips', 'goToTripsTab', 'goToTripRequestsTab']);
@@ -129,7 +131,9 @@ import TripRequestsHelpModal from '../components/TripRequestsHelpModal.vue';
 
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
-const tripRequestsHelpModal = ref(null)
+const tripRequestsHelpModal = ref(null);
+const confirmDialogue = ref(null);
+
 
 const sortedTripRequests = computed(() => {
     return [...tripRequests.value].sort((a, b) => {
@@ -182,13 +186,25 @@ function rejectJoinRequest(joinID) {
 }
 
 async function removeTripRequest(tripRequestID) {
-    if (confirm('Are you sure you want to remove this trip request?')) {
+    const confirm = await confirmDialogue.value.show({
+        title: "Confirm",
+        message: "Are you sure you want to remove this trip?",
+        cancelButton: "Cancel",
+        okButton: "Remove",
+        okClass: "btn btn-danger",
+    });
+    if (confirm) {
         const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}/`;
         try {
             await axios.delete(endpoint);
             emit('refreshTrips');
         } catch (error) {
-            alert(error);
+            confirmDialogue.value.show({
+                title: "Error",
+                message: "Error removing trip:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+                cancelButton: "Close",
+                okClass: "btn btn-danger",
+            });
             return;
         }
     }

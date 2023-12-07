@@ -2,7 +2,7 @@
     <transition name="fade">
       <div class="popup modal" tabindex="-1" v-if="isVisible">
         <div
-          class="modal-dialog modal-dialog-centered"
+          class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
           :class="{ 'modal-sm': small, 'modal-lg': large, 'modal-xl': xlarge }"
           :style="style"
         >
