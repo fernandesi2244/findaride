@@ -2,10 +2,17 @@
 <div id="app" class="box">
     <nav style="margin-bottom: 20px;">
         <div class="nav-content">
-            <span class = text-size><router-link to="/">findaride</router-link></span>
 
+        <div v-if="isLoggedIn">
+          <span class = text-size><router-link to="/">findaride</router-link></span>
+        </div>
+        <div v-else>
+          <span class = text-size><router-link to="/dashboard">findaride</router-link></span>
+        </div>
             <div class="right">
-                <router-link to="/">Home</router-link> |
+
+                <!-- <router-link to="/">Home</router-link> | -->
+                
                 <router-link to="/about">About</router-link> |
                 <!----<a href="/accounts/login/">Login</a> |
                 <a href="/accounts/logout/">Logout</a> |
@@ -20,6 +27,29 @@
     <router-view class="full-height"/>
 </div>
 </template>
+<script>
+import axios from 'axios';
+import { endpoints } from './common/endpoints.js'
+
+export default {
+  data() {
+    return {
+      isLoggedIn: false
+    };
+  },
+  created() {
+    this.checkLoginStatus();
+  },
+  methods: {
+    async checkLoginStatus() {
+      const endpoint = endpoints['is-logged-in'];
+      const response = await axios.get(endpoint);
+      this.isLoggedIn = response.data.isAuthenticated;
+    }
+  }
+};
+</script>
+
 
 <style>
 #app {
