@@ -152,7 +152,7 @@ function hasUpdate(tripID) {
 }
 
 function checkUpdate(tripID) {
-    const endpoint = `${endpoints["trip"]}${tripID}/`;
+    /*const endpoint = `${endpoints["trip"]}${tripID}/`;
     try {
         axios.patch(endpoint, null, {
             params: {
@@ -160,8 +160,10 @@ function checkUpdate(tripID) {
             }
         });
         emit('refreshTrips');
-    } catch (error) {
-    }
+    } 
+    catch (error) {
+    }*/
+    return;
 }
 
 function acceptJoinRequest(joinID) {

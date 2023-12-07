@@ -265,7 +265,6 @@ class TripAPIView(views.APIView):
 
         if action == "removeUser":
             trip.remove_user(self.request.user)
-            send_member_left_email(trip.participant_list,)
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})

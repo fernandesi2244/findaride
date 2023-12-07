@@ -34,7 +34,7 @@
             My pending trips
           </button>
         </li>
-        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; border-radius: 50%; font-size:small; margin-left: 1em">?</button>
+        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; font-size:small; width: 42px; height: 42px; margin-left: 1em">?</button>
         <TripHelpModal ref="tripHelpModalRef"></TripHelpModal>
     </ul>
       <div class="col-10 tab-content fill pt-4" id="v-pills-tabContent">
@@ -262,7 +262,7 @@ async function removeTripRequest(id) {
   cursor: pointer;
 }
 
-.btn {
-  border-radius: 30px;
+.need-help-btn {
+  
 }
 </style>

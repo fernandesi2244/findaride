@@ -1,7 +1,7 @@
 from django.db import models
 from django.apps import apps
 from django.utils.timezone import make_aware
-from api.utils import send_confirm_email
+from api.utils import send_confirm_email, send_member_left_email
 
 import datetime
 
@@ -49,6 +49,8 @@ class Trip(models.Model):
             # delete associated stuff like TripUserDetails
             self.delete()
             return
+        
+        send_member_left_email(self.participant_list,)
 
         curr_utc_time = make_aware(datetime.datetime.utcnow())
 
