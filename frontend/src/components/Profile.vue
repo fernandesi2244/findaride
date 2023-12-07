@@ -3,8 +3,51 @@
       <div class="narrow-container">
         <h2 class="text-start">{{ user.first_name }} {{ user.last_name }} <span class="text-secondary text-small">({{ user.college_display }})</span></h2>
         <!--TODO: insert cute section with ur stats eg how many trips, how many miles traveled etc-->
+        <div class="mt-4">
+          <h4 class="text-start">
+            Thank you for using findaride!
+          </h4>
+          <h5 class="text-start mt-3">
+            During your time with us, you have
+          </h5>
+        </div>
+        <div class="row mt-3">
+          <div class="col-4 px-4">
+            <p class="text-start">
+              been on
+            </p>
+            <p class="big-text">
+            {{ userStats.number_trips }}
+            </p>
+            <p class="text-end">
+              trips
+            </p>
+          </div>
+          <div class="col-4">
+            <p class="text-start">
+              traveled
+            </p>
+            <p class="big-text">
+            {{ userStats.miles_ridden }}
+            </p>
+            <p class="text-end">
+              miles
+            </p>
+          </div>
+          <div class="col-4">
+            <p class="text-start">
+              shared rides with
+            </p>
+            <p class="big-text">
+            {{ userStats.number_riders }}
+            </p>
+            <p class="text-end">
+              people
+            </p>
+          </div>
+        </div>
         <h4>Your past trips</h4>
-        <div class="accordion" id="accordion">
+        <div v-if="pastTrips.length > 0" class="accordion" id="accordion">
             <div v-for="trip in pastTrips" :key="trip.college+trip.id" class="accordion-item">
             <h2 class="accordion-header">
                 <button
@@ -40,6 +83,9 @@
             </div>
             </div>
         </div>
+        <div v-else>
+          You do not have any past trips.
+        </div>
       </div>
     </div>
   </template>
@@ -52,6 +98,13 @@
   
   // ground truth data
   const user = reactive({ first_name: "", id: -1, })
+  const userStats = reactive({ 
+    number_riders: 0,
+    number_trips: 0,
+    miles_ridden: 0,
+    past_riders: 0,
+    id: -1, 
+  })
   const trips = ref([]);
   const userID = ref(0);
   
@@ -60,7 +113,6 @@
       return !item.is_active;
     });
   })
-  
 
   const addTripModal = ref(null)
   
@@ -78,6 +130,7 @@
     const endpoint = endpoints["me"];
     const response = await axios.get(endpoint);
     Object.assign(user, response.data);
+    Object.assign(userStast, response.data.user_stats);
   }
   
   async function getUserTrips() {
@@ -159,5 +212,9 @@
     overflow-y: scroll;
     border: 2px solid rgb(203, 203, 203);
     border-radius: 5px;
+  }
+  .big-text {
+    font-size: 10em;
+    line-height: 0.65;
   }
   </style>

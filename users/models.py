@@ -31,6 +31,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    user_stats = models.OneToOneField('users.UserStats', on_delete=models.CASCADE, related_name='user', null=True)
 
     class Meta:
         ordering = ['first_name']
@@ -45,6 +46,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 def in_24_hours():
     return timezone.now() + timedelta(hours=24)
+
+class UserStats(models.Model):
+    miles_ridden = models.IntegerField(default=0)
+    number_trips = models.IntegerField(default=0)
+    past_riders = models.ManyToManyField('users.CustomUser', blank=True)
+
+    @property
+    def number_riders(self):
+        return self.past_riders.count()-1
 
 class ActivationToken(models.Model):
     token = models.CharField(max_length=150, unique=True)

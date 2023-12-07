@@ -4,8 +4,16 @@ from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from phonenumber_field.serializerfields import PhoneNumberField
+from .models import UserStats
 
 UserModel = get_user_model()
+
+class UserStatsSerializer(serializers.ModelSerializer):
+    number_riders = serializers.ReadOnlyField()
+
+    class Meta:
+        model = UserStats 
+        fields = '__all__'
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(
@@ -85,6 +93,7 @@ class SignUpSerializer(serializers.ModelSerializer):
     
 class UserSerializer(serializers.ModelSerializer):
     college_display = serializers.SerializerMethodField()
+    user_stats = UserStatsSerializer()
 
     def get_college_display(self, obj):
         return obj.get_college_display()

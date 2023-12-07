@@ -3,7 +3,7 @@ from django.shortcuts import render
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
-from api.utils import send_join_email, send_confirm_email, send_member_left_email
+from api.utils import send_join_email
 
 from django.utils.timezone import make_aware
 
@@ -178,6 +178,18 @@ class TripRequestAPIView(views.APIView):
                 latest_departure_time=trip_request.latest_departure_time,
                 num_luggage_bags=trip_request.num_luggage_bags,
             )
+
+            user_stats = trip_request.user.user_stats
+        
+            user_stats.number_trips += 1
+            from_coord = (trip.departure_location.latitude, trip.departure_location.longitude)
+            to_coord = (trip.arrival_location.latitude, trip.arrival_location.longitude)
+            user_stats.miles_ridden += int(geodesic(from_coord, to_coord).miles)
+        
+            for participant in trip.participant_list.all():
+                user_stats.past_riders.add(participant)
+
+            user_stats.save()
 
             trip_request.delete()
 

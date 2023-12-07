@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUser, ActivationToken
+from .models import CustomUser, ActivationToken, UserStats
 
 
 class CustomUserAdmin(UserAdmin):
@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('email', 'phone_number', 'is_active', 'is_staff',)
     list_filter = ('email', 'phone_number', 'is_active', 'is_staff',)
     fieldsets = (
-        (None, {'fields': ('email', 'phone_number', 'first_name', 'last_name', 'password', 'email_verified')}),
+        (None, {'fields': ('email', 'phone_number', 'first_name', 'last_name', 'password', 'user_stats', 'email_verified',)}),
         ('Permissions', {'fields': ('is_staff', 'is_active',)}),
     )
     add_fieldsets = (
@@ -29,3 +29,4 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(ActivationToken)
+admin.site.register(UserStats)
