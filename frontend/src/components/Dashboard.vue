@@ -5,7 +5,7 @@
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
         <button id="add-trip-btn" @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
-        <AddTripModal @addTripRequest="addTripRequest" ref="addTripModal"></AddTripModal>
+        <AddTripModal @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripModal>
       </div>
       <ul class="mt-2 nav nav-pills" role="tablist">
         <!--
@@ -23,7 +23,7 @@
             </button>
         </li>-->
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
+          <button class="nav-link active" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
             role="tab" aria-selected="false" @click="refreshData">
             My confirmed trips
           </button>
@@ -58,10 +58,10 @@ import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import AddTripModal from '../components/AddTripModal.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
-import $ from "jquery";
 import TripHelpModal from '../components/TripHelpModal.vue';
-import PopupModal from "./PopupModal.vue";
+import PopupModal from './PopupModal.vue';
 import { formatError } from './common.js';
+import $ from "jquery";
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
