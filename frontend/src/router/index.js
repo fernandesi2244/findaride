@@ -48,7 +48,6 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const isProtected = protectedRoutes.includes(to.name)
-  //const isSkippable = skippableRoutes.includes(to.name as string)
 
   /*if (isSkippable) {
     const isloggedin = await isLoggedIn()
@@ -67,7 +66,8 @@ router.beforeEach(async (to, from, next) => {
       next()
     }
     else {
-      window.location.href = '/accounts/login/';
+      let test = `/accounts/login/?next=${encodeURIComponent(to.path)}`
+      window.location.href = test;
     }
   } else next()
 })

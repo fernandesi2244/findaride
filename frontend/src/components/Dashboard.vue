@@ -1,4 +1,14 @@
 <template>
+  <div v-show="loading">
+    <div class="loading-overlay">
+    </div>
+    <div class="spinner">
+      <div class="spinner-border" style="z-index: 104; width: 6rem; height: 6rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <h5>Finding matches...</h5>
+    </div>
+  </div>
   <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
   <div class="container-xl" style="row-gap: 20px;">
     <div class="narrow-container">
@@ -8,20 +18,6 @@
         <AddTripModal @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripModal>
       </div>
       <ul class="mt-2 nav nav-pills" role="tablist">
-        <!--
-        <li class="nav-item" role="presentation">
-            <button
-                class="nav-link active"
-                id="addtrip-tab"
-                data-bs-toggle="tab"
-                data-bs-target="#addtrip"
-                type="button"
-                role="tab"
-                aria-selected="true"
-            >
-                Plan a new trip
-            </button>
-        </li>-->
         <li class="nav-item" role="presentation" style="margin-right: 10px;">
           <button class="nav-link active btn-sm" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
             role="tab" aria-selected="false" @click="refreshData">
@@ -69,6 +65,8 @@ const trips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
 const tripHelpModalRef = ref(null);
+
+const loading = ref(false);
 
 
 const activeTrips = computed(() => {
@@ -143,6 +141,7 @@ async function getUserTrips() {
 
 async function addTripRequest(newTripRequest) {
   //tripRequests.value.push(newTripRequest);
+  loading.value = true;
 
   let departure = {
     "address": newTripRequest.from,
@@ -168,11 +167,35 @@ async function addTripRequest(newTripRequest) {
     "comment": newTripRequest.comment,
   }
 
+  showTripForm.value = false;
+
   const endpoint = endpoints["tripRequest"];
   try {
-    await axios.post(endpoint, data);
+    const response = await axios.post(endpoint, data);
 
+    await refreshData(); // force to wait before showing confirmation modal
+
+    loading.value = false;
+
+    if (response.data.message==="Trip request created") {
+      goToTripRequestsTab();
+      confirmDialogue.value.show({
+        title: "You have a match!",
+        message: "Congrats! We found matching trips. We have sent requests to join on your behalf, and you will receive an email if they accept.",
+        cancelButton: "Close"
+      });
+    }
+    else {
+      goToTripsTab();
+      confirmDialogue.value.show({
+        title: "Success",
+        message: "There weren't any trips that matched your request. For now, you're in a trip on your own, but you will receive an email when other users request to join!",
+        cancelButton: "Close"
+      });
+    }
   } catch (error) {
+
+    loading.value = false;
     // create modal dialog indicating the error that has occurred and to retry
     confirmDialogue.value.show({
       title: "Error",
@@ -181,16 +204,6 @@ async function addTripRequest(newTripRequest) {
     });
     return;
   }
-
-  showTripForm.value = false;
-
-  await refreshData(); // force to wait before showing confirmation modal
-
-  await confirmDialogue.value.show({
-    title: "Created",
-    message: "Trip request successfully created!",
-    cancelButton: "Close"
-  });
 }
 
 async function removeTripRequest(id) {
@@ -262,7 +275,25 @@ async function removeTripRequest(id) {
   cursor: pointer;
 }
 
-.need-help-btn {
-  
+.loading-overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #000000;
+  opacity: 0.4;
+  z-index: 2;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 1;
+  margin: 0 auto;
+  z-index: 101;
+  color: rgb(255, 255, 255);
 }
 </style>

@@ -13,7 +13,7 @@ def send_confirm_email(user, trip):
     to = [user.email,]
 
     # Load the HTML template
-    html_content = render_to_string('emails/confirm_request.html', {'trip': trip})
+    html_content = render_to_string('emails/confirm_request.html', {'user': user, 'trip': trip})
 
     # Create the email body with both HTML and plain text versions
     text_content = strip_tags(html_content)
@@ -22,7 +22,7 @@ def send_confirm_email(user, trip):
     email.send()
 
 def send_join_email(participant_list, user):
-    subject = "Join request"
+    subject = "findaride: Request to join your trip"
     from_email = settings.EMAIL_HOST_USER
     to = [participant.email for participant in participant_list.all()]
 
@@ -36,7 +36,7 @@ def send_join_email(participant_list, user):
     email.send()
 
 def send_member_left_email(participant_list):
-    subject = "A member has left your trip"
+    subject = "findaride: A member has left your trip"
     from_email = settings.EMAIL_HOST_USER
     to = [participant.email for participant in participant_list.all()]
 

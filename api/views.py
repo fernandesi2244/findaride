@@ -193,7 +193,7 @@ class TripRequestAPIView(views.APIView):
 
             trip_request.delete()
 
-            return Response(status=status.HTTP_200_OK)
+            return Response({'message': 'Trip created'}, status=status.HTTP_200_OK)
         
         # Otherwise, we have matching trips, so we need to create a join request for each of them under a unified trip request
         for trip in matching_trips:
@@ -209,7 +209,7 @@ class TripRequestAPIView(views.APIView):
 
             send_join_email(trip.participant_list, user)
 
-        return Response(status=status.HTTP_200_OK)
+        return Response({'message': 'Trip request created'}, status=status.HTTP_200_OK)
     
     def __getLocationObjects(self, departure_location, arrival_location):
         # See if location table contains any rows with the same departure address. If so, fetch that row. Otherwise, create a new row.
