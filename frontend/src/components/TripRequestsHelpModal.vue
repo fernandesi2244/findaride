@@ -6,7 +6,7 @@
         </div>
         <div class="modal-body">
             <p class="text-start">
-				Welcome to your trip request management tab! Here's a quick guide on how to navigate<br>
+              Welcome to your trip request management tab! Here's a quick guide on how to navigate<br>
                 through trip matches and confirmation requests:<br><br>
                 Trip Matches: These are potential trips that match your preferences. You'll see details<br>
                 like departure and arrival locations, times, luggage totals, and number of riders. Please<br>

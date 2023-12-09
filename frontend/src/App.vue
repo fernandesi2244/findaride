@@ -19,6 +19,7 @@
                 <router-link to="/login">Login</router-link> |
                 <router-link to="/signup">Sign Up</router-link>| ---->
                 <router-link to="/dashboard">Dashboard</router-link> |
+                <router-link to="/dashboard2">Dashboard</router-link> |
                 <router-link to="/profile">Profile</router-link>
             </div>
         </div>

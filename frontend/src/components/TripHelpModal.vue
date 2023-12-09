@@ -24,10 +24,10 @@
               <li> Sometimes, shit happens. If you at any point need to drop the trip, we recommend you do so as soon as
                 possible by clicking the 'Leave' button in the trip details. This will automatically notify all other members
                 of the group for you.</li>
-              <li> <strong>When the time comes, use the 'Copy emails' button to get the contact information for everyone in your
+              <li> When the time comes, use the 'Copy emails' button to get the contact information for everyone in your
                 group. Set up an email chat to discuss the specifics of the Uber/Lyft ride as well as the precise time that
                 everyone wants to leave at.
-              </strong></li>
+              </li>
             </ol>
             <br>
             <h6>Pending trips</h6>

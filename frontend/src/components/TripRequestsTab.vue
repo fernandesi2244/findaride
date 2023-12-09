@@ -1,7 +1,7 @@
 <template>
     <ConfirmDialogue ref="confirmDialogue" cancel-color="red"></ConfirmDialogue>
     <div v-if="tripRequests.length == 0">
-        <h4 class="mt-2">No trip requests yet.</h4>
+        <h4 class="mt-2">No Matched Trips.</h4>
     </div>
     <div v-else>
         <div class="accordion" id="accordion">
@@ -65,7 +65,8 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <h5 class="mt-2 text-start">Confirmation requests:</h5>
+
+                            <!-- <h5 class="mt-2 text-start">Confirmation requests:</h5>
                             <div v-if="tripRequest.confirmation_requests.length == 0">
                                 <p class="text-start">No confirmations yet.</p>
                             </div>
@@ -107,7 +108,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -141,38 +142,38 @@ const sortedTripRequests = computed(() => {
     });
 });
 
-function acceptConfirmationRequest(confirmationID) {
-    const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=accept`;
-    console.log(endpoint)
-    try {
-        axios.post(endpoint);
-        emit('refreshTrips');
-        emit('goToTripsTab')
-    } catch (error) {
-        alert(error);
-        return;
-    }
-}
+// function acceptConfirmationRequest(confirmationID) {
+//     const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=accept`;
+//     console.log(endpoint)
+//     try {
+//         axios.post(endpoint);
+//         emit('refreshTrips');
+//         emit('goToTripsTab')
+//     } catch (error) {
+//         alert(error);
+//         return;
+//     }
+// }
 
-function hasConfirmationRequest(tripRequest, joinRequest) {
-    return tripRequest.confirmation_requests.some(confirmationRequest => confirmationRequest.join_request.id === joinRequest.id);
-}
+// function hasConfirmationRequest(tripRequest, joinRequest) {
+//     return tripRequest.confirmation_requests.some(confirmationRequest => confirmationRequest.join_request.id === joinRequest.id);
+// }
 
 function toggleHelp() {
     tripRequestsHelpModal.value.show();
 }
 
-function rejectConfirmationRequest(confirmationID) {
-    const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=reject`;
-    try {
-        axios.post(endpoint);
-        emit('refreshTrips');
-        emit('goToTripsTab')  // temp fix to refresh confirmation requests; TODO: STAY ON PAGE unless there are no more confirmation requests
-    } catch (error) {
-        alert(error);
-        return;
-    }
-}
+// function rejectConfirmationRequest(confirmationID) {
+//     const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=reject`;
+//     try {
+//         axios.post(endpoint);
+//         emit('refreshTrips');
+//         emit('goToTripsTab')  // temp fix to refresh confirmation requests; TODO: STAY ON PAGE unless there are no more confirmation requests
+//     } catch (error) {
+//         alert(error);
+//         return;
+//     }
+// }
 
 function rejectJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
