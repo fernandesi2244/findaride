@@ -15,24 +15,40 @@
         <div class="d-flex justify-content-between">
           <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
         </div>
-        <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
-        <v-data-table
-          :items="trips"
-          :headers="headers"
-        >
-          <template v-slot:item.earliest_departure_time="{ item }">
-            <div class="text-start">{{ getDate(item.earliest_departure_time) }}</div>
-          </template>
-          <template v-slot:item.latest_departure_time="{ item }">
-            <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
-          </template>
-          <template v-slot:item.departure_location="{ item }">
-            <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
-          </template>
-          <template v-slot:item.arrival_location="{ item }">
-            <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
-          </template>
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button">Plan a new trip</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip">Manage my trips</a>
+          </li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
+          <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
+          <v-data-table
+            :items="trips"
+            :headers="headers"
+          >
+            <template v-slot:item.latest_departure_time="{ item }">
+              <div class="text-start">{{ getDate(item.earliest_departure_time) }}</div>
+            </template>
+            <template v-slot:item.earliest_departure_time="{ item }">
+              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
+            </template>
+            <template v-slot:item.departure_location="{ item }">
+              <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
+            </template>
+            <template v-slot:item.arrival_location="{ item }">
+              <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
+            </template>
         </v-data-table>
+        </div>
+        <div class="tab-pane fade" id="manageTrip" role="tabpanel">
+          <!--Dashboard content-->
+        </div>
+      </div>
+
       </div>
     </div>
   </template>
@@ -62,13 +78,13 @@
       title: 'Depature Date',
       align: 'start',
       sortable: true,
-      key: 'earliest_departure_time'
+      key: 'latest_departure_time',
     },
     {
       title: 'Depature Time',
       align: 'start',
-      sortable: true,
-      key: 'latest_departure_time'
+      sortable: false,
+      key: 'earliest_departure_time',
     },
     {
       title: 'From',
@@ -81,12 +97,6 @@
       align: 'start',
       sortable: true,
       key: 'arrival_location',
-    },
-    {
-      title: 'ID',
-      align: 'start',
-      sortable: true,
-      key: 'id',
     },
   ])
 
