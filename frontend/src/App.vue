@@ -1,13 +1,13 @@
 <template>
 <div id="app" class="box">
-    <nav style="margin-bottom: 20px;">
+    <nav class="navbar" style="margin-bottom: 20px;">
         <div class="nav-content">
 
         <div v-if="isLoggedIn">
           <span class = text-size><router-link to="/">findaride</router-link></span>
         </div>
         <div v-else>
-          <span class = text-size><router-link to="/dashboard">findaride</router-link></span>
+          <span class = text-size><router-link to="/">findaride</router-link></span>
         </div>
             <div class="right">
 
@@ -75,7 +75,7 @@ export default {
     height: 100%;
 }
 
-nav {
+.navbar {
   background: #aed8ab;
   box-shadow: 0 2px 4px rgba(182, 166, 166, 0.1);
   padding: 0.5rem 2rem;
@@ -89,7 +89,7 @@ nav {
   align-items: center;
 }
 
-nav a {
+.navbar a {
   font-weight: bold;
   color: #2c3e50;
   text-decoration: none;

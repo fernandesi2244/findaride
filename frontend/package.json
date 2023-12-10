@@ -16,6 +16,7 @@
     "bootstrap-vue": "^2.23.1",
     "core-js": "^3.8.3",
     "jquery": "^3.7.1",
+    "material-design-icons-iconfont": "^6.7.0",
     "vite-tsconfig-paths": "^4.2.1",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",

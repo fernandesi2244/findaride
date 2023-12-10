@@ -16,10 +16,8 @@
           <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
         </div>
         <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
-        <v-data-table-server
+        <v-data-table
           :items="trips"
-          :items-length="trips.length"
-          :loading="loading"
           :headers="headers"
         >
           <template v-slot:item.earliest_departure_time="{ item }">
@@ -34,7 +32,7 @@
           <template v-slot:item.arrival_location="{ item }">
             <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
           </template>
-        </v-data-table-server>
+        </v-data-table>
       </div>
     </div>
   </template>
@@ -63,26 +61,32 @@
     {
       title: 'Depature Date',
       align: 'start',
-      sortable: false,
+      sortable: true,
       key: 'earliest_departure_time'
     },
     {
       title: 'Depature Time',
       align: 'start',
-      sortable: false,
+      sortable: true,
       key: 'latest_departure_time'
     },
     {
       title: 'From',
       align: 'start',
-      sortable: false,
+      sortable: true,
       key: 'departure_location',
     },
     {
       title: 'To',
       align: 'start',
-      sortable: false,
+      sortable: true,
       key: 'arrival_location',
+    },
+    {
+      title: 'ID',
+      align: 'start',
+      sortable: true,
+      key: 'id',
     },
   ])
 
