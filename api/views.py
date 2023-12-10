@@ -34,6 +34,77 @@ class TripRequestListAPIView(generics.ListAPIView):
     serializer_class = SimpleTripRequestSerializer
     queryset = TripRequest.objects.all()
 
+class TripListAPIView(views.APIView):
+
+    def get(self, request):
+        user = request.user
+        user_college = user.college
+        blacklisted_trips_id = user.blacklisted_trips.values('id')
+        user_trip_ids = user.trips.values('id')
+
+        queryset = Trip.objects.filter(
+            college=user_college,
+            is_full=False,
+        ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')
+    
+        earliest_departure_time = self.request.query_params.get("earliestDepartureTime", None)
+        latest_departure_time = self.request.query_params.get("latestDepartureTime", None)
+        num_luggage_bags = self.request.query_params.get("luggageCount", None)
+
+        print(earliest_departure_time)
+        departure_longitude = self.request.query_params.get("fromLong", None)
+        departure_latitude = self.request.query_params.get("fromLat", None)
+        arrival_longitude = self.request.query_params.get("toLong", None)
+        arrival_latitude = self.request.query_params.get("toLat", None)
+
+        if earliest_departure_time is not None:
+            earliest_departure_time = datetime.strptime(earliest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
+            earliest_departure_time = make_aware(earliest_departure_time)
+            queryset = queryset.filter(earliest_departure_time__lte=earliest_departure_time)
+
+        if latest_departure_time is not None:
+            latest_departure_time = datetime.strptime(latest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
+            latest_departure_time = make_aware(latest_departure_time)
+            queryset = queryset.filter(latest_departure_time__gte=latest_departure_time)
+
+        if num_luggage_bags is not None:
+            queryset = queryset.filter(num_luggage_bags__lte=5 - int(num_luggage_bags))
+
+        matching_trips = []
+
+        if departure_latitude is not None and arrival_latitude is None:
+            departure_latitude = float(departure_latitude)
+            departure_longitude = float(departure_longitude)
+            from_coord = (departure_latitude, departure_longitude)
+            for trip in queryset:
+                from_coord_2 = (trip.departure_location.latitude, trip.departure_location.longitude)
+                if geodesic(from_coord, from_coord_2).miles < 1:
+                    matching_trips.append(trip)
+        elif departure_latitude is None and arrival_latitude is not None:
+            arrival_latitude = float(arrival_latitude)
+            arrival_longitude = float(arrival_longitude)
+            to_coord = (arrival_latitude, arrival_longitude)
+            for trip in queryset:
+                from_coord_2 = (trip.departure_location.latitude, trip.departure_location.longitude)
+                if geodesic(to_coord, to_coord_2).miles < 1:
+                    matching_trips.append(trip)
+        elif departure_latitude is not None and arrival_latitude is not None:
+            arrival_latitude = float(arrival_latitude)
+            arrival_longitude = float(arrival_longitude)
+            departure_latitude = float(departure_latitude)
+            departure_longitude = float(departure_longitude)
+            from_coord = (departure_latitude, departure_longitude)
+            to_coord = (arrival_latitude, arrival_longitude)
+            for trip in queryset:
+                from_coord_2 = (trip.departure_location.latitude, trip.departure_location.longitude)
+                to_coord_2 = (trip.arrival_location.latitude, trip.arrival_location.longitude)
+                if geodesic(from_coord, from_coord_2).miles < 1 and geodesic(to_coord, to_coord_2).miles < 1:
+                    matching_trips.append(trip)
+        else:
+            matching_trips = queryset
+    
+        serializer = SimpleTripSerializer(matching_trips, many=True)
+        return Response(serializer.data)
 
 class ConfirmationRequestAPIView(views.APIView):
     def get(self, request):

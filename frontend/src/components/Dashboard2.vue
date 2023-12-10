@@ -15,47 +15,39 @@
         <div class="d-flex justify-content-between">
           <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
         </div>
-          <AddTripModal @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripModal>
-        <ul class="mt-2 nav nav-pills" role="tablist">
-            <li class="nav-item" role="presentation">
-            <button class="nav-link btn-sm" id="triprequests-tab" data-bs-toggle="tab" data-bs-target="#triprequests" type="button"
-              role="tab" aria-selected="false" @click="refreshData">
-              Matched Trips
-            </button>
-          </li>
-          <li class="nav-item" role="presentation" style="margin-right: 10px;">
-            <button class="nav-link active btn-sm" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
-              role="tab" aria-selected="false" @click="refreshData">
-              Created Trips
-            </button>
-          </li>
-          <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; font-size:small; width: 42px; height: 42px; margin-left: 1em">?</button>
-          <TripHelpModal ref="tripHelpModalRef"></TripHelpModal>
-      </ul>
-        <div class="col-10 tab-content fill pt-4" id="v-pills-tabContent">
-          <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
-            <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
-          </div>
-          <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-            <TripRequestsTab :tripRequests="activeTripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab"
-              @goToTripRequestsTab="goToTripRequestsTab" />
-          </div>
-        </div>
+        <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
+        <v-data-table-server
+          :items="trips"
+          :items-length="trips.length"
+          :loading="loading"
+          :headers="headers"
+        >
+          <template v-slot:item.earliest_departure_time="{ item }">
+            <div class="text-start">{{ getDate(item.earliest_departure_time) }}</div>
+          </template>
+          <template v-slot:item.latest_departure_time="{ item }">
+            <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
+          </template>
+          <template v-slot:item.departure_location="{ item }">
+            <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
+          </template>
+          <template v-slot:item.arrival_location="{ item }">
+            <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
+          </template>
+        </v-data-table-server>
       </div>
     </div>
   </template>
   
   <script setup>
   import { ref, reactive, onMounted, computed } from 'vue';
-  import TripsTab from '../components/TripsTab.vue';
-  import TripRequestsTab from '../components/TripRequestsTab.vue';
   import { endpoints } from '../common/endpoints.js';
   import { axios } from '../common/axios_service.js'
-  import AddTripModal from '../components/AddTripForm.vue';
+  import AddTripForm from '../components/AddTripForm.vue';
   import ConfirmDialogue from "../components/ConfirmDialogue.vue";
   import TripHelpModal from '../components/TripHelpModal.vue';
   import PopupModal from './PopupModal.vue';
-  import { formatError } from './common.js';
+  import { getDatePart, getDate, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
   import $ from "jquery";
   
   // ground truth data
@@ -66,8 +58,34 @@
   const tripHelpModalRef = ref(null);
   
   const loading = ref(false);
-  
-  
+
+  const headers = ref([
+    {
+      title: 'Depature Date',
+      align: 'start',
+      sortable: false,
+      key: 'earliest_departure_time'
+    },
+    {
+      title: 'Depature Time',
+      align: 'start',
+      sortable: false,
+      key: 'latest_departure_time'
+    },
+    {
+      title: 'From',
+      align: 'start',
+      sortable: false,
+      key: 'departure_location',
+    },
+    {
+      title: 'To',
+      align: 'start',
+      sortable: false,
+      key: 'arrival_location',
+    },
+  ])
+
   const activeTrips = computed(() => {
     return trips.value.filter((item) => {
       return item.is_active;
@@ -101,18 +119,8 @@
     getUserTrips();
   }
   onMounted(async () => {
+    await getTrips({});
     await getUserInfo();
-    await getUserTrips();
-    toggleTripModal();
-    // if the user already has a trip, show the trip tab
-    if (trips.value.length > 0) {
-      $("#trips-tab").click();
-    } else if (tripRequests.value.length > 0) {
-      $("#triprequests-tab").click();
-    } else {
-      $("#triprequests-tab").click();
-      $("#add-trip-btn").click();
-    }
   });
   
   function goToTripsTab() {
@@ -136,6 +144,24 @@
     trips.value = response.data.trips;
   
     userID.value = response.data.id;
+  }
+
+  async function getTrips(params) {
+    let endpoint = `${endpoints["trip"]}?`;
+    
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== "") {
+        if (key==="earliestDepartureTime" || key==="latestDepartureTime") {
+          let str = new Date(value).toUTCString();
+          endpoint += `${key}=${str}&`;
+        } else{
+          endpoint += `${key}=${value}&`;
+        }
+      }
+    }
+    console.log(endpoint)
+    const response = await axios.get(endpoint);
+    trips.value = response.data;
   }
   
   async function addTripRequest(newTripRequest) {

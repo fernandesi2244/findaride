@@ -52,7 +52,6 @@
   
   <script>
   import TripFormHelpModal from '../components/TripFormHelpModal.vue';
-  import PopupModal from "./PopupModal.vue";
   
   let fromLocationWasSelected = false;
   let toLocationWasSelected = false;
@@ -60,7 +59,6 @@
   export default {
     name: "AddTripModal",
     components: {
-      PopupModal,
       TripFormHelpModal,
       
     },
@@ -70,19 +68,17 @@
         invalidLocationType: '',
         fromLocationWasSelected: false,
         toLocationWasSelected: false,
+        from: '',
+        to: '',
         trip: {
-          from: '',
           fromLat: '',
           fromLong: '',
-          to: '',
           toLat: '',
           toLong: '',
           departureDate: '',
           earliestDepartureTime: '',
           latestDepartureTime: '',
           luggageCount: 0,
-          comment: '',
-          status: 'Pending',
         },
       }
     },
@@ -103,9 +99,7 @@
     },
     methods: {
         checkAndCreateTripRequest() {
-        if (this.allFieldsFilled && !this.tripRequestCreated) {
-            this.autoSearchForTrips();
-        }
+          this.autoSearchForTrips();
         },
         initializeAutocomplete() {
       const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
@@ -122,7 +116,8 @@
         let place = acFrom.getPlace().geometry.location;
         this.trip.fromLat = place.lat();
         this.trip.fromLong = place.lng();
-        this.trip.from = this.$refs.fromRef.value;
+        this.from = this.$refs.fromRef.value;
+        this.$emit('getTrips', { ...this.trip });
         fromLocationWasSelected = true;
       });
 
@@ -130,7 +125,8 @@
         let place = acTo.getPlace().geometry.location;
         this.trip.toLat = place.lat();
         this.trip.toLong = place.lng();
-        this.trip.to = this.$refs.toRef.value;
+        this.to = this.$refs.toRef.value;
+        this.$emit('getTrips', { ...this.trip });
         toLocationWasSelected = true;
       });
     },
@@ -142,10 +138,10 @@
         this.$refs.tripFormHelpModal.show();
       },
       resetForm() {
-        this.trip.from = '';
+        this.from = '';
         this.trip.fromLat = '';
         this.trip.fromLong = '';
-        this.trip.to = '';
+        this.to = '';
         this.trip.toLat = '';
         this.trip.toLong = '';
         this.trip.departureDate = '';
@@ -178,9 +174,9 @@
         this._close();
       },
       autoSearchForTrips() {
-        this.$emit('addTripRequest', { ...this.trip });
-        this.$emit('refreshTrips');
-        },
+        console.log("TEST")
+        this.$emit('getTrips', { ...this.trip });
+      },
     }
   }
   </script>

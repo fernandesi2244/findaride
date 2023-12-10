@@ -30,7 +30,7 @@ export function getDatePart(firstDateString, secondDateString) {
 }
 
 export function getTime(dateString) {
-    return new Date(dateString).toLocaleTimeString();
+    return new Date(dateString).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
 export function getDateTime(dateString) {
