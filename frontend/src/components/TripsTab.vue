@@ -143,9 +143,23 @@ const sortedTrips = computed(() => {
 function toggleTripIsFull(tripID) {
     trips.is_full = !trips.is_full
     const endpoint = `${endpoints["trip"]}${tripID}/`;
-    
+    try {
+        axios.patch(endpoint, null, {
+            params: {
+                action: 'toggleIsFullSetting'
+            }
+        });
+        emit('refreshTrips');
+    } catch (error) {
+        confirmDialogue.value.show({
+            title: "Error",
+            message: "Error marking trip as full:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+            cancelButton: "Close",
+            okClass: "btn btn-danger",
+        });
+        return;
+    }
 }
-
 
 function hasUpdate(tripID) {
     const endpoint = `${endpoints["trip"]}${tripID}/`;

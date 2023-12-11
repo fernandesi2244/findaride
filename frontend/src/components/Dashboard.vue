@@ -35,10 +35,10 @@
     </ul>
       <div class="col-10 tab-content fill pt-4" id="v-pills-tabContent">
         <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
-          <TripsTab :trips="activeTrips" :userID="userID" @refreshTrips="refreshData" />
+          <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
         </div>
         <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-          <TripRequestsTab :tripRequests="activeTripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab"
+          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab"
             @goToTripRequestsTab="goToTripRequestsTab" />
         </div>
       </div>
@@ -67,19 +67,6 @@ const userID = ref(0);
 const tripHelpModalRef = ref(null);
 
 const loading = ref(false);
-
-
-const activeTrips = computed(() => {
-  return trips.value.filter((item) => {
-    return item.is_active;
-  });
-})
-
-const activeTripRequests = computed(() => {
-  return tripRequests.value.filter((item) => {
-    return item.is_active;
-  });
-})
 
 // display vars
 const showTripForm = ref(false)

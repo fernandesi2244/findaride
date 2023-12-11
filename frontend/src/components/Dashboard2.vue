@@ -109,18 +109,6 @@ const headers = ref([
   },
 ])
 
-const activeTrips = computed(() => {
-  return trips.value.filter((item) => {
-    return item.is_active;
-  });
-})
-
-const activeTripRequests = computed(() => {
-  return tripRequests.value.filter((item) => {
-    return item.is_active;
-  });
-})
-
 // display vars
 const showTripForm = ref(true)
 

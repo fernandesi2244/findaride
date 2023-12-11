@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import make_aware
-from api.utils import send_trip_joined_email, send_member_left_email
+from api.utils import send_trip_joined_email, send_member_left_email, create_new_trip
 from geopy.distance import geodesic
 
 import datetime
@@ -65,10 +65,6 @@ class Trip(models.Model):
 
         self.save()
 
-    @property
-    def is_active(self):
-        return self.latest_departure_time > make_aware(datetime.datetime.utcnow())
-
 class TripUserDetails(models.Model):
     trip = models.ForeignKey('Trip', related_name='user_timespans', on_delete=models.CASCADE)
     user = models.ForeignKey('users.CustomUser', related_name='trip_timespans', on_delete=models.CASCADE)
@@ -88,10 +84,6 @@ class TripRequest(models.Model):
     latest_departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
     comment = models.CharField(max_length=255, blank=True)
-
-    @property
-    def is_active(self):
-        return self.latest_departure_time > make_aware(datetime.datetime.utcnow())
 
     class Meta:
         ordering = ['created_on']
@@ -116,6 +108,17 @@ class JoinRequest(models.Model):
         
         # make sure that the associated trip request still exists
         if not self.trip_request:
+            return
+
+        if self.trip.is_full:
+            if self.trip_request.join_requests.count() == 1:
+                create_new_trip(self.trip_request)
+                self.trip_request.delete()
+        
+            # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
+            # trips they can join, then we should create a new trip for them.
+
+            self.delete()
             return
         
         self.participants_that_accepted.add(user)
@@ -176,27 +179,7 @@ class JoinRequest(models.Model):
 
         # If this was the last join request for the trip request, then create a new trip for the user
         if self.trip_request.join_requests.count() == 1:
-            new_trip = Trip.objects.create(
-                num_participants=1,
-                departure_location=self.trip_request.departure_location,
-                arrival_location=self.trip_request.arrival_location,
-                earliest_departure_time=self.trip_request.earliest_departure_time,
-                latest_departure_time=self.trip_request.latest_departure_time,
-                num_luggage_bags=self.trip_request.num_luggage_bags,
-                num_join_requests=0,
-                college=self.trip_request.user.college,
-                is_full=False
-            )
-            new_trip.participant_list.add(self.trip_request.user)
-            TripUserDetails.objects.create(
-                trip=new_trip,
-                user=self.trip_request.user,
-                earliest_departure_time=self.trip_request.earliest_departure_time,
-                latest_departure_time=self.trip_request.latest_departure_time,
-                num_luggage_bags=self.trip_request.num_luggage_bags
-            )
-
-            # delete the associated trip request
+            create_new_trip(self.trip_request)
             self.trip_request.delete()
         
         # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible

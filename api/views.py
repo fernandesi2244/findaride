@@ -323,5 +323,9 @@ class TripAPIView(views.APIView):
         if action == "removeUser":
             trip.remove_user(self.request.user)
             return Response(status=status.HTTP_200_OK)
+        elif action == "toggleIsFullSetting":
+            trip.is_full = not trip.is_full
+            trip.save()
+            return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
