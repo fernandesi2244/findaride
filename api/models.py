@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import make_aware
-from api.utils import send_confirm_email, send_member_left_email
+from api.utils import send_trip_joined_email, send_member_left_email
 from geopy.distance import geodesic
 
 import datetime
@@ -102,16 +102,20 @@ class JoinRequest(models.Model):
     # TODO: See any other relationships where this needs to be coded out
     num_participants_accepted = models.IntegerField(default=0) # members from specific trip being applied to that have accepted this applicant
     participants_that_accepted = models.ManyToManyField('users.CustomUser', related_name='+', blank=True)
-    trip_details_changed = models.BooleanField(default=False) # whether or not the trip details have changed since the request was made; relevant for notifying the user when they are confirming their acceptance
+    trip_details_changed = models.BooleanField(default=False) # whether or not the trip details have changed since the request was made; relevant for notifying the user when they are looking at their join requests
     trip_request = models.ForeignKey('TripRequest', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE) 
     trip = models.ForeignKey('Trip', related_name='join_requests', null=True, blank=True, on_delete=models.CASCADE)
     
     def accept(self, user):
         """
         Mark that the given existing trip user has accepted this join request. If all trip members have accepted,
-        then send a confirmation request to the user that requested the trip.
+        then add the user to the trip.
         """
         if user in self.participants_that_accepted.all():
+            return
+        
+        # make sure that the associated trip request still exists
+        if not self.trip_request:
             return
         
         self.participants_that_accepted.add(user)
@@ -122,25 +126,43 @@ class JoinRequest(models.Model):
         # if all trip members previously accepted -> good to go
         # if not all trip members previously accepted -> need to have new member accept request as well
         if self.num_participants_accepted == self.trip.num_participants:
-            # note that user a and b may both be sent a confirmation request around the same time
-
-            # make sure that there is not already a confirmation request for this join request (user a gets in and accepts user b before b accepts their confirmation request)
-            if ConfirmationRequest.objects.filter(join_request=self).exists():
-                return
-
-            # odd-ball case where user b is already in group but a hasn't refreshed their page yet and tries to accept user b's join request
+            # odd-ball case where user b is already in group but a hasn't refreshed their page yet and tries to accept user b's join request - this shouldn't be possible assuming appropriate measures taken at frontend
             if self.trip.participant_list.filter(pk=self.trip_request.user.pk).exists():
                 return
 
-            # send confirmation request to user that requested trip
-            ConfirmationRequest.objects.create(
-                join_request=self
-            )
-            send_confirm_email(self.trip_request.user, self.trip)
+            # add the user to the trip they accepted and clean up the database
+            trip = self.trip
+            tripRequest = self.trip_request
+            user = tripRequest.user
 
-            # Don't delete the join request yet, since we need to display its status to the trip group based on the associated confirmation request
+            trip.num_participants += 1
+            trip.participant_list.add(user)
+            trip.num_luggage_bags += tripRequest.num_luggage_bags
+            trip.num_join_requests -= 1
+
+            # update the trip's timespan to be the intersection of the trip's timespan and the user's timespan (max possible overlap)
+            trip.earliest_departure_time = max(trip.earliest_departure_time, tripRequest.earliest_departure_time)
+            trip.latest_departure_time = min(trip.latest_departure_time, tripRequest.latest_departure_time)
+            trip.save()
+
+            TripUserDetails.objects.create(
+                trip=trip,
+                user=user,
+                earliest_departure_time=tripRequest.earliest_departure_time,
+                latest_departure_time=tripRequest.latest_departure_time,
+                num_luggage_bags=tripRequest.num_luggage_bags
+            )
+
+            # remove all join requests from the trip request
+            for joinRequest in tripRequest.join_requests.all():
+                joinRequest.delete()
             
-            # TODO: send email notification (or by preferred notification method) to user that informing them that all participants have accepted them
+            tripRequest.delete()
+
+            self.delete()
+
+            # send email to team indicating new team along with details
+            send_trip_joined_email(trip.participant_list, user)
     
     def reject(self):
         """
@@ -153,8 +175,7 @@ class JoinRequest(models.Model):
         trip.save()
 
         # If this was the last join request for the trip request, then create a new trip for the user
-        num_confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request_id=self.trip_request.id).count()
-        if self.trip_request.join_requests.count() == 1 and num_confirmation_requests == 0:
+        if self.trip_request.join_requests.count() == 1:
             new_trip = Trip.objects.create(
                 num_participants=1,
                 departure_location=self.trip_request.departure_location,
@@ -182,86 +203,3 @@ class JoinRequest(models.Model):
         # trips they can join, then we should create a new trip for them.
 
         self.delete()
-
-class ConfirmationRequest(models.Model):
-    join_request = models.OneToOneField(JoinRequest, on_delete=models.CASCADE)
-    created_on = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['created_on']
-    
-    def accept(self):
-        # add the user to the trip they accepted and clean up the database
-        trip = self.join_request.trip
-        tripRequest = self.join_request.trip_request
-        user = tripRequest.user
-
-        trip.num_participants += 1
-        trip.participant_list.add(user)
-        trip.num_luggage_bags += self.join_request.trip_request.num_luggage_bags
-        trip.num_join_requests -= 1
-
-        # update the trip's timespan to be the intersection of the trip's timespan and the user's timespan (max possible overlap)
-        trip.earliest_departure_time = max(trip.earliest_departure_time, tripRequest.earliest_departure_time)
-        trip.latest_departure_time = min(trip.latest_departure_time, tripRequest.latest_departure_time)
-        trip.save()
-
-        TripUserDetails.objects.create(
-            trip=trip,
-            user=user,
-            earliest_departure_time=tripRequest.earliest_departure_time,
-            latest_departure_time=tripRequest.latest_departure_time,
-            num_luggage_bags=tripRequest.num_luggage_bags
-        )
-
-        # remove all join requests from the trip request
-        for joinRequest in tripRequest.join_requests.all():
-            joinRequest.delete()
-        
-        tripRequest.delete()
-
-        self.delete()
-
-        # send email to team indicating confirmation and new trip details
-
-    def reject(self):
-        tripRequest = self.join_request.trip_request
-        user = tripRequest.user
-
-        trip = self.join_request.trip
-        trip.num_join_requests -= 1
-        trip.blacklisted_users.add(user)
-        trip.save()
-
-        self.join_request.delete()
-
-        self.delete()
-
-        # if this was the last confirmation request for the trip request and there are no join requests, then create a new trip for the user
-        num_confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request_id=tripRequest.id).count()
-        if tripRequest.join_requests.count() == 0 and num_confirmation_requests == 0:
-            newTrip = Trip.objects.create(
-                num_participants=1,
-                departure_location=tripRequest.departure_location,
-                arrival_location=tripRequest.arrival_location,
-                earliest_departure_time=tripRequest.earliest_departure_time,
-                latest_departure_time=tripRequest.latest_departure_time,
-                num_luggage_bags=tripRequest.num_luggage_bags,
-                num_join_requests=0,
-                college=tripRequest.user.college,
-                is_full=False
-            )
-            newTrip.participant_list.add(tripRequest.user)
-            TripUserDetails.objects.create(
-                trip=newTrip,
-                user=user,
-                earliest_departure_time=tripRequest.earliest_departure_time,
-                latest_departure_time=tripRequest.latest_departure_time,
-                num_luggage_bags=tripRequest.num_luggage_bags
-            )
-
-            # delete the associated trip request
-            tripRequest.delete()
-
-        # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
-        # trips they can join, then we should create a new trip for them.

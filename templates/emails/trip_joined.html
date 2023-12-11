@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Joined a trip</title>
+</head>
+
+<body style="text-align: center;">
+    <p>Hi {{user.first_name}},</p>
+    <h5>Hooray!</h5>
+    <p>You've been accepted into the trip described below and have automatically been added to it. Navigate to your dashboard to view more details!</p>
+    <p>Trip details:</p>
+    <p>From: {{trip.departure_location}}</p>
+    <p>To: {{trip.arrival_location}}</p>
+    <p>Earliest departure time (UTC): {{ trip.earliest_departure_time }}</p>
+    <p>Latest departure time (UTC): {{ trip.latest_departure_time }}</p>
+
+    <p>findaride team</p>
+</body>
+
+</html>

@@ -14,11 +14,12 @@ from secrets import token_urlsafe
 from django.contrib.auth import get_user_model
 from datetime import timedelta, datetime
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import F
 
 UserModel = get_user_model()
 
-from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest, TripUserDetails
-from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleConfirmationRequestSerializer, SimpleTripSerializer
+from .models import TripRequest, Trip, JoinRequest, Location, TripUserDetails
+from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleTripSerializer
 
 # TODO: see if any permissions need to be changed
 
@@ -42,33 +43,36 @@ class TripListAPIView(views.APIView):
         blacklisted_trips_id = user.blacklisted_trips.values('id')
         user_trip_ids = user.trips.values('id')
 
+        curr_utc_time = make_aware(datetime.utcnow())
+
         queryset = Trip.objects.filter(
             college=user_college,
             is_full=False,
+            # allow trips to be joined late but not too late (halfway through the defined range)
+            earliest_departure_time__gt=curr_utc_time - (F('latest_departure_time') - F('earliest_departure_time')) / 2,
         ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')
     
         earliest_departure_time = self.request.query_params.get("earliestDepartureTime", None)
         latest_departure_time = self.request.query_params.get("latestDepartureTime", None)
-        num_luggage_bags = self.request.query_params.get("luggageCount", None)
+        # num_luggage_bags = self.request.query_params.get("luggageCount", None)
 
-        print(earliest_departure_time)
         departure_longitude = self.request.query_params.get("fromLong", None)
         departure_latitude = self.request.query_params.get("fromLat", None)
         arrival_longitude = self.request.query_params.get("toLong", None)
         arrival_latitude = self.request.query_params.get("toLat", None)
 
         if earliest_departure_time is not None:
-            earliest_departure_time = datetime.strptime(earliest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
-            earliest_departure_time = make_aware(earliest_departure_time)
-            queryset = queryset.filter(earliest_departure_time__lte=earliest_departure_time)
-
-        if latest_departure_time is not None:
             latest_departure_time = datetime.strptime(latest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
             latest_departure_time = make_aware(latest_departure_time)
-            queryset = queryset.filter(latest_departure_time__gte=latest_departure_time)
+            queryset = queryset.filter(earliest_departure_time__lte=latest_departure_time)
 
-        if num_luggage_bags is not None:
-            queryset = queryset.filter(num_luggage_bags__lte=5 - int(num_luggage_bags))
+        if latest_departure_time is not None:
+            earliest_departure_time = datetime.strptime(earliest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
+            earliest_departure_time = make_aware(earliest_departure_time)
+            queryset = queryset.filter(latest_departure_time__gte=earliest_departure_time)
+
+        # if num_luggage_bags is not None:
+        #     queryset = queryset.filter(num_luggage_bags__lte=5 - int(num_luggage_bags))
 
         matching_trips = []
 
@@ -85,7 +89,7 @@ class TripListAPIView(views.APIView):
             arrival_longitude = float(arrival_longitude)
             to_coord = (arrival_latitude, arrival_longitude)
             for trip in queryset:
-                from_coord_2 = (trip.departure_location.latitude, trip.departure_location.longitude)
+                to_coord_2 = (trip.arrival_location.latitude, trip.arrival_location.longitude)
                 if geodesic(to_coord, to_coord_2).miles < 1:
                     matching_trips.append(trip)
         elif departure_latitude is not None and arrival_latitude is not None:
@@ -106,24 +110,6 @@ class TripListAPIView(views.APIView):
         serializer = SimpleTripSerializer(matching_trips, many=True)
         return Response(serializer.data)
 
-class ConfirmationRequestAPIView(views.APIView):
-    def get(self, request):
-        user = self.request.user
-        confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request__user=user)
-        serializer = SimpleConfirmationRequestSerializer(confirmation_requests, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request, pk):
-        action = self.request.query_params.get("action", None)
-        confirmation_request = ConfirmationRequest.objects.get(pk=pk)
-        # TODO: Do all the logic for preventing users from typing random stuff in the URL
-        if action == "accept":
-            confirmation_request.accept()
-        elif action == "reject":
-            confirmation_request.reject()
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
-        return Response(status=status.HTTP_200_OK)
 
 class JoinRequestAPIView(views.APIView):
     def post(self, request, pk):
@@ -161,7 +147,7 @@ class TripRequestAPIView(views.APIView):
 
         # TODO: depending on what we do for stale requests later, we might impose a max limit on the departure_time
 
-        if data['num_luggage_bags'] < 0 or data['num_luggage_bags'] > TripRequestAPIView.INDIVIDUAL_BAG_LIMIT: 
+        if data['num_luggage_bags'] < 0: # or data['num_luggage_bags'] > TripRequestAPIView.INDIVIDUAL_BAG_LIMIT: 
             validation_results['num_luggage_bags'] = f'Number of luggage bags must be between 0 and {TripRequestAPIView.INDIVIDUAL_BAG_LIMIT}.'
 
         return validation_results
@@ -212,7 +198,7 @@ class TripRequestAPIView(views.APIView):
             college=user_college,
             earliest_departure_time__lte=trip_request.latest_departure_time,
             latest_departure_time__gte=trip_request.earliest_departure_time,
-            num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
+            # num_luggage_bags__lte=5 - trip_request.num_luggage_bags,
             is_full=False,
         ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')[:5]
 

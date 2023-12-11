@@ -7,13 +7,13 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
 
-def send_confirm_email(user, trip):
-    subject = "Confirm request"
+def send_trip_joined_email(user, trip):
+    subject = "findaride: Joined a trip"
     from_email = settings.EMAIL_HOST_USER
     to = [user.email,]
 
     # Load the HTML template
-    html_content = render_to_string('emails/confirm_request.html', {'user': user, 'trip': trip})
+    html_content = render_to_string('emails/trip_joined.html', {'user': user, 'trip': trip})
 
     # Create the email body with both HTML and plain text versions
     text_content = strip_tags(html_content)

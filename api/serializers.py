@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from users.serializers import SimpleUserSerializer
 
-from .models import TripRequest, Trip, JoinRequest, Location, ConfirmationRequest
+from .models import TripRequest, Trip, JoinRequest, Location
 
 UserModel = get_user_model()
 
@@ -22,26 +22,12 @@ class JoinRequestTripSerializer(serializers.ModelSerializer):
         fields = ('num_participants_accepted', 'trip_details_changed', 'participants_that_accepted', 'trip', 'id')
 
 
-class SimpleConfirmationRequestSerializer(serializers.ModelSerializer):
-    join_request = JoinRequestTripSerializer()
-    class Meta:
-        model = ConfirmationRequest
-        fields = '__all__'
-
 class TripRequestSerializer(serializers.ModelSerializer):
     arrival_location = serializers.StringRelatedField()
     departure_location = serializers.StringRelatedField()
     user = SimpleUserSerializer()
     join_requests = JoinRequestTripSerializer(many=True)
-
-    confirmation_requests = serializers.SerializerMethodField('get_confirmation_requests')
-
     is_active = serializers.ReadOnlyField()
-    
-    def get_confirmation_requests(self, obj):
-        confirmation_requests = ConfirmationRequest.objects.filter(join_request__trip_request_id=obj.id)
-        serializer = SimpleConfirmationRequestSerializer(confirmation_requests, many=True)
-        return serializer.data
     
     class Meta:
         model = TripRequest
