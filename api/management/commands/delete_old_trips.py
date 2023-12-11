@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand
 from api.models import TripRequest, Trip
-import datetime
 from geopy.distance import geodesic
-from django.utils.timezone import make_aware
+from django.utils import timezone
+from datetime import timedelta
 
 class Command(BaseCommand):
     help = 'Delete old trips'
 
     def handle(self, *args, **kwargs):
-        old_trips = Trip.objects.filter(latest_departure_time__lte=make_aware(datetime.datetime.utcnow()))
+        old_trips = Trip.objects.filter(latest_departure_time__lte=(timezone.now()-timedelta(days=365)))
         for trip in old_trips.all():
             for participant in trip.participant_list.all():
                 user_stats = participant.user_stats
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.stdout.write(f'deleting {old_trips.count()} trips')
         old_trips.delete()
 
-        old_trip_requests = TripRequest.objects.filter(latest_departure_time__lte=make_aware(datetime.datetime.utcnow()))
+        old_trip_requests = TripRequest.objects.filter(latest_departure_time__lte=timezone.now())
 
         self.stdout.write(f'deleting {old_trip_requests.count()} trip requests')
         old_trip_requests.delete()
