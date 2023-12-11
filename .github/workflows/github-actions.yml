@@ -4,6 +4,6 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Delete old trips and trip requests
         run: python manage.py delete_old_trips
