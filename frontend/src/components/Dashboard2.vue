@@ -57,7 +57,7 @@
         </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
-          <!--Dashboard content-->
+            <ManageTripsTab :trips="trips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
         </div>
       </div>
 
@@ -71,9 +71,10 @@ import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
+import ManageTripsTab from './ManageTripsTab.vue';
 import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from './PopupModal.vue';
-import { getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
+import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
 import $ from "jquery";
 
 // ground truth data
