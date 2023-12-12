@@ -1,8 +1,7 @@
 <template>
   <div class="container-xl pt-4">
     <div class="narrow-container">
-      <h2 class="text-start">{{ user.first_name }} {{ user.last_name }} <span class="text-secondary text-small">({{
-        user.college_display }})</span></h2>
+      <h2 class="text-start">{{ user.first_name }} {{ user.last_name }} </h2>
       <!--TODO: insert cute section with ur stats eg how many trips, how many miles traveled etc-->
       <div class="mt-4">
         <h4 class="text-start">
@@ -146,71 +145,74 @@ function formatError(errorDict) {
 </script>
   
 <style>
-.col-2 {
-  margin-top: 1.1rem;
+body, .dashboard {
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #4A4A4A;
+  background-color: #F4F4F8;
 }
 
-.dashboard {
-  height: 100%;
-  font-family: 'Roboto', sans-serif;
-}
-
-.card {
-  background-color: #DCDCDC;
-  border-color: #DCDCDC;
-}
-
-.padding {
-  padding: 10px;
-  width: 100%;
-  height: 100%;
-  /* box-sizing: border-box; */
-  display: flex;
-  border-radius: 20px;
+.container-xl {
+  padding: 2rem;
 }
 
 .narrow-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 90%;
+  margin: 20px auto;
+  background: #FFFFFF;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
 }
 
-/* The Close Button */
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+h2, h4, h5 {
+  color: #333333;
+  margin-bottom: 1rem;
 }
 
 .text-small {
-  font-size: 16px;
-}
-
-.past-trips {
-  height: 500px;
-  overflow-y: scroll;
-  border: 2px solid rgb(203, 203, 203);
-  border-radius: 5px;
+  font-size: 0.9rem;
+  color: #6C757D;
 }
 
 .big-text {
-  font-size: 10em;
-  line-height: 0.65;
+  font-size: 4rem;
+  color: #007BFF;
 }
 
-.margin-right-1 {
-  margin-right: 50px;
+button, .accordion-button {
+  background-color: #3894f7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.header-border {
-  border-right: 1px;
-  border-bottom: 1px;
+button:hover, .accordion-button:hover {
+  background-color: #0056b3;
+}
+
+.row {
+  text-align: center;
+}
+
+.col-4 {
+  padding: 15px;
+}
+
+.accordion-item {
+  border: none;
+  border-bottom: 1px solid #ECECEC;
+  padding-bottom: 10px;
+}
+
+.accordion-header {
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .narrow-container {
+    max-width: 800px;
+  }
 }
 </style>

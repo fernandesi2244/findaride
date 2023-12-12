@@ -43,7 +43,6 @@
         and less on how you’ll get to your next destination.
       </p>
     </section>
-    <br>
     <section class="team">
       <h2>The team behind findaride</h2>
       <ul>
@@ -57,7 +56,6 @@
             href="https://www.linkedin.com/in/darren-alexis-210078256/">LinkedIn</a>)</li>
       </ul>
     </section>
-    <br>
     <section class="acknowledgments">
       <h2>Special thanks to</h2>
       <ul>
@@ -65,28 +63,77 @@
         <li>Robert Dondero - COS 333 Fall 2023 Professor</li>
       </ul>
     </section>
-    <footer class="footer" style="height:60px">
-      <nav>
-        <p>Developed at Princeton by Ian Fernandes, Dylan Li, Kohei Sanno, and Darren Alexis</p>
-      </nav>
-    </footer>
   </div>
 </template>
   
 <style scoped>
+.about {
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #4A4A4A;
+  background-color: #F4F4F8;
+  padding: 20px;
+  line-height: 1.6;
+}
+
+.header h1 {
+  text-align: center;
+  color: #333;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+}
+
+section {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: justify;
+}
+
+.team h2, .acknowledgments h2 {
+  font-size: 2rem;
+  color: #0056b3;
+  margin-bottom: 15px;
+}
+
 ul {
   list-style: none;
   padding: 0;
+  margin: 20px 0;
 }
 
-.footer nav li {
-  display: inline;
+ul li {
+  margin-bottom: 10px;
 }
 
-/* add margins on both left and right */
-section {
-  /* make text only take up the middle portion of the page */
-  max-width: 800px;
-  margin: 0 auto;
-}</style>
+ul li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+ul li a:hover {
+  text-decoration: underline;
+}
+
+.footer nav p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  section {
+    padding: 15px;
+  }
+
+  .team h2, .acknowledgments h2 {
+    font-size: 1.8rem;
+  }
+}
+
+</style>
   
