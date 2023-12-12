@@ -2,7 +2,6 @@
 <div id="app" class="box">
     <nav class="navbar" style="margin-bottom: 20px;">
         <div class="nav-content">
-
         <div v-if="isLoggedIn">
           <span class = text-size><router-link to="/">findaride</router-link></span>
         </div>
@@ -10,16 +9,14 @@
           <span class = text-size><router-link to="/">findaride</router-link></span>
         </div>
             <div class="right">
-
-                <!-- <router-link to="/">Home</router-link> | -->
-                
-                <router-link to="/about">About</router-link> |
-                <!----<a href="/accounts/login/">Login</a> |
-                <a href="/accounts/logout/">Logout</a> |
-                <router-link to="/login">Login</router-link> |
-                <router-link to="/signup">Sign Up</router-link>| ---->
-                <router-link to="/dashboard">Dashboard</router-link> |
-                <router-link to="/dashboard2">Dashboard</router-link> |
+                <!-- <router-link to="/">Home</router-link>-->
+                <router-link to="/about">About</router-link>
+                <!----<a href="/accounts/login/">Login</a>
+                <a href="/accounts/logout/">Logout</a>
+                <router-link to="/login">Login</router-link> 
+                <router-link to="/signup">Sign Up</router-link>---->
+                <router-link to="/dashboard">Dashboard</router-link>
+                <router-link to="/dashboard2">Dashboard</router-link> 
                 <router-link to="/profile">Profile</router-link>
             </div>
         </div>
@@ -54,54 +51,79 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-.modal.show {
-  z-index: 10000;
+  background-color: #F4F4F8;
 }
 
 .box {
   display: flex;
-  flex-flow: column;
+  flex-direction: column;
   height: 100vh;
 }
 
 .full-height {
-    height: 100%;
+  height: 100%;
 }
 
 .navbar {
-  background: #aed8ab;
-  box-shadow: 0 2px 4px rgba(182, 166, 166, 0.1);
-  padding: 0.5rem 2rem;
-  
+  background: rgb(45, 137, 237);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+  color: white;
 }
+
 .nav-content {
-  max-width: none;
-  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .navbar a {
   font-weight: bold;
-  color: #2c3e50;
+  color: white;
   text-decoration: none;
-  padding: 0 10px;
+  padding: 0 15px;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #d1e8ff;
 }
 
 .text-size {
-  font-size:22px;
+  font-size: 24px;
 }
 
 .right {
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .nav-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .right {
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .navbar a {
+    padding: 5px 0;
+    display: block;
+  }
+}
+
 </style>
