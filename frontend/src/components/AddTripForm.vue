@@ -29,6 +29,8 @@
               <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
             </div>
         </div>
+        <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest" class="btn btn-primary">Create a new trip</button>
+          
             <!-- <div class="form-actions">
               <button type="submit" class="btn primary">Find Matching Trips</button>
             </div> -->
@@ -80,6 +82,7 @@
           earliestDepartureTime: '',
           latestDepartureTime: '',
           luggageCount: 0,
+          comment: '',
         },
       }
     },
@@ -138,6 +141,31 @@
         console.log(this.$refs.tripFormHelpModal)
         this.$refs.tripFormHelpModal.show();
       },
+      async addManualTripRequest() {
+        if(!validateFormData(tripData)) return;
+        showCommentsAndLuggagePopup();
+        let data = {
+            "earliest_departure_time": trip.earliestDepartureTime,
+            "latest_departure_time": trip.latestDepartureTime,
+            "num_luggage_bags": trip.luggageCount,
+            "user": user.id,
+            "departure_location": trip.departure_location,
+            "arrival_location": trip.arrival_location,
+        };
+        
+        const endpoint = await endpoints["tripRequest"];
+        try {
+            const response = axios.post(endpoint, data);    
+            if (response.status === 200) {
+              alert("Trip created successfully!");
+            } else {
+              alert("Trip creation failed. Please try again.");
+            } 
+          }
+        catch (error) {
+            alert("Error creating trip: " + error.message);
+        }
+        },
       resetForm() {
         this.from = '';
         this.trip.fromLat = '';

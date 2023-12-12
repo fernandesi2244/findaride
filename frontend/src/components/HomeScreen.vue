@@ -1,19 +1,23 @@
 <template>
     <div class="home">
-        <div class="home-overlay"></div>
-        <div class="home-content">
-            <h3>Welcome to findaride!</h3>
-            <h4>Your one-stop solution to find affordable, timely rides back home.</h4>
-            <p class="tagline">
-              Are you tired of the hassle in finding a ride? Our platform revolutionizes the way people connect
-              for shared journeys. Whether you're heading to work, a concert, or just a weekend getaway, findaride
-              is here to help.
-            </p>
-            <button @click="goToLogin" class="btn-login">
-            Get Started
-            </button>
-            <!-- maybe include image -->
-            <!-- <img src="../components/images/rideshare.jpg" alt="Rideshare Image"> -->
+        <div class="container mx-auto row d-flex align-items-center px-4">
+          <div class="col-xl px-4">
+            <div style="max-width: 750px" class="mx-auto">
+              <h3>Welcome to findaride!</h3>
+              <h4>Your one-stop solution to find affordable, timely rides back home.</h4>
+              <p class="tagline">
+                Are you tired of the hassle in finding a ride? Our platform revolutionizes the way people connect
+                for shared journeys. Whether you're heading to work, a concert, or just a weekend getaway, findaride
+                is here to help.
+              </p>
+              <button @click="goToLogin" class="btn-login">
+                Get Started
+              </button>
+            </div>
+          </div>
+          <div class="col-xl">
+            <img class="img-fluid" src="static/home.svg" alt="Rideshare Image">
+          </div>
         </div>
     </div>
   </template>

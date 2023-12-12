@@ -35,12 +35,18 @@
           :items="filteredTrips"
           :headers="headers"
           item-key="id"
-          > 
-          <template v-slot:item.select="{ item }">
-            <v-checkbox v-model="selectedTrips" :value="item.id"></v-checkbox>
-          </template>
+          >
+            <!-- <template v-slot:item.data-table-select="{ item }">
+              <v-checkbox :checked="isSelected(item.id)" @change="toggleSelection(item.id)"></v-checkbox>
+            </template> -->
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
+            </template>
+            <template v-slot:item.is_full="{ item }">
+              <div class="text-start">
+                 {{ true }}
+                 <!-- <v-checkbox :checked="true" @change="toggleSelection(item.id)"></v-checkbox> -->
+              </div>
             </template>
             <template v-slot:item.earliest_departure_time="{ item }">
               <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
@@ -95,11 +101,20 @@ const confirmDialogue = ref(null);
 const selectedTrips = ref([]);
 
 const headers = ref([
-  {
+{
+    text: 'Select',
+    value: 'select',
+    sortable: false, 
+  },{
     title: 'Departure date',
     align: 'start',
     sortable: true,
     key: 'latest_departure_time',
+  },
+  {
+  title: 'hehe',
+  align: 'start',
+  sortable: false,
   },
   {
     title: 'Departure time range',
@@ -129,6 +144,18 @@ const headers = ref([
 
 function toggleTripModal() {
   addTripModal.value.show();
+}
+function isSelected(tripId) {
+  return selectedTrips.value.includes(tripId);
+}
+
+function toggleSelection(tripId) {
+  const index = selectedTrips.value.indexOf(tripId);
+  if (index >= 0) {
+    selectedTrips.value.splice(index, 1);
+  } else {
+    selectedTrips.value.push(tripId);
+  }
 }
 
 function toggleHelp() {
@@ -295,8 +322,7 @@ async function removeTripRequest(id) {
     }  
     loading.value = true;
     try {
-        // Replace with the actual API endpoint
-        const response = await axios.post(endpoints["joinTrips"], { trips: selectedTrips.value });
+        const response = await axios.post(endpoints["tripRequest"], { trips: selectedTrips.value });
         if (response.status === 200) {
           confirmDialogue.value.show({
             title: "You have successfully joined the trip!",
@@ -317,55 +343,7 @@ async function removeTripRequest(id) {
     goToManageTrips();
   }
 
-  function validateFormData() {
-    if (trips.departure_location|| trips.arrival_location) {
-        alert("Please enter both pickup and dropoff locations.");
-        return false;
-    }
-    if (!earliestDepartureTime || !latestDepartureTime) {
-        alert("Please enter both earliest and latest departure times.");
-        return false;
-    }
-    if (trips.luggageCount < 0) {
-        alert("Please enter a valid number of luggage bags.");
-        return false;
-    }
-    return true;
-  }
-
-  async function addManualTripRequest() {
-    if(!validateFormData()) return;
-    showCommentsAndLuggagePopup();
-    let data = {
-        "earliest_departure_time": earliestDepartureTime,
-        "latest_departure_time": latestDepartureTime,
-        "num_luggage_bags": trips.luggageCount,
-        "user": user.id,
-        "departure_location": trips.departure_location,
-        "arrival_location": trips.arrival_location,
-        "comment": tripComment.value  
-    };
-    
-    const endpoint = endpoints["tripRequest"];
-    try {
-        const response = await axios.post(endpoint, data);    
-        if (response.status === 200) {
-          alert("Trip created successfully!");
-        } else {
-          alert("Trip creation failed. Please try again.");
-        } 
-      }
-    catch (error) {
-        alert("Error creating trip: " + error.message);
-    }
-}
-
-function showCommentsAndLuggagePopup() {
-    const comment = prompt("Please enter any additional comments:");
-    if (comment !== null) {
-        tripComment.value = comment;
-    }
-}
+  
 
 </script>
   
