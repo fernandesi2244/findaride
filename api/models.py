@@ -49,9 +49,13 @@ class Trip(models.Model):
             # delete associated stuff like TripUserDetails
             self.delete()
             return
-            
-        
+
         send_member_left_email(self.participant_list,)
+
+        # mark all join requests to this trip as trip details changed
+        for joinRequest in self.join_requests.all():
+            joinRequest.trip_details_changed = True
+            joinRequest.save()
 
         curr_utc_time = make_aware(datetime.datetime.utcnow())
 
@@ -73,7 +77,7 @@ class TripUserDetails(models.Model):
     latest_departure_time = models.DateTimeField()
 
     num_luggage_bags = models.IntegerField()
-    
+
 # created when a user submits the trip request form from the dashboard
 class TripRequest(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
@@ -166,6 +170,11 @@ class JoinRequest(models.Model):
 
             # send email to team indicating new team along with details
             send_trip_joined_email(trip.participant_list, user)
+
+            # mark all other join requests to this trip as trip details changed
+            for joinRequest in trip.join_requests.all():
+                joinRequest.trip_details_changed = True
+                joinRequest.save()
     
     def reject(self):
         """

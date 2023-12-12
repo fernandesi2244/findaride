@@ -40,7 +40,7 @@
             <v-checkbox v-model="selectedTrips" :value="item.id"></v-checkbox>
           </template>
             <template v-slot:item.latest_departure_time="{ item }">
-              <div class="text-start">{{ getDate(item.earliest_departure_time) }}</div>
+              <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
             </template>
             <template v-slot:item.earliest_departure_time="{ item }">
               <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
@@ -50,6 +50,9 @@
             </template>
             <template v-slot:item.arrival_location="{ item }">
               <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
+            </template>
+            <template v-slot:item.num_luggage_bags="{ item }">
+              <div class="text-start">{{ item.num_luggage_bags }}</div>
             </template>
         </v-data-table>
         </div>
