@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import make_aware
-from api.utils import send_trip_joined_email, send_member_left_email, create_new_trip
+from api.utils import send_trip_joined_email, send_member_left_email
 from geopy.distance import geodesic
 
 import datetime
@@ -186,3 +186,27 @@ class JoinRequest(models.Model):
         # trips they can join, then we should create a new trip for them.
 
         self.delete()
+
+@staticmethod
+def create_new_trip(trip_request):
+    new_trip = Trip.objects.create(
+        num_participants=1,
+        departure_location=trip_request.departure_location,
+        arrival_location=trip_request.arrival_location,
+        earliest_departure_time=trip_request.earliest_departure_time,
+        latest_departure_time=trip_request.latest_departure_time,
+        num_luggage_bags=trip_request.num_luggage_bags,
+        num_join_requests=0,
+        college=trip_request.user.college,
+        is_full=False
+    )
+    new_trip.participant_list.add(trip_request.user)
+    TripUserDetails.objects.create(
+        trip=new_trip,
+        user=trip_request.user,
+        earliest_departure_time=trip_request.earliest_departure_time,
+        latest_departure_time=trip_request.latest_departure_time,
+        num_luggage_bags=trip_request.num_luggage_bags
+    )
+
+    return new_trip
