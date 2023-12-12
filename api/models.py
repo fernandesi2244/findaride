@@ -48,7 +48,7 @@ class Trip(models.Model):
             self.delete()
             return
 
-        send_member_left_email(self.participant_list,)
+        send_member_left_email(self.participant_list, self)
 
         # mark all join requests to this trip as trip details changed
         for joinRequest in self.join_requests.all():

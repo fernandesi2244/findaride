@@ -36,6 +36,7 @@ class TripRequestListAPIView(generics.ListAPIView):
     queryset = TripRequest.objects.all()
 
 class TripListAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
@@ -164,6 +165,8 @@ class JoinSelectedTripsAPIView(views.APIView):
         return Response(status=status.HTTP_200_OK)
 
 class TripRequestAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = TripRequestSerializer
 
     INDIVIDUAL_BAG_LIMIT = 5 # TODO: change if we mess with bag filtering
