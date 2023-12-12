@@ -32,12 +32,14 @@
                         </div>
                     </div>
                     <!-- put each member on a separate line -->
-                    <h6 v-for="participant in trip.participant_list" :key="participant.id" class="text-start">
+                    <!-- print all trip participants except current user -->
+                    <h6 class="text-start">You</h6>
+                    <h6 v-for="participant in trip.participant_list.filter(participant => participant.id !== userID)" :key="participant.id" class="text-start">
                         {{ nameEmail(participant) }}
                     </h6>
                     <div class="tooltip" style="margin-bottom: 10px;">
                         <button class="btn-text copy-emails-btn"
-                            @click="copyEmailsOf(trip.participant_list, trip.id)">
+                            @click="copyEmailsOf(trip.participant_list.filter(participant => participant.id !== userID), trip.id)">
                             Copy emails
                         </button>
                         <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to
@@ -124,14 +126,20 @@ import { toRefs, defineProps, defineEmits, computed } from 'vue';
 import { getDatePart, getDate, getTime, cleanLocation, nameEmail, getTimeRange, getDateDiff } from '../components/common.js'
 
 
-const props = defineProps(['trip'])
-const { trip } = toRefs(props)
+const props = defineProps(['trip', 'userID'])
+const { trip, userID} = toRefs(props)
 
 const emit = defineEmits(['acceptJoinRequest', 'rejectJoinRequest', 'leaveTrip', 'toggleTripIsFull'])
 
 const numRidersText = computed(() => {
     console.log(trip.value.participant_list)
-    return "You + " + String(trip.value.participant_list.length) + " others"
+    const numOthers = trip.value.participant_list.length - 1
+    if (numOthers == 0) {
+        return "You"
+    } else if (numOthers == 1) {
+        return "You + 1 other"
+    }
+    return "You + " + String(numOthers) + " others"
 })
 
 function showTooltip(id) {

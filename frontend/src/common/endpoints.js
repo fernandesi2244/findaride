@@ -13,6 +13,7 @@ const endpoints = {
   userTrips: `${apiEndpoint}/user-trips/`,
   deleteTripRequest: `${apiEndpoint}/delete-trip-request/`,
   joinRequests: `${apiEndpoint}/join-requests/`,
+  joinSelectedTrips: `${apiEndpoint}/join-selected-trips/`,
 };
 
 export { endpoints };

@@ -6,7 +6,7 @@
       <div class="spinner-border" style="z-index: 104; width: 6rem; height: 6rem;" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <h5>Finding matches...</h5>
+      <h5>Sending requests...</h5>
     </div>
   </div>
   <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
@@ -26,30 +26,20 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
-          <AddTripForm @getTrips="getFilteredTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
-          <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest" class="btn btn-primary">Create a new trip</button>
+          <AddTripForm @getTrips="getFilteredTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData"
+            ref="addTripModal"></AddTripForm>
+          <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
+            class="btn btn-primary">Create a new trip</button>
           <button @click="joinSelectedTrips" class="btn btn-primary">
             Join Selected Trips
           </button>
-          <v-data-table
-          :items="filteredTrips"
-          :headers="headers"
-          item-key="id"
-          >
-            <!-- <template v-slot:item.data-table-select="{ item }">
-              <v-checkbox :checked="isSelected(item.id)" @change="toggleSelection(item.id)"></v-checkbox>
-            </template> -->
+          <v-data-table v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
             </template>
-            <template v-slot:item.is_full="{ item }">
-              <div class="text-start">
-                 {{ true }}
-                 <!-- <v-checkbox :checked="true" @change="toggleSelection(item.id)"></v-checkbox> -->
-              </div>
-            </template>
             <template v-slot:item.earliest_departure_time="{ item }">
-              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
+              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time)
+              }}</div>
             </template>
             <template v-slot:item.departure_location="{ item }">
               <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
@@ -60,10 +50,10 @@
             <template v-slot:item.num_luggage_bags="{ item }">
               <div class="text-start">{{ item.num_luggage_bags }}</div>
             </template>
-        </v-data-table>
+          </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
-            <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
+          <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
         </div>
       </div>
 
@@ -101,20 +91,11 @@ const confirmDialogue = ref(null);
 const selectedTrips = ref([]);
 
 const headers = ref([
-{
-    text: 'Select',
-    value: 'select',
-    sortable: false, 
-  },{
+  {
     title: 'Departure date',
     align: 'start',
     sortable: true,
     key: 'latest_departure_time',
-  },
-  {
-  title: 'hehe',
-  align: 'start',
-  sortable: false,
   },
   {
     title: 'Departure time range',
@@ -145,18 +126,6 @@ const headers = ref([
 function toggleTripModal() {
   addTripModal.value.show();
 }
-function isSelected(tripId) {
-  return selectedTrips.value.includes(tripId);
-}
-
-function toggleSelection(tripId) {
-  const index = selectedTrips.value.indexOf(tripId);
-  if (index >= 0) {
-    selectedTrips.value.splice(index, 1);
-  } else {
-    selectedTrips.value.push(tripId);
-  }
-}
 
 function toggleHelp() {
   if (tripHelpModalRef.value) {
@@ -182,8 +151,8 @@ function goToTripRequestsTab() {
   $("#triprequests-tab").click();
 }
 function goToManageTrips() {
-    $("#manageTrip").click();
-  }
+  $("#manageTrip").click();
+}
 
 async function getUserInfo() {
   const endpoint = endpoints["me"];
@@ -192,7 +161,7 @@ async function getUserInfo() {
 }
 
 async function getUserTrips() {
-  const endpoint = `${endpoints["userTrips"]}${user.id}/`;
+  const endpoint = `${endpoints["userTrips"]}`;
   const response = await axios.get(endpoint, { params: { when: "upcoming" } });
   tripRequests.value = response.data.trip_requests;
   userTrips.value = response.data.trips;
@@ -315,35 +284,32 @@ async function removeTripRequest(id) {
     }
   }
 }
-  async function joinSelectedTrips() {
-    if (selectedTrips.value.length === 0) {
-      alert("Please select at least one trip.");
-      return;
-    }  
-    loading.value = true;
-    try {
-        const response = await axios.post(endpoints["tripRequest"], { trips: selectedTrips.value });
-        if (response.status === 200) {
-          confirmDialogue.value.show({
-            title: "You have successfully joined the trip!",
-            message: "Congrats! You have successfully requested joined the trip. We have sent requests to join on your behalf, and you will receive an email if they accept.",
-            cancelButton: "Close"
-          });
-          console.log("Trips joined successfully:", response.data);
-        } else {
-            console.error("Failed to join trips:", response.data);
-        }
-    } catch (error) {
-        console.error("Error joining trips:", error);
-        alert("Error joining trips: " + error.message);
-    } finally {
-        loading.value = false;
-    }
-    
-    goToManageTrips();
+async function joinSelectedTrips() {
+  if (selectedTrips.value.length === 0) {
+    alert("Please select at least one trip.");
+    return;
   }
-
-  
+  loading.value = true;
+  try {
+    const response = await axios.post(endpoints["joinSelectedTrips"], { selected_trip_ids: selectedTrips.value });
+    if (response.status === 200) {
+      confirmDialogue.value.show({
+        title: "Requested to join the selected trip(s)!",
+        message: "We have sent requests to join the selected trips on your behalf, and you will receive an email notification when any group accepts.",
+        cancelButton: "Close"
+      });
+      loading.value = false;
+      goToManageTrips();
+    } else {
+      console.error("Request to join trips failed:", response.data);
+    }
+  } catch (error) {
+    console.error("Error requesting to join selected trips:", error);
+    alert("Error requesting to join selected trips: " + error.message);
+  } finally {
+    loading.value = false;
+  }
+}
 
 </script>
   

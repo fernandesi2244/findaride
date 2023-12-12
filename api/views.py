@@ -127,6 +127,42 @@ class JoinRequestAPIView(views.APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
         return Response(status=status.HTTP_200_OK)
 
+class JoinSelectedTripsAPIView(views.APIView):
+    def post(self, request):
+        selected_trip_ids = request.data['selected_trip_ids']
+        if selected_trip_ids is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "No trips selected."})
+        user = request.user
+        trip_request = TripRequest.objects.create(
+            user = user,
+            departure_location = Location.objects.get(pk=1),
+            arrival_location = Location.objects.get(pk=1),
+            earliest_departure_time = datetime.utcnow(),
+            latest_departure_time = datetime.utcnow(),
+            num_luggage_bags = -1,
+            comment = 'TODO: FIX THIS!'
+        )
+        trip_request.save()
+        request_made = False
+        for trip_id in selected_trip_ids:
+            try:
+                trip = Trip.objects.get(pk=trip_id)
+            except Exception as e:
+                continue
+            request_made = True
+            join_request = JoinRequest.objects.create(
+                num_participants_accepted=0,
+                trip_details_changed=False,
+                trip_request=trip_request,
+                trip=trip
+            )
+            join_request.save()
+            send_join_email(trip.participant_list, trip)
+        
+        if not request_made:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "The requested trips do not exist."})
+        return Response(status=status.HTTP_200_OK)
+
 class TripRequestAPIView(views.APIView):
     serializer_class = TripRequestSerializer
 

@@ -9,6 +9,7 @@
             <div v-for="trip in sortedTrips" :key="trip.type + trip.id" class="accordion-item">
                 <div v-if="trip.type === 't'">
                     <TripCard :trip="trip"
+                              :userID="userID"
                               @acceptJoinRequest="acceptJoinRequest"
                               @rejectJoinRequest="rejectJoinRequest"
                               @leaveTrip="leaveTrip"

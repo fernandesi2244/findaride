@@ -118,7 +118,7 @@ async function getUserInfo() {
 }
 
 async function getUserTrips() {
-  const endpoint = `${endpoints["userTrips"]}${user.id}/`;
+  const endpoint = `${endpoints["userTrips"]}`;
   const response = await axios.get(endpoint);
   tripRequests.value = response.data.trip_requests;
   trips.value = response.data.trips;
