@@ -62,6 +62,7 @@
       TripFormHelpModal,
       
     },
+    emits: ['addTripRequest', 'refreshTrips', 'getTrips'],
     data() {
       return {
         showInvalidLocationModal: false,

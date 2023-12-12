@@ -114,7 +114,10 @@ class TripListAPIView(views.APIView):
 class JoinRequestAPIView(views.APIView):
     def post(self, request, pk):
         action = self.request.query_params.get("action", None)
-        join_request = JoinRequest.objects.get(pk=pk)
+        try:
+            join_request = JoinRequest.objects.get(pk=pk)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
         # TODO: Do all the logic for preventing users from typing random stuff in the URL
         if action == "accept":
             join_request.accept(self.request.user)
@@ -193,7 +196,6 @@ class TripRequestAPIView(views.APIView):
         blacklisted_trips_id = user.blacklisted_trips.values('id')
         user_trip_ids = user.trips.values('id')
 
-        # Once we get lats/lons, update this. For now, just match on postal code.
         pre_matching_trips = Trip.objects.filter(
             college=user_college,
             earliest_departure_time__lte=trip_request.latest_departure_time,
@@ -223,7 +225,6 @@ class TripRequestAPIView(views.APIView):
                 num_luggage_bags=trip_request.num_luggage_bags,
                 num_participants=1,
                 is_full=False,
-                num_join_requests=0
             )
             trip.participant_list.add(trip_request.user)
             trip.save()
@@ -249,7 +250,6 @@ class TripRequestAPIView(views.APIView):
                 trip=trip
             )
             join_request.save()
-            trip.num_join_requests += 1
             trip.save()
 
             send_join_email(trip.participant_list, trip)
@@ -265,10 +265,8 @@ class TripRequestAPIView(views.APIView):
             departure_location = matching_departure_locations[0]
         else:
             location = geolocator.reverse((departure_location['latitude'], departure_location['longitude']), addressdetails=True)
-            #location = geolocator.geocode({"postalcode": departure_location['postal_code']})
             departure_location = Location.objects.create(
                 address = departure_location['address'],
-                postal_code = location.raw['address']['postcode'],
                 latitude = departure_location['latitude'],
                 longitude = departure_location['longitude'],
             )
@@ -282,7 +280,6 @@ class TripRequestAPIView(views.APIView):
             location = geolocator.reverse((arrival_location['latitude'], arrival_location['longitude']), addressdetails=True)
             arrival_location = Location.objects.create(
                 address = arrival_location['address'],
-                postal_code = location.raw['address']['postcode'],
                 latitude = arrival_location['latitude'],
                 longitude = arrival_location['longitude'],
             )
@@ -292,13 +289,13 @@ class TripRequestAPIView(views.APIView):
 
     def delete(self, request, pk):
         # TODO: Atomicize this
-        tripRequest = TripRequest.objects.get(pk=pk)
+        try:
+            tripRequest = TripRequest.objects.get(pk=pk)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
         try:
             joinRequests = tripRequest.join_requests.all()
             for joinRequest in joinRequests:
-                associatedTrip = joinRequest.trip
-                associatedTrip.num_join_requests -= 1
-                associatedTrip.save()
                 joinRequest.delete()
             tripRequest.delete()
             return Response(status=status.HTTP_200_OK)
@@ -309,6 +306,30 @@ class UserTripsDetailAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     queryset = UserModel.objects.all()
     serializer_class = UserTripsSerializer
+
+    def get(self, request):
+        when = self.request.query_params.get("when", None)
+        if when is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "No time span provided."})
+        elif when == "past" or when == "upcoming":
+            user = self.request.user
+            associated_trips = user.trips.all()
+            associated_trip_requests = user.trip_requests.all()
+
+            utcnow = datetime.utcnow()
+
+            if when == "past":
+                associated_trips = associated_trips.filter(latest_departure_time__lt=utcnow)
+                associated_trip_requests = associated_trip_requests.filter(latest_departure_time__lt=utcnow)
+            elif when == "upcoming":
+                associated_trips = associated_trips.filter(latest_departure_time__gte=utcnow)
+                associated_trip_requests = associated_trip_requests.filter(latest_departure_time__gte=utcnow)
+
+            return Response(status=status.HTTP_200_OK, data={
+                "trips": SimpleTripSerializer(associated_trips, many=True).data,
+                "trip_requests": SimpleTripRequestSerializer(associated_trip_requests, many=True).data,
+                "id": user.id,
+            })
 
 class TripAPIView(views.APIView):
     serializer_class = SimpleTripSerializer
@@ -324,8 +345,7 @@ class TripAPIView(views.APIView):
             trip.remove_user(self.request.user)
             return Response(status=status.HTTP_200_OK)
         elif action == "toggleIsFullSetting":
-            trip.is_full = not trip.is_full
-            trip.save()
+            trip.toggle_is_full_setting()
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})

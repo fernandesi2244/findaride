@@ -21,18 +21,18 @@
             a new trip</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip">Manage my trips</a>
+          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button">Manage my trips</a>
         </li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
-          <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
+          <AddTripForm @getTrips="getFilteredTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
           <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest" class="btn btn-primary">Create a new trip</button>
           <button @click="joinSelectedTrips" class="btn btn-primary">
             Join Selected Trips
           </button>
           <v-data-table
-          :items="trips"
+          :items="filteredTrips"
           :headers="headers"
           item-key="id"
           > 
@@ -57,7 +57,7 @@
         </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
-            <ManageTripsTab :trips="trips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
+            <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
         </div>
       </div>
 
@@ -79,12 +79,20 @@ import $ from "jquery";
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
-const trips = ref([]);
+const filteredTrips = ref([]);
+const userTrips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
 const tripHelpModalRef = ref(null);
 
 const loading = ref(false);
+
+// display vars
+const showTripForm = ref(true)
+const tripComment = ref("");
+const addTripModal = ref(null)
+const confirmDialogue = ref(null);
+const selectedTrips = ref([]);
 
 const headers = ref([
   {
@@ -119,13 +127,6 @@ const headers = ref([
   },
 ])
 
-// display vars
-const showTripForm = ref(true)
-const tripComment = ref("");
-const addTripModal = ref(null)
-const confirmDialogue = ref(null);
-const selectedTrips = ref([]);
-
 function toggleTripModal() {
   addTripModal.value.show();
 }
@@ -141,8 +142,9 @@ async function refreshData() {
   getUserTrips();
 }
 onMounted(async () => {
-  await getTrips({});
   await getUserInfo();
+  await getFilteredTrips({});
+  await getUserTrips();
 });
 
 function goToTripsTab() {
@@ -164,14 +166,14 @@ async function getUserInfo() {
 
 async function getUserTrips() {
   const endpoint = `${endpoints["userTrips"]}${user.id}/`;
-  const response = await axios.get(endpoint);
+  const response = await axios.get(endpoint, { params: { when: "upcoming" } });
   tripRequests.value = response.data.trip_requests;
-  trips.value = response.data.trips;
+  userTrips.value = response.data.trips;
 
   userID.value = response.data.id;
 }
 
-async function getTrips(params) {
+async function getFilteredTrips(params) {
   let endpoint = `${endpoints["trip"]}?`;
 
   for (const [key, value] of Object.entries(params)) {
@@ -186,7 +188,7 @@ async function getTrips(params) {
   }
   console.log(endpoint)
   const response = await axios.get(endpoint);
-  trips.value = response.data;
+  filteredTrips.value = response.data;
 }
 
 async function addTripRequest(newTripRequest) {

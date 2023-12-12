@@ -48,8 +48,8 @@
         </div>
       </div>
       <h4>Your past trips</h4>
-      <div v-if="pastTrips.length > 0" class="past-trips accordion" id="accordion">
-        <div v-for="trip in pastTrips" :key="trip.college + trip.id" class="accordion-item">
+      <div v-if="trips.length > 0" class="past-trips accordion" id="accordion">
+        <div v-for="trip in trips" :key="trip.college + trip.id" class="accordion-item">
           <h2 class="accordion-header">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
               :data-bs-target="'#' + trip.college + trip.id">
@@ -100,15 +100,6 @@ const userStats = reactive({
 const trips = ref([]);
 const userID = ref(0);
 
-const pastTrips = computed(() => {
-  return trips.value.filter((item) => {
-    // check if trip is in the past
-    const now = new Date();
-    const tripTime = new Date(item.latest_departure_time);
-    return tripTime < now;
-  });
-})
-
 const addTripModal = ref(null)
 
 async function refreshData() {
@@ -130,7 +121,7 @@ async function getUserInfo() {
 
 async function getUserTrips() {
   const endpoint = `${endpoints["userTrips"]}${user.id}/`;
-  const response = await axios.get(endpoint);
+  const response = await axios.get(endpoint, { params: { when: "past" } });
   trips.value = response.data.trips;
 
   userID.value = response.data.id;

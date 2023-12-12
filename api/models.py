@@ -7,7 +7,6 @@ import datetime
 
 class Location(models.Model):
     address = models.CharField(max_length=255)
-    postal_code = models.CharField(max_length=12, default='00000') # see https://www.quora.com/What-is-the-maximum-number-of-digits-in-a-zipcode-postal-code-for-a-place-in-this-universe
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
 
@@ -24,7 +23,6 @@ class Trip(models.Model):
     earliest_departure_time = models.DateTimeField()
     latest_departure_time = models.DateTimeField()
     num_luggage_bags = models.IntegerField()
-    num_join_requests = models.IntegerField()
     blacklisted_users = models.ManyToManyField('users.CustomUser', related_name='blacklisted_trips', blank=True) # can use user.blacklisted_trips.all() to get all trips a user is blacklisted from
     college = models.CharField(max_length=5)
 
@@ -68,6 +66,21 @@ class Trip(models.Model):
         self.latest_departure_time = TripUserDetails.objects.filter(trip=self).aggregate(models.Min('latest_departure_time'))['latest_departure_time__min']
 
         self.save()
+    
+    def toggle_is_full_setting(self):
+        self.is_full = not self.is_full
+        self.save()
+
+        if self.is_full:
+            # clear all join requests to this trip
+            for joinRequest in self.join_requests.all():
+                # if the trip request associated with this join request has no more join requests, then create a new trip for the user
+                if joinRequest.trip_request.join_requests.count() == 1:
+                    create_new_trip(joinRequest.trip_request)
+                    joinRequest.trip_request.delete()
+                joinRequest.delete()
+
+                self.save()
 
 class TripUserDetails(models.Model):
     trip = models.ForeignKey('Trip', related_name='user_timespans', on_delete=models.CASCADE)
@@ -145,7 +158,6 @@ class JoinRequest(models.Model):
             trip.num_participants += 1
             trip.participant_list.add(user)
             trip.num_luggage_bags += tripRequest.num_luggage_bags
-            trip.num_join_requests -= 1
 
             # update the trip's timespan to be the intersection of the trip's timespan and the user's timespan (max possible overlap)
             trip.earliest_departure_time = max(trip.earliest_departure_time, tripRequest.earliest_departure_time)
@@ -182,7 +194,6 @@ class JoinRequest(models.Model):
         add the user to the trip's blacklist.
         """
         trip = self.trip
-        trip.num_join_requests -= 1
         trip.blacklisted_users.add(self.trip_request.user)
         trip.save()
 
@@ -205,7 +216,6 @@ def create_new_trip(trip_request):
         earliest_departure_time=trip_request.earliest_departure_time,
         latest_departure_time=trip_request.latest_departure_time,
         num_luggage_bags=trip_request.num_luggage_bags,
-        num_join_requests=0,
         college=trip_request.user.college,
         is_full=False
     )
