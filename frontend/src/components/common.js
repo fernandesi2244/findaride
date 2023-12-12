@@ -14,8 +14,43 @@ export function formatError(errorDict) {
   }
 }
 
+export function getDateDiff(startString, endString) {
+    const start = new Date(startString)
+    const end = new Date(endString)
+    const diff = Math.round((end - start) / (1000 * 60 * 60 * 24))
+    if(diff > 0) {
+        return "+" + String(diff)
+    }
+    return ""
+}
+
+const months = {
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec"
+}
+
+export function getDateRange(startString, endString) {
+    return getDate(startString) + "  " + getTime(startString) + " – " + getTime(endString)
+}
+
+export function getTimeRange(startString, endString) {
+    return getTime(startString) + " – " + getTime(endString)
+}
+
 export function getDate(dateString) {
-  return new Date(dateString).toLocaleDateString();
+    const date = new Date(dateString)
+    return months[date.getMonth()] + ". " + date.getDate() + " " + date.getFullYear() 
+    // return new Date(dateString).toLocaleDateString();
 }
 
 export function getDateOrRange(firstDateString, secondDateString) {
