@@ -48,3 +48,17 @@ def send_member_left_email(participant_list):
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, "text/html")
     email.send()
+
+def send_absolute_rejection_email(user, trip):
+    subject = "findaride: Request(s) to join trip(s) failed"
+    from_email = settings.EMAIL_HOST_USER
+    to = [user.email,]
+
+    # Load the HTML template
+    html_content = render_to_string('emails/absolute_rejection.html', {'user': user})
+
+    # Create the email body with both HTML and plain text versions
+    text_content = strip_tags(html_content)
+    email = EmailMultiAlternatives(subject, text_content, from_email, to)
+    email.attach_alternative(html_content, "text/html")
+    email.send()

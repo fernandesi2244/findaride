@@ -23,8 +23,6 @@ class JoinRequestTripSerializer(serializers.ModelSerializer):
 
 
 class TripRequestSerializer(serializers.ModelSerializer):
-    arrival_location = serializers.StringRelatedField()
-    departure_location = serializers.StringRelatedField()
     user = SimpleUserSerializer()
     join_requests = JoinRequestTripSerializer(many=True)
     
@@ -39,8 +37,6 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class SimpleTripRequestSerializer(serializers.ModelSerializer):
-    arrival_location = serializers.StringRelatedField()
-    departure_location = serializers.StringRelatedField()
     user = SimpleUserSerializer()
     class Meta:
         model = TripRequest

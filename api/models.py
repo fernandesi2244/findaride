@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import make_aware
-from api.utils import send_trip_joined_email, send_member_left_email
+from api.utils import send_trip_joined_email, send_member_left_email, send_absolute_rejection_email
 from geopy.distance import geodesic
 
 import datetime
@@ -44,7 +44,12 @@ class Trip(models.Model):
         self.save()
 
         if self.num_participants == 0:
-            # delete associated stuff like TripUserDetails
+            # delete all join requests to this trip
+            for join_request in self.join_requests.all():
+                if joinRequest.trip_request.join_requests.count() == 1:
+                    send_absolute_rejection_email(joinRequest.trip_request.user)
+                    joinRequest.trip_request.delete()
+                join_request.delete()
             self.delete()
             return
 
@@ -76,7 +81,7 @@ class Trip(models.Model):
             for joinRequest in self.join_requests.all():
                 # if the trip request associated with this join request has no more join requests, then create a new trip for the user
                 if joinRequest.trip_request.join_requests.count() == 1:
-                    create_new_trip(joinRequest.trip_request)
+                    send_absolute_rejection_email(joinRequest.trip_request.user)
                     joinRequest.trip_request.delete()
                 joinRequest.delete()
 
@@ -91,14 +96,13 @@ class TripUserDetails(models.Model):
 
     num_luggage_bags = models.IntegerField()
 
+    trip_nickname = models.CharField(max_length=255, blank=True)
+
 # created when a user submits the trip request form from the dashboard
 class TripRequest(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name='trip_requests')
-    departure_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
-    arrival_location = models.ForeignKey(Location, on_delete=models.RESTRICT, related_name='+')
-    earliest_departure_time = models.DateTimeField()
-    latest_departure_time = models.DateTimeField()
+    trip_nickname = models.CharField(max_length=255, blank=True)
     num_luggage_bags = models.IntegerField()
     comment = models.CharField(max_length=255, blank=True)
 
@@ -129,7 +133,7 @@ class JoinRequest(models.Model):
 
         if self.trip.is_full:
             if self.trip_request.join_requests.count() == 1:
-                create_new_trip(self.trip_request)
+                send_absolute_rejection_email(self.trip_request.user)
                 self.trip_request.delete()
         
             # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
@@ -159,9 +163,6 @@ class JoinRequest(models.Model):
             trip.participant_list.add(user)
             trip.num_luggage_bags += tripRequest.num_luggage_bags
 
-            # update the trip's timespan to be the intersection of the trip's timespan and the user's timespan (max possible overlap)
-            trip.earliest_departure_time = max(trip.earliest_departure_time, tripRequest.earliest_departure_time)
-            trip.latest_departure_time = min(trip.latest_departure_time, tripRequest.latest_departure_time)
             trip.save()
 
             TripUserDetails.objects.create(
@@ -169,7 +170,8 @@ class JoinRequest(models.Model):
                 user=user,
                 earliest_departure_time=tripRequest.earliest_departure_time,
                 latest_departure_time=tripRequest.latest_departure_time,
-                num_luggage_bags=tripRequest.num_luggage_bags
+                num_luggage_bags=tripRequest.num_luggage_bags,
+                trip_nickname=tripRequest.trip_nickname
             )
 
             # remove all join requests from the trip request
@@ -199,7 +201,7 @@ class JoinRequest(models.Model):
 
         # If this was the last join request for the trip request, then create a new trip for the user
         if self.trip_request.join_requests.count() == 1:
-            create_new_trip(self.trip_request)
+            send_absolute_rejection_email(self.trip_request.user)
             self.trip_request.delete()
         
         # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
@@ -225,7 +227,8 @@ def create_new_trip(trip_request):
         user=trip_request.user,
         earliest_departure_time=trip_request.earliest_departure_time,
         latest_departure_time=trip_request.latest_departure_time,
-        num_luggage_bags=trip_request.num_luggage_bags
+        num_luggage_bags=trip_request.num_luggage_bags,
+        trip_nickname=trip_request.trip_nickname
     )
 
     return new_trip
