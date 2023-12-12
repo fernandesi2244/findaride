@@ -26,15 +26,24 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
-          <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData"
-            ref="addTripModal"></AddTripForm>
-          <v-data-table :items="trips" :headers="headers">
+          <AddTripForm @getTrips="getTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripForm>
+          <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest" class="btn btn-primary">Create a new trip</button>
+          <button @click="joinSelectedTrips" class="btn btn-primary">
+            Join Selected Trips
+          </button>
+          <v-data-table
+          :items="trips"
+          :headers="headers"
+          item-key="id"
+          > 
+          <template v-slot:item.select="{ item }">
+            <v-checkbox v-model="selectedTrips" :value="item.id"></v-checkbox>
+          </template>
             <template v-slot:item.latest_departure_time="{ item }">
-              <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
+              <div class="text-start">{{ getDate(item.earliest_departure_time) }}</div>
             </template>
             <template v-slot:item.earliest_departure_time="{ item }">
-              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time)
-              }}</div>
+              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time) }}</div>
             </template>
             <template v-slot:item.departure_location="{ item }">
               <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
@@ -42,10 +51,7 @@
             <template v-slot:item.arrival_location="{ item }">
               <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
             </template>
-            <template v-slot:item.num_luggage_bags="{ item }">
-              <div class="text-start">{{ item.num_luggage_bags }}</div>
-            </template>
-          </v-data-table>
+        </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
           <!--Dashboard content-->
@@ -111,9 +117,10 @@ const headers = ref([
 
 // display vars
 const showTripForm = ref(true)
-
+const tripComment = ref("");
 const addTripModal = ref(null)
 const confirmDialogue = ref(null);
+const selectedTrips = ref([]);
 
 function toggleTripModal() {
   addTripModal.value.show();
@@ -141,6 +148,9 @@ function goToTripsTab() {
 function goToTripRequestsTab() {
   $("#triprequests-tab").click();
 }
+function goToManageTrips() {
+    $("#manageTrip").click();
+  }
 
 async function getUserInfo() {
   const endpoint = endpoints["me"];
@@ -272,6 +282,85 @@ async function removeTripRequest(id) {
     }
   }
 }
+  async function joinSelectedTrips() {
+    if (selectedTrips.value.length === 0) {
+      alert("Please select at least one trip.");
+      return;
+    }  
+    loading.value = true;
+    try {
+        // Replace with the actual API endpoint
+        const response = await axios.post(endpoints["joinTrips"], { trips: selectedTrips.value });
+        if (response.status === 200) {
+          confirmDialogue.value.show({
+            title: "You have successfully joined the trip!",
+            message: "Congrats! You have successfully requested joined the trip. We have sent requests to join on your behalf, and you will receive an email if they accept.",
+            cancelButton: "Close"
+          });
+          console.log("Trips joined successfully:", response.data);
+        } else {
+            console.error("Failed to join trips:", response.data);
+        }
+    } catch (error) {
+        console.error("Error joining trips:", error);
+        alert("Error joining trips: " + error.message);
+    } finally {
+        loading.value = false;
+    }
+    
+    goToManageTrips();
+  }
+
+  function validateFormData() {
+    if (trips.departure_location|| trips.arrival_location) {
+        alert("Please enter both pickup and dropoff locations.");
+        return false;
+    }
+    if (!earliestDepartureTime || !latestDepartureTime) {
+        alert("Please enter both earliest and latest departure times.");
+        return false;
+    }
+    if (trips.luggageCount < 0) {
+        alert("Please enter a valid number of luggage bags.");
+        return false;
+    }
+    return true;
+  }
+
+  async function addManualTripRequest() {
+    if(!validateFormData()) return;
+    showCommentsAndLuggagePopup();
+    let data = {
+        "earliest_departure_time": earliestDepartureTime,
+        "latest_departure_time": latestDepartureTime,
+        "num_luggage_bags": trips.luggageCount,
+        "user": user.id,
+        "departure_location": trips.departure_location,
+        "arrival_location": trips.arrival_location,
+        "comment": tripComment.value  
+    };
+    
+    const endpoint = endpoints["tripRequest"];
+    try {
+        const response = await axios.post(endpoint, data);    
+        if (response.status === 200) {
+          alert("Trip created successfully!");
+        } else {
+          alert("Trip creation failed. Please try again.");
+        } 
+      }
+    catch (error) {
+        alert("Error creating trip: " + error.message);
+    }
+}
+
+function showCommentsAndLuggagePopup() {
+    const comment = prompt("Please enter any additional comments:");
+    if (comment !== null) {
+        tripComment.value = comment;
+    }
+}
+
 </script>
   
 <style>
