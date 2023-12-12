@@ -6,24 +6,24 @@
             <div class="form-row">
             <div class="form-group">
               <label class="text-start" for="from">Pickup location:</label>
-              <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
+              <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..."  />
             </div>
             <div class="form-group">
               <label class="text-start" for="to">Dropoff location:</label>
-              <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
+              <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..."  />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
               <label class="text-start" for="pickup-time">Earliest departure time:</label>
-              <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
+              <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local"  />
             </div>
             <div class="form-group">
               <label class="text-start" for="dropoff-time">Latest departure time:</label>
-              <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
+              <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local"  />
             </div>
         </div>
-        <div class="form-row">
+        <!-- <div class="form-row">
             <div class="form-group">
               <label class="text-start" for="luggage-count">Number of luggage bags:</label>
               <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
@@ -49,6 +49,7 @@
             </div>
           </form>
         </div>
+
       </div>
   </template>
   
@@ -62,7 +63,6 @@
     name: "AddTripModal",
     components: {
       TripFormHelpModal,
-      
     },
     emits: ['addTripRequest', 'refreshTrips', 'getTrips'],
     data() {
@@ -205,7 +205,7 @@
       autoSearchForTrips() {
         console.log("TEST")
         this.$emit('getTrips', { ...this.trip });
-      },
+      }
     }
   }
   </script>

@@ -17,8 +17,8 @@
       </div>
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button">Plan
-            a new trip</a>
+          <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button">
+            Plan a new trip</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button">Manage my trips</a>
@@ -33,6 +33,10 @@
           <button @click="joinSelectedTrips" class="btn btn-primary">
             Join Selected Trips
           </button>
+          <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="toggleCreateTripModal" class="btn btn-primary">
+            Create a new trip
+            </button>
+            <CreateNewTripModal ref="createTripModalRef"></CreateNewTripModal>
           <v-data-table v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
@@ -68,6 +72,7 @@ import { axios } from '../common/axios_service.js'
 import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import ManageTripsTab from './ManageTripsTab.vue';
+import CreateNewTripModal from './CreateNewTripModal.vue';
 import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from './PopupModal.vue';
 import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
@@ -123,6 +128,21 @@ const headers = ref([
   },
 ])
 
+// display vars
+const tripComment = ref("");
+const addTripModal = ref(null)
+const confirmDialogue = ref(null);
+const selectedTrips = ref([]);
+const createTripData = ref({});
+const createTripModalRef = ref(null);
+
+function toggleCreateTripModal() {
+    console.log(addTripModal.value.trip)
+    createTripModalRef
+    // createTripData.value = addTripModal.value.getData()
+    createTripModalRef.value.show()
+}
+
 function toggleTripModal() {
   addTripModal.value.show();
 }
@@ -131,6 +151,20 @@ function toggleHelp() {
   if (tripHelpModalRef.value) {
     tripHelpModalRef.value.show();
   }
+}
+
+function getTripFormData(trip) {
+    // console.log(addTripModal.value.trip)
+    return {
+        from: trip.from,
+        to: trip.to,
+        earliestDepartureTime: trip.earliestDepartureTime,
+        latestDepartureTime: trip.latestDepartureTime
+    }
+}
+
+async function createNewTrip() {
+
 }
 
 async function refreshData() {
