@@ -21,13 +21,13 @@ def send_trip_joined_email(user, trip):
     email.attach_alternative(html_content, "text/html")
     email.send()
 
-def send_join_email(participant_list, user):
+def send_join_email(participant_list, trip):
     subject = "findaride: Request to join your trip"
     from_email = settings.EMAIL_HOST_USER
     to = [participant.email for participant in participant_list.all()]
 
     # Load the HTML template
-    html_content = render_to_string('emails/join_request.html', {'user': user})
+    html_content = render_to_string('emails/join_request.html', {'dep': trip.departure_location.address.split(" ")[0], 'arr': trip.arrival_location.address.split(" ")[0]})
 
     # Create the email body with both HTML and plain text versions
     text_content = strip_tags(html_content)

@@ -252,7 +252,7 @@ class TripRequestAPIView(views.APIView):
             trip.num_join_requests += 1
             trip.save()
 
-            send_join_email(trip.participant_list, user)
+            send_join_email(trip.participant_list, trip)
 
         return Response({'message': 'Trip request created'}, status=status.HTTP_200_OK)
     
