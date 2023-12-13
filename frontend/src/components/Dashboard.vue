@@ -109,7 +109,6 @@ const addTripModal = ref(null)
 const confirmDialogue = ref(null);
 const joinTripsRef = ref(null);
 const selectedTrips = ref([]);
-const createTripModalRef = ref(null);
 
 const headers = ref([
   {
@@ -143,10 +142,6 @@ const headers = ref([
     key: 'num_luggage_bags',
   },
 ])
-
-function toggleTripModal() {
-  addTripModal.value.show();
-}
 
 function toggleHelp() {
   if (tripHelpModalRef.value) {
@@ -332,10 +327,6 @@ async function joinSelectedTrips(data) {
   background-color: white;
   border: solid;
   border-width: thin;
-  /* border-left-width: thin;
-    border-right-width: thin;
-    border-top-width: 0;
-    border-bottom-width: thin; */
   border-top-right-radius: var(--bs-border-radius);
   border-bottom-left-radius: var(--bs-border-radius);
   border-bottom-right-radius: var(--bs-border-radius);
@@ -345,7 +336,7 @@ async function joinSelectedTrips(data) {
 
 .nav-tabs {
   border-bottom: none;
-  margin-bottom: 15px;
+  /* margin-bottom: 15px; */
 }
 
 .nav-link {
