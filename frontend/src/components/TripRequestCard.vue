@@ -95,4 +95,9 @@ const emit = defineEmits(['removeTripRequest', 'withdrawJoinRequest'])
     text-align: right;
     padding-right: 10px;
 }
+.withdraw-btn {
+    width: 80px;
+    background-color: rgb(220,52,68);
+    color: white;
+}
 </style>

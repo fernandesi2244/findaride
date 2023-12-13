@@ -155,17 +155,6 @@ onMounted(async () => {
   await getUserTrips();
 });
 
-function goToTripsTab() {
-  $("#trips-tab").click();
-}
-
-function goToTripRequestsTab() {
-  $("#triprequests-tab").click();
-}
-function goToManageTrips() {
-  $("#manageTrip").click();
-}
-
 async function getUserInfo() {
   const endpoint = endpoints["me"];
   const response = await axios.get(endpoint);

@@ -1,6 +1,6 @@
 <template>
     <ConfirmDialogue ref="confirmDialogue" cancel-color="red"></ConfirmDialogue>
-    <div v-if="trips.length == 0">
+    <div v-if="trips.length == 0 && tripRequests.length == 0">
         <h4 class="my-8">No trips yet.</h4>
     </div>
 
@@ -33,7 +33,7 @@ import TripRequestCard from "./TripRequestCard.vue"
 import { ref, defineProps, defineEmits, computed, onMounted } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import { getDatePart, getDate, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
+import { formatError } from '../components/common.js'
 import { toRefs } from 'vue'
 
 const emit = defineEmits(['refreshTrips']);
@@ -43,7 +43,7 @@ const confirmDialogue = ref(null);
 const sortedTrips = computed(() => {
     const myTrips = trips.value.map(obj => ({ ...obj, type: 't' }))
     const myRequests = tripRequests.value.map(obj => ({ ...obj, type: 'r' }))
-    var allTrips = myTrips.concat(myRequests)
+    let allTrips = myTrips.concat(myRequests);
     return allTrips.sort((a, b) => {
         // sort by nickname string
         if (a.type === 'r' && b.type === 'r') {
