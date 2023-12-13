@@ -43,7 +43,7 @@
                 </div>
             </div>
           
-          <v-data-table v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
+          <v-data-table no-data-text="No matching trips" v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
             </template>
