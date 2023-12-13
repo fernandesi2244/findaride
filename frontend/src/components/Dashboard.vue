@@ -26,7 +26,7 @@
   <div class="container-xl mb-4" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
-        <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
+        <h2 class="text-start">Welcome, {{ user.first_name == "" ? 'fellow ridesharer' : user.first_name }}!</h2>
       </div>
       <ul class="nav nav-tabs">
         <li class="nav-item">
@@ -94,7 +94,7 @@ import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail
 import $ from "jquery";
 
 // ground truth data
-const user = reactive({ first_name: "", id: -1, })
+const user = reactive({ first_name: " ", id: -1, })
 const filteredTrips = ref([]);
 const userTrips = ref([]);
 const tripRequests = ref([]);
