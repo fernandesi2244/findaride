@@ -344,7 +344,8 @@ async function joinSelectedTrips(data) {
 }
 
 .nav-tabs {
-  border-bottom-width: 0;
+  border-bottom: none;
+  margin-bottom: 15px;
 }
 
 .nav-link {
@@ -360,6 +361,12 @@ async function joinSelectedTrips(data) {
   transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
 }
 
+.nav-link.active, .nav-link:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
 .col-2 {
   margin-top: 1.1rem;
 }
@@ -367,6 +374,7 @@ async function joinSelectedTrips(data) {
 .dashboard {
   height: 100%;
   font-family: 'Roboto', sans-serif;
+  background-color: #F4F4F8;
 }
 
 .card {
@@ -381,11 +389,19 @@ async function joinSelectedTrips(data) {
 
 .narrow-container {
   max-width: 1000px;
-  /* padding: 20px; */
+  padding: 20px; 
   margin: 0 auto;
+  background-color: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
 }
 
-/* The Close Button */
+.spinner-border {
+  width: 6rem;
+  height: 6rem;
+  color: #007bff;
+}
+
 .close {
   color: #aaa;
   float: right;
@@ -422,7 +438,24 @@ async function joinSelectedTrips(data) {
   color: rgb(255, 255, 255);
 }
 
-button.btn.btn-secondary {
+button.btn {
   color: white;
+  background-color: #007bff;
+  border-color: #007bff;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+button.btn:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+@media (max-width: 768px) {
+  .narrow-container {
+    padding: 15px;
+  }
+
+  .nav-link {
+    padding: 8px 12px;
+  }
 }
 </style>

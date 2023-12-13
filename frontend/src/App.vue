@@ -1,24 +1,45 @@
 <template>
-<div id="app" class="box">
+  <div id="app" class="box">
     <nav class="navbar">
-        <div class="nav-content">
-        <div v-if="isLoggedIn">
-          <span class = text-size><router-link to="/">findaride</router-link></span>
+      <div class="nav-content">
+        <div class="brand-and-menu">
+          <div v-if="isLoggedIn">
+            <span class = text-size><router-link to="/">findaride</router-link></span>
+          </div>
+          <div v-else>
+            <span class = text-size><router-link to="/">findaride</router-link></span>
+          </div>
+          <div class="hamburger" @click="toggleMenu">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
-        <div v-else>
-          <span class = text-size><router-link to="/">findaride</router-link></span>
-        </div>
-            <div class="right">
+        <div class="right" id="rightNav">
+                <!-- <router-link to="/">Home</router-link>-->
                 <router-link to="/about">About</router-link>
+                <a href="/tutorial">Tutorial</a>
+                <!----<a href="/accounts/login/">Login</a> -->
+                <!-----<router-link to="/login">Login</router-link> 
+                <router-link to="/signup">Sign Up</router-link>---->
                 <router-link to="/dashboard">Dashboard</router-link>
+                <!-- <router-link to="/dashboard2">Dashboard</router-link>  -->
                 <router-link to="/profile">Profile</router-link>
-            </div>
-        </div>
-    </nav>
+                
+              <!-- Add logout button -->
+              <!-- <div v-if="isLoggedIn">
+                  <a href="/accounts/logout/">Logout</a>
+              </div>
+              <div v-else></div> -->
 
+
+        </div>
+      </div>
+    </nav>
     <router-view class="full-height pt-8" style="overflow: auto;"/>
-</div>
+  </div>
 </template>
+
 <script>
 import axios from 'axios';
 import { endpoints } from './common/endpoints.js'
@@ -32,12 +53,24 @@ export default {
   created() {
     this.checkLoginStatus();
   },
+  
   methods: {
     async checkLoginStatus() {
-      const endpoint = endpoints['is-logged-in'];
+      const endpoint = endpoints['isLoggedIn'];
       const response = await axios.get(endpoint);
       this.isLoggedIn = response.data.isAuthenticated;
+    },
+    toggleMenu() {
+    this.showMenu = !this.showMenu;
+    var x = document.getElementById("rightNav");
+    if (x.style.display === "block") {
+      x.style.display = "none";
+    } else {
+      x.style.display = "block";
     }
+  },
+  
+    
   }
 };
 </script>
@@ -51,12 +84,12 @@ export default {
   text-align: center;
   color: #2c3e50;
   background-color: #F4F4F8;
+  min-height: 100vh;
 }
 
 .box {
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }
 
 .full-height {
@@ -119,5 +152,45 @@ export default {
     display: block;
   }
 }
+.hamburger {
+  display: none;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.brand-and-menu {
+display: flex;
+align-items: center;
+}
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 5px;
+  transition: 0.4s;
+}
 
+.change .bar1 { transform: rotate(-45deg) translate(-5px, 6px); }
+.change .bar2 { opacity: 0; }
+.change .bar3 { transform: rotate(45deg) translate(-5px, -6px); }
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .nav-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .right {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hamburger {
+    display: block;
+  }
+}
 </style>
