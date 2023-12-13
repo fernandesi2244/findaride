@@ -1,6 +1,7 @@
 <template>
   <popup-modal ref="popup" medium>
-    <form @submit.prevent="submitNewTrip" class="modal-content create-trip-modal">
+    <div class="modal-content">
+    <form @submit.prevent="submitNewTrip" class="create-trip-modal">
       <h5 class="nickname">
         <label class="label" for="nickname">Nickname:</label>
         <input class="input" id="nickname" v-model="trip.nickname" type="text" placeholder="e.g. Spring break departure"
@@ -39,6 +40,7 @@
         <button type="submit" class="btn primary">Create trip request</button>
       </div>
     </form>
+</div>
   </popup-modal>
   <div class="modal-content">
     <div class="modal-body">
@@ -68,21 +70,7 @@
           <button id="add-trip-btn" class="btn-link">Create your own trip</button>
           that others can join.
         </div>
-        <!-- <button id="add-trip-btn" class="btn btn-primary">
-            Create new trip
-        </button> -->
-        <!-- <div class="form-row">
-            <div class="form-group">
-              <label class="text-start" for="luggage-count">Number of luggage bags:</label>
-              <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
-            </div>
-        </div>
-        <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest" class="btn btn-primary">Create a new trip</button>
-          
-            <div class="form-actions">
-              <button type="submit" class="btn primary">Find Matching Trips</button>
-            </div> -->
-        <!-- <button v-if="showCreateTripModal" class="overlay" @click="toggleCreateTripModal" style="cursor: default;"></button> -->
+        
         <div v-if="showInvalidLocationModal" class="overlay"></div>
         <div v-if="showInvalidLocationModal" class="invalid-location-modal">
           <div class="modal-header">
@@ -96,22 +84,7 @@
             <button @click="closeInvalidLocationModal" class="btn primary">OK</button>
           </div>
         </div>
-        <div class="create-trip-row">
-          <b> Dropoff location:</b><br>
-          <div class="">{{ trip.to }}</div>
-        </div>
-        <div class="create-trip-row">
-          <b> Earliest departure time:</b>
-          <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
-        </div>
-        <div class="create-trip-row">
-          <b> Latest departure time:</b>
-          <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
-        </div>
-        <div class="create-trip-footer">
-          <button type="button" @click="toggleCreateTripModal" class="btn cancel-btn">Close</button>
-          <button type="submit" class="btn primary">Create trip request</button>
-        </div>
+
         <div v-if="showInvalidLocationModal" class="overlay"></div>
         <div v-if="showInvalidLocationModal" class="invalid-location-modal">
           <div class="modal-header">
@@ -270,14 +243,14 @@ export default {
       this.$refs.popup.close()
     },
     submitFirst() {
-      // if (!fromLocationWasSelected) {
-      //   this.showInvalidLocationAlert('pickup');
-      //   return;
-      // }
-      // if (!toLocationWasSelected) {
-      //   this.showInvalidLocationAlert('dropoff');
-      //   return;
-      // }
+      if (!fromLocationWasSelected) {
+        this.showInvalidLocationAlert('pickup');
+        return;
+      }
+      if (!toLocationWasSelected) {
+        this.showInvalidLocationAlert('dropoff');
+        return;
+      }
       this.$refs.popup.open()
       this.toggleCreateTripModal()
     },
