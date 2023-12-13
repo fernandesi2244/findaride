@@ -190,7 +190,7 @@ async function getFilteredTrips(tripDetails) {
       if (key === "earliestDepartureTime" || key === "latestDepartureTime") {
         let str = new Date(value).toUTCString();
         params[key] = str;
-      } else {
+      } else if (key !== "from" && key !== "to") {
         params[key] = value;
       }
     }
@@ -224,7 +224,7 @@ async function createTrip(newTrip) {
     "user": user.id,
     "departure_location": departure,
     "arrival_location": arrival,
-    "trip_nickname": trip.nickname,
+    "trip_nickname": newTrip.nickname,
   }
 
   const endpoint = endpoints["trip"];

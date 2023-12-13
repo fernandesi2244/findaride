@@ -19,18 +19,18 @@
       <div>
         <div class="create-trip-row">
           <b> Pickup location:</b> <br>
-          <div class="">{{ trip.from }}</div>
+          <div class="">{{ cleanLocation(trip.from) }}</div>
         </div>
         <div class="create-trip-row">
           <b> Dropoff location:</b><br>
-          <div class="">{{ trip.to }}</div>
+          <div class="">{{ cleanLocation(trip.to) }}</div>
         </div>
         <div class="create-trip-row">
           <b> Earliest departure time:</b>
           <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
         </div>
         <div class="create-trip-row">
-          <b> Latest departure time:</b>
+          <b> Latest departure timse:</b>
           <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
         </div>
       </div>
@@ -40,7 +40,7 @@
         <button type="submit" class="btn primary">Create trip request</button>
       </div>
     </form>
-</div>
+    </div>
   </popup-modal>
   <div class="modal-content">
     <div class="modal-body">
@@ -106,7 +106,7 @@
 <script>
 import TripFormHelpModal from '../components/TripFormHelpModal.vue';
 import PopupModal from './PopupModal.vue';
-import { getTime, getDate } from './common.js';
+import { getTime, getDate, cleanLocation } from './common.js';
 
 let fromLocationWasSelected = false;
 let toLocationWasSelected = false;
@@ -116,7 +116,7 @@ export default {
   components: {
     TripFormHelpModal, PopupModal
   },
-  emits: ['getFilteredTrips', 'createTrip', 'refreshTrips'],
+  emits: ['getFilteredTrips', 'createTrip', 'refreshTrips', 'getTrips'],
   data() {
     return {
       showCreateTripModal: false,
@@ -124,9 +124,9 @@ export default {
       invalidLocationType: '',
       fromLocationWasSelected: false,
       toLocationWasSelected: false,
-      from: '',
-      to: '',
       trip: {
+        from: '',
+        to: '',
         fromLat: '',
         fromLong: '',
         toLat: '',
@@ -156,9 +156,9 @@ export default {
     this.initializeAutocomplete();
   },
   methods: {
-    getTime, getDate,
+    getTime, getDate, cleanLocation,
     checkAndCreateTripRequest() {
-      emit('getFilteredTrips', { ...this.trip })
+      this.$emit('getFilteredTrips', { ...this.trip })
     },
     initializeAutocomplete() {
       const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
@@ -175,7 +175,7 @@ export default {
         let place = acFrom.getPlace().geometry.location;
         this.trip.fromLat = place.lat();
         this.trip.fromLong = place.lng();
-        this.from = this.$refs.fromRef.value;
+        this.trip.from = this.$refs.fromRef.value;
         this.$emit('getTrips', { ...this.trip });
         fromLocationWasSelected = true;
       });
@@ -184,7 +184,7 @@ export default {
         let place = acTo.getPlace().geometry.location;
         this.trip.toLat = place.lat();
         this.trip.toLong = place.lng();
-        this.to = this.$refs.toRef.value;
+        this.trip.to = this.$refs.toRef.value;
         this.$emit('getTrips', { ...this.trip });
         toLocationWasSelected = true;
       });
@@ -219,10 +219,10 @@ export default {
       }
     },
     resetForm() {
-      this.from = '';
+      this.trip.from = '';
       this.trip.fromLat = '';
       this.trip.fromLong = '';
-      this.to = '';
+      this.trip.to = '';
       this.trip.toLat = '';
       this.trip.toLong = '';
       this.trip.departureDate = '';
@@ -260,10 +260,9 @@ export default {
       this.$emit('createTrip', { ...this.trip });
       this.$emit('refreshTrips');
       this.resetForm();
-      this._close();
+      this.$refs.popup.close()
     },
     autoSearchForTrips() {
-      console.log("TEST")
       this.$emit('getTrips', { ...this.trip });
     },
     toggleCreateTripModal() {

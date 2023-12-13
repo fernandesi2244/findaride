@@ -16,9 +16,7 @@
               <textarea id="comments" v-model="myData.comment" placeholder="Any special accommodations, considerations, etc."
                 maxlength="255"></textarea>
             </div>
-            
-            
-            Request to join <b>{{ trips.length }}</b> trip(s)
+              Request to join <b>{{ trips.length }}</b> trip(s)
             <hr>
             <div class="create-trip-footer">
                 <button type="button" @click="_close" class="btn cancel-btn">Close</button>

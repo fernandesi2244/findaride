@@ -54,12 +54,12 @@ class TripListAPIView(views.APIView):
         arrival_longitude = self.request.query_params.get("toLong", None)
         arrival_latitude = self.request.query_params.get("toLat", None)
 
-        if earliest_departure_time is not None:
+        if latest_departure_time is not None:
             latest_departure_time = datetime.strptime(latest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
             latest_departure_time = make_aware(latest_departure_time)
             queryset = queryset.filter(earliest_departure_time__lte=latest_departure_time)
 
-        if latest_departure_time is not None:
+        if earliest_departure_time is not None:
             earliest_departure_time = datetime.strptime(earliest_departure_time, '%a, %d %b %Y %H:%M:%S %Z')
             earliest_departure_time = make_aware(earliest_departure_time)
             queryset = queryset.filter(latest_departure_time__gte=earliest_departure_time)
