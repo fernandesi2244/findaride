@@ -54,7 +54,7 @@ class UserStats(models.Model):
 
     @property
     def number_riders(self):
-        return self.past_riders.count()-1
+        return  max(0, self.past_riders.count()-1)
 
 class ActivationToken(models.Model):
     token = models.CharField(max_length=150, unique=True)
