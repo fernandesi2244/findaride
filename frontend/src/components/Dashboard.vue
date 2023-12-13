@@ -12,8 +12,8 @@
     <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
     <JoinTripsModal @joinSelectedTrips="joinSelectedTrips" @refreshTrips="refreshData" 
                     :trips="selectedTrips" ref="joinTripsRef"></JoinTripsModal>
-    
-  <div class="container-xl" style="row-gap: 20px;">
+
+  <div class="container-xl mb-4" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>

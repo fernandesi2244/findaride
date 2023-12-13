@@ -1,6 +1,6 @@
 <template>
 <div id="app" class="box">
-    <nav class="navbar" style="margin-bottom: 20px;">
+    <nav class="navbar">
         <div class="nav-content">
         <div v-if="isLoggedIn">
           <span class = text-size><router-link to="/">findaride</router-link></span>
@@ -16,7 +16,7 @@
         </div>
     </nav>
 
-    <router-view class="full-height"/>
+    <router-view class="full-height pt-5" style="overflow: auto;"/>
 </div>
 </template>
 <script>
