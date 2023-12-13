@@ -12,7 +12,7 @@
     <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
     <JoinTripsModal @joinSelectedTrips="joinSelectedTrips" @refreshTrips="refreshData" 
                     :trips="selectedTrips" ref="joinTripsRef"></JoinTripsModal>
-
+    
   <div class="container-xl" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
@@ -34,7 +34,7 @@
           <!-- <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
             class="btn btn-primary">Create a new trip</button> -->
             <div class="flex mt-4">
-                <button @click="toggleShowJoinTripsModal" :disabled="false" class="btn btn-primary mt-4">
+                <button @click="toggleShowJoinTripsModal" :disabled="noTripsSelected" class="btn btn-primary mt-4">
                     Request to join
                 </button>
                 <h3 style="margin: auto; padding-top: 15px;">Trip Matches</h3>
@@ -43,7 +43,6 @@
                 </div>
             </div>
           
-
           <v-data-table v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
@@ -67,7 +66,6 @@
           <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -135,13 +133,6 @@ const headers = ref([
   },
 ])
 
-function toggleCreateTripModal() {
-    console.log(addTripModal.value.trip)
-    createTripModalRef
-    // createTripData.value = addTripModal.value.getData()
-    createTripModalRef.value.show()
-}
-
 function toggleTripModal() {
   addTripModal.value.show();
 }
@@ -150,16 +141,6 @@ function toggleHelp() {
   if (tripHelpModalRef.value) {
     tripHelpModalRef.value.show();
   }
-}
-
-function getTripFormData(trip) {
-    // console.log(addTripModal.value.trip)
-    return {
-        from: trip.from,
-        to: trip.to,
-        earliestDepartureTime: trip.earliestDepartureTime,
-        latestDepartureTime: trip.latestDepartureTime
-    }
 }
 
 async function refreshData() {
@@ -295,6 +276,10 @@ async function removeTripRequest(id) {
 }
 
 function toggleShowJoinTripsModal() {
+    if (noTripsSelected()) {
+        alert("Please select at least one trip.");
+        return;
+    }
     joinTripsRef.value.show()
 }
 
@@ -332,6 +317,25 @@ async function joinSelectedTrips() {
 </script>
   
 <style>
+.tab-content {
+    background-color: white;
+    border: solid;
+    border-width: thin;
+    /* border-left-width: thin;
+    border-right-width: thin;
+    border-top-width: 0;
+    border-bottom-width: thin; */
+    border-top-right-radius: var(--bs-border-radius);
+    border-bottom-left-radius: var(--bs-border-radius);
+    border-bottom-right-radius: var(--bs-border-radius);
+    border-color: var(--bs-border-color);
+
+}
+
+.nav-tabs {
+    border-bottom-width: 0;
+}
+
 .nav-link {
   --bs-nav-link-color: #3B3B3B;
   --bs-nav-pills-link-active-color: #fff;

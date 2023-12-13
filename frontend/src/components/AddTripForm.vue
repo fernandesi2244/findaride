@@ -3,7 +3,7 @@
     <form @submit.prevent="submitNewTrip" class="modal-content create-trip-modal">
       <h5 class="nickname">
         <label class="label" for="nickname">Nickname:</label>
-        <input class="input" id="nickname" v-model="trip.nickname" type="text" placeholder="e.g. Spring break"
+        <input class="input" id="nickname" v-model="trip.nickname" type="text" placeholder="e.g. Spring break departure"
           maxlength="255" required>
       </h5>
 
