@@ -96,15 +96,7 @@ const userStats = reactive({
   past_riders: 0,
   id: -1,
 })
-const trips = ref([
-    {id: 0,
-    college: "c",
-departure_location: "a",
-arrival_location: "d",
-earliest_departure_time: "q",
-latest_departure_time: "r",
-}
-]);
+const trips = ref([]);
 const userID = ref(0);
 
 const addTripModal = ref(null)
@@ -115,8 +107,8 @@ async function refreshData() {
 }
 
 onMounted(async () => {
-//   await getUserInfo();
-//   await getUserTrips();
+  await getUserInfo();
+  await getUserTrips();
 });
 
 async function getUserInfo() {
