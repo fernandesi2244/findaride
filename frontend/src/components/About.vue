@@ -71,7 +71,7 @@
   font-family: 'Roboto', Arial, sans-serif;
   color: #4A4A4A;
   background-color: #F4F4F8;
-  padding: 20px;
+  /* padding: 20px; */
   line-height: 1.6;
 }
 

@@ -141,6 +141,9 @@ export default {
     }
   },
   computed: {
+    noFieldsFilled() {
+        return !this.trip.from && !this.trip.to && !this.trip.earliestDepartureTime && !this.trip.latestDepartureTime && this.trip.luggageCount == 0;
+    },
     allFieldsFilled() {
       return this.trip.from && this.trip.to && this.trip.earliestDepartureTime && this.trip.latestDepartureTime && this.trip.luggageCount > 0;
     },
@@ -158,7 +161,11 @@ export default {
   methods: {
     getTime, getDate, cleanLocation,
     checkAndCreateTripRequest() {
-      this.$emit('getFilteredTrips', { ...this.trip })
+        if(this.noFieldsFilled) {
+            this.$emit('getFilteredTrips', {})
+        } else {
+            this.$emit('getFilteredTrips', { ...this.trip })
+        }
     },
     initializeAutocomplete() {
       const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
