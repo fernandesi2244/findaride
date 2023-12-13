@@ -10,7 +10,7 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button type="button" :class="cancelClass" @click="_cancel">
+          <button :class="cancelClass" @click="_cancel">
             {{ cancelButton }}
           </button>
           <button v-if="okButton" type="button" :class="okClass" @click="_confirm">
