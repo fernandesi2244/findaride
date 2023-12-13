@@ -182,17 +182,13 @@ class JoinRequest(models.Model):
         trip = self.trip
         trip.blacklisted_users.add(self.trip_request.user)
         trip.save()
-        print("test1")
 
         # If this was the last join request for the trip request, then delete the trip request
         
         if self.trip_request.join_requests.count() == 1:
-            print("test1.1")
             send_absolute_rejection_email(self.trip_request.user)
-            print("test1.2")
             self.trip_request.delete()
         
-        print("test2")
         # TODO: Down the line, we should ask if they want to have more requests sent out. If not or if there are no more possible
         # trips they can join, then we should create a new trip for them.
 

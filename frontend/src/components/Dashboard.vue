@@ -155,7 +155,6 @@ function toggleHelp() {
 }
 
 async function refreshData(deletedTripID=null, manageTrips=false) {
-  console.log("TEST")
   getUserInfo();
   await getUserTrips()
 
@@ -304,7 +303,6 @@ async function joinSelectedTrips(data) {
     alert("Please select at least one trip.");
     return;
   }
-  console.log(data)
   loading.value = true;
   try {
     const response = await axios.post(endpoints["joinSelectedTrips"], { selected_trip_ids: selectedTrips.value, ...data });

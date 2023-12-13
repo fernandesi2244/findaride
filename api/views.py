@@ -118,11 +118,9 @@ class JoinRequestAPIView(views.APIView):
         if action == "accept":
             join_request.accept(self.request.user)
         elif action == "reject":
-            print("test")
             join_request.reject()
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "Invalid action."})
-        print("test3")
         return Response(status=status.HTTP_200_OK)
 
 class JoinSelectedTripsAPIView(views.APIView):
