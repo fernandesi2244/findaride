@@ -149,7 +149,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # additional places to store static files
 STATICFILES_DIRS = [
     os.path.join(APP_DIR, "dist"),
-    os.path.join(APP_DIR, "static"),
+    os.path.join(APP_DIR, "assets"),
 ]
 
 STORAGES = {

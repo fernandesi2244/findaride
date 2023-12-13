@@ -15,20 +15,20 @@
         <!---TO DO: Add comments to each picutre explaining features-->
         <!-- TO DO: Create an image showing filtering data with a created trip showing join feature -->
         <div class="profile-image">
-            <img class="img-fluid" src="static/filter_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
+            <img class="img-fluid" src="/assets/filter_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
     </section>
     <section>
     <p>If you don't find a suitable trip, or there are no trips available, feel free to create a new one.</p>
         <div class="profile-image">
-            <img class="img-fluid" src="static/create_trip.png" alt="Profile" style="max-width:600pt; height:300pt;">
+            <img class="img-fluid" src="/assets/create_trip.png" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
     </section>
         <section>
         <!---TO DO: Create an image for manage my trip tab with join requests functionality-->
         <p>Review your trip details in the 'Manage My Trips' tab once you're done.</p>
         <div class="profile-image">
-            <img class="img-fluid" src="static/manage_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
+            <img class="img-fluid" src="/assets/manage_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
         <p>It's simple! You'll receive email notifications for trip updates, which can also be viewed in the 'Manage My Trips' tab.
             
@@ -37,7 +37,7 @@
     <section>
             <p>View statistics about your past trips on your profile page.</p>
         <div class="profile-image">
-            <img class="img-fluid" src="static/profile.png" alt="Profile" style="max-width:600pt; height:300pt;">
+            <img class="img-fluid" src="/assets/profile.png" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
     </section>
 

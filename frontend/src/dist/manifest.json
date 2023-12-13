@@ -1,98 +1,150 @@
 {
-  "_axios_service-799264dd.js": {
-    "file": "assets/axios_service-799264dd.js",
+  "_axios_service-be54fb79.js": {
+    "file": "assets/axios_service-be54fb79.js",
     "imports": [
-      "_vendor-ef93eb73.js"
+      "_vendor-4c76fc02.js"
     ]
   },
-  "_vendor-ef93eb73.js": {
-    "file": "assets/vendor-ef93eb73.js"
+  "_vendor-4c76fc02.js": {
+    "css": [
+      "assets/vendor-86a04bde.css"
+    ],
+    "file": "assets/vendor-4c76fc02.js"
+  },
+  "assets/create_trip.png": {
+    "file": "assets/create_trip-72908a5b.png",
+    "src": "assets/create_trip.png"
+  },
+  "assets/filter_trips.jpeg": {
+    "file": "assets/filter_trips-edd23b07.jpeg",
+    "src": "assets/filter_trips.jpeg"
+  },
+  "assets/home.svg": {
+    "file": "assets/home-a285bb47.svg",
+    "src": "assets/home.svg"
+  },
+  "assets/manage_trips.jpeg": {
+    "file": "assets/manage_trips-d2167e32.jpeg",
+    "src": "assets/manage_trips.jpeg"
+  },
+  "assets/profile.png": {
+    "file": "assets/profile-b354e00e.png",
+    "src": "assets/profile.png"
   },
   "index.css": {
-    "file": "assets/index-3099610c.css",
+    "file": "assets/index-0b376316.css",
     "src": "index.css"
   },
   "index.html": {
     "css": [
-      "assets/index-3099610c.css"
+      "assets/index-0b376316.css"
     ],
     "dynamicImports": [
       "views/HomeView.vue",
       "views/AboutView.vue",
       "views/ProfileView.vue",
-      "views/DashboardView.vue"
+      "views/DashboardView.vue",
+      "views/TutorialView.vue"
     ],
-    "file": "assets/index-d23e1351.js",
+    "file": "assets/index-8d4a04a8.js",
     "imports": [
-      "_vendor-ef93eb73.js"
+      "_vendor-4c76fc02.js"
     ],
     "isEntry": true,
     "src": "index.html"
   },
+  "vendor.css": {
+    "file": "assets/vendor-86a04bde.css",
+    "src": "vendor.css"
+  },
   "views/AboutView.css": {
-    "file": "assets/AboutView-e8d30713.css",
+    "file": "assets/AboutView-a4edf163.css",
     "src": "views/AboutView.css"
   },
   "views/AboutView.vue": {
     "css": [
-      "assets/AboutView-e8d30713.css"
+      "assets/AboutView-a4edf163.css"
     ],
-    "file": "assets/AboutView-5390050a.js",
+    "file": "assets/AboutView-25e7ef4d.js",
     "imports": [
       "index.html",
-      "_vendor-ef93eb73.js"
+      "_vendor-4c76fc02.js"
     ],
     "isDynamicEntry": true,
     "src": "views/AboutView.vue"
   },
   "views/DashboardView.css": {
-    "file": "assets/DashboardView-ba59a742.css",
+    "file": "assets/DashboardView-8859964b.css",
     "src": "views/DashboardView.css"
   },
   "views/DashboardView.vue": {
     "css": [
-      "assets/DashboardView-ba59a742.css"
+      "assets/DashboardView-8859964b.css"
     ],
-    "file": "assets/DashboardView-2aeec1c4.js",
+    "file": "assets/DashboardView-3089b9e3.js",
     "imports": [
-      "_vendor-ef93eb73.js",
+      "_vendor-4c76fc02.js",
       "index.html",
-      "_axios_service-799264dd.js"
+      "_axios_service-be54fb79.js"
     ],
     "isDynamicEntry": true,
     "src": "views/DashboardView.vue"
   },
   "views/HomeView.css": {
-    "file": "assets/HomeView-e3cd28bc.css",
+    "file": "assets/HomeView-e4c169b1.css",
     "src": "views/HomeView.css"
   },
   "views/HomeView.vue": {
-    "css": [
-      "assets/HomeView-e3cd28bc.css"
+    "assets": [
+      "assets/home-a285bb47.svg"
     ],
-    "file": "assets/HomeView-64bee808.js",
+    "css": [
+      "assets/HomeView-e4c169b1.css"
+    ],
+    "file": "assets/HomeView-79a236d7.js",
     "imports": [
       "index.html",
-      "_vendor-ef93eb73.js"
+      "_vendor-4c76fc02.js"
     ],
     "isDynamicEntry": true,
     "src": "views/HomeView.vue"
   },
   "views/ProfileView.css": {
-    "file": "assets/ProfileView-f1392103.css",
+    "file": "assets/ProfileView-283430ec.css",
     "src": "views/ProfileView.css"
   },
   "views/ProfileView.vue": {
     "css": [
-      "assets/ProfileView-f1392103.css"
+      "assets/ProfileView-283430ec.css"
     ],
-    "file": "assets/ProfileView-330f2e0d.js",
+    "file": "assets/ProfileView-f66752da.js",
     "imports": [
-      "_axios_service-799264dd.js",
-      "index.html",
-      "_vendor-ef93eb73.js"
+      "_axios_service-be54fb79.js",
+      "_vendor-4c76fc02.js"
     ],
     "isDynamicEntry": true,
     "src": "views/ProfileView.vue"
+  },
+  "views/TutorialView.css": {
+    "file": "assets/TutorialView-78520f69.css",
+    "src": "views/TutorialView.css"
+  },
+  "views/TutorialView.vue": {
+    "assets": [
+      "assets/filter_trips-edd23b07.jpeg",
+      "assets/create_trip-72908a5b.png",
+      "assets/manage_trips-d2167e32.jpeg",
+      "assets/profile-b354e00e.png"
+    ],
+    "css": [
+      "assets/TutorialView-78520f69.css"
+    ],
+    "file": "assets/TutorialView-d551b83c.js",
+    "imports": [
+      "index.html",
+      "_vendor-4c76fc02.js"
+    ],
+    "isDynamicEntry": true,
+    "src": "views/TutorialView.vue"
   }
 }

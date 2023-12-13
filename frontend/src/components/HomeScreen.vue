@@ -16,7 +16,7 @@
             </div>
           </div>
           <div class="col-xl">
-            <img class="img-fluid" src="static/home.svg" alt="Rideshare Image">
+            <img class="img-fluid" src="/assets/home.svg" alt="Rideshare Image">
           </div>
         </div>
     </div>
