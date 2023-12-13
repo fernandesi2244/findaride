@@ -23,14 +23,6 @@ from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, Use
 
 # TODO: see if any permissions need to be changed
 
-# TODO: add appropriate views to users app based on table schema (e.g., trip ids for that user)
-class TripRequestModelViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.AllowAny,)
-    queryset = TripRequest.objects.all()
-    serializer_class = TripRequestSerializer
-
-    # Define list here and create in serializer
-
 class TripRequestListAPIView(generics.ListAPIView):
     serializer_class = SimpleTripRequestSerializer
     queryset = TripRequest.objects.all()
@@ -173,6 +165,12 @@ class TripRequestAPIView(views.APIView):
             tripRequest = TripRequest.objects.get(pk=pk)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
+        
+        # check authorization
+        user = request.user
+        if user != tripRequest.user:
+            return Response(status=status.HTTP_403_FORBIDDEN, data={"error": "Not authorized."})
+
         try:
             joinRequests = tripRequest.join_requests.all()
             for joinRequest in joinRequests:
@@ -314,6 +312,11 @@ class TripAPIView(views.APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "No action provided."})
 
         trip = Trip.objects.get(pk=pk)
+
+        # check authorization
+        user = request.user
+        if user not in trip.participant_list.all():
+            return Response(status=status.HTTP_403_FORBIDDEN, data={"error": "Not authorized."})
 
         if action == "removeUser":
             trip.remove_user(self.request.user)
