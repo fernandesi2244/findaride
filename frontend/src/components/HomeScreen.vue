@@ -3,7 +3,7 @@
         <div class="container mx-auto row d-flex align-items-center px-4">
           <div class="col-xl px-4">
             <div style="max-width: 750px" class="mx-auto">
-              <h3>Welcome to findaride!</h3>
+              <h3 class="h3-home">Welcome to findaride!</h3>
               <h4>Connect with fellow students for shared, budget-friendly rides.</h4>
               <p class="tagline">
                 Looking for a ride without breaking the bank? findaride makes it easy to connect with
@@ -45,11 +45,11 @@ body {
   text-align: center;
 }
 
-h3, h4, .tagline {
+.h3-home, h4, .tagline {
   margin-bottom: 15px;
 }
 
-h3 {
+.h3-home {
   font-size: 2.5rem;
   color: #333;
 }
@@ -87,7 +87,7 @@ h4 {
     padding: 15px;
   }
 
-  h3 {
+  .h3-home {
     font-size: 2rem;
   }
 
