@@ -60,16 +60,6 @@ class Trip(models.Model):
             joinRequest.trip_details_changed = True
             joinRequest.save()
 
-        curr_utc_time = make_aware(datetime.datetime.utcnow())
-
-        # if the trip is less than 3 hours away, then don't change the trip timespan
-        if curr_utc_time + datetime.timedelta(hours=3) > self.earliest_departure_time:
-            return
-
-        # get max min time and min max time of all users in trip to form new trip timespan
-        self.earliest_departure_time = TripUserDetails.objects.filter(trip=self).aggregate(models.Max('earliest_departure_time'))['earliest_departure_time__max']
-        self.latest_departure_time = TripUserDetails.objects.filter(trip=self).aggregate(models.Min('latest_departure_time'))['latest_departure_time__min']
-
         self.save()
     
     def toggle_is_full_setting(self):
@@ -79,7 +69,7 @@ class Trip(models.Model):
         if self.is_full:
             # clear all join requests to this trip
             for joinRequest in self.join_requests.all():
-                # if the trip request associated with this join request has no more join requests, then create a new trip for the user
+                # if the trip request associated with this join request has no more join requests, then delete it
                 if joinRequest.trip_request.join_requests.count() == 1:
                     send_absolute_rejection_email(joinRequest.trip_request.user)
                     joinRequest.trip_request.delete()
@@ -90,12 +80,7 @@ class Trip(models.Model):
 class TripUserDetails(models.Model):
     trip = models.ForeignKey('Trip', related_name='user_timespans', on_delete=models.CASCADE)
     user = models.ForeignKey('users.CustomUser', related_name='trip_timespans', on_delete=models.CASCADE)
-
-    earliest_departure_time = models.DateTimeField()
-    latest_departure_time = models.DateTimeField()
-
     num_luggage_bags = models.IntegerField()
-
     trip_nickname = models.CharField(max_length=255, blank=True)
 
 # created when a user submits the trip request form from the dashboard
@@ -168,8 +153,6 @@ class JoinRequest(models.Model):
             TripUserDetails.objects.create(
                 trip=trip,
                 user=user,
-                earliest_departure_time=tripRequest.earliest_departure_time,
-                latest_departure_time=tripRequest.latest_departure_time,
                 num_luggage_bags=tripRequest.num_luggage_bags,
                 trip_nickname=tripRequest.trip_nickname
             )
@@ -199,7 +182,7 @@ class JoinRequest(models.Model):
         trip.blacklisted_users.add(self.trip_request.user)
         trip.save()
 
-        # If this was the last join request for the trip request, then create a new trip for the user
+        # If this was the last join request for the trip request, then delete the trip request
         if self.trip_request.join_requests.count() == 1:
             send_absolute_rejection_email(self.trip_request.user)
             self.trip_request.delete()
@@ -225,8 +208,6 @@ def create_new_trip(trip_request):
     TripUserDetails.objects.create(
         trip=new_trip,
         user=trip_request.user,
-        earliest_departure_time=trip_request.earliest_departure_time,
-        latest_departure_time=trip_request.latest_departure_time,
         num_luggage_bags=trip_request.num_luggage_bags,
         trip_nickname=trip_request.trip_nickname
     )

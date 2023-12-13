@@ -9,11 +9,11 @@ urlpatterns = [
     path("user-trips/", UserTripsDetailAPIView.as_view(), name="user-trips"),
     path("join-requests/<int:pk>/", JoinRequestAPIView.as_view(), name="join-request"),
     path("join-selected-trips/", JoinSelectedTripsAPIView.as_view(), name="join-selected-trips"),
-    path("trip-request/", TripRequestAPIView.as_view(), name="trip-request"),
+    path("trip/", TripAPIView.as_view(), name="create-trip"),
     path("trip-request-list/", TripRequestListAPIView.as_view(), name="trip-request-list"),
     path("delete-trip-request/<int:pk>/", TripRequestAPIView.as_view(), name="delete-trip-request"),
     path("trip/<int:pk>/", TripAPIView.as_view(), name="trip"),
-    path("trip/", TripListAPIView.as_view(), name="trip-list"),
+    path("trip-list/", TripListAPIView.as_view(), name="trip-list"),
 ]
 
 urlpatterns += router.urls

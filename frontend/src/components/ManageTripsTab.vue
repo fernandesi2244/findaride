@@ -18,7 +18,7 @@
                 </div>
                 <div v-else>
                     <TripRequestCard :tripRequest="trip"
-                                     @rejectJoinRequest="rejectJoinRequest"
+                                     @withdrawJoinRequest="rejectJoinRequest"
                                      @removeTripRequest="removeTripRequest"></TripRequestCard>
                 </div>
             </div>
@@ -45,14 +45,33 @@ const sortedTrips = computed(() => {
     const myRequests = tripRequests.value.map(obj => ({ ...obj, type: 'r' }))
     var allTrips = myTrips.concat(myRequests)
     return allTrips.sort((a, b) => {
-        return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time);
+        // sort by nickname string
+        if (a.type === 'r' && b.type === 'r') {
+            return a.trip_nickname.localeCompare(b.trip_nickname)
+        } else if (a.type === 't' && b.type === 't') {
+            return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time)
+        } else if (a.type === 'r' && b.type === 't') {
+            return 1;
+        } else {
+            return -1;
+        }
     });
 });
 
 function toggleTripIsFull(tripID) {
     trips.is_full = !trips.is_full
     const endpoint = `${endpoints["trip"]}${tripID}/`;
-    
+    try {
+        axios.patch(endpoint, null, {
+            params: {
+                action: 'toggleIsFullSetting'
+            }
+        });
+        emit('refreshTrips');
+    } catch (error) {
+        alert(error);
+        return;
+    }
 }
 
 function acceptJoinRequest(joinID) {

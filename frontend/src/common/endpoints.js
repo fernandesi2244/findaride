@@ -9,11 +9,11 @@ const endpoints = {
   me: `${authEndpoint}/me/`,
 
   trip: `${apiEndpoint}/trip/`,
-  tripRequest: `${apiEndpoint}/trip-request/`,
   userTrips: `${apiEndpoint}/user-trips/`,
   deleteTripRequest: `${apiEndpoint}/delete-trip-request/`,
   joinRequests: `${apiEndpoint}/join-requests/`,
   joinSelectedTrips: `${apiEndpoint}/join-selected-trips/`,
+  tripList: `${apiEndpoint}/trip-list/`,
 };
 
 export { endpoints };

@@ -38,6 +38,7 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class SimpleTripRequestSerializer(serializers.ModelSerializer):
     user = SimpleUserSerializer()
+    join_requests = JoinRequestTripSerializer(many=True)
     class Meta:
         model = TripRequest
         fields = '__all__'

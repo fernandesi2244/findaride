@@ -1,32 +1,32 @@
 <template>
-      <TripFormHelpModal ref="tripFormHelpModal"></TripFormHelpModal>
-      <div class="modal-content">
-        <div class="modal-body">
-          <form @submit.prevent="submitFirst" class="form-container">
-            <div class="form-row mb-1">
-            <div class="form-group">
-              <label class="text-start" for="from">Pickup location:</label>
-              <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required/>
-            </div>
-            <div class="form-group">
-              <label class="text-start" for="to">Dropoff location:</label>
-              <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required/>
-            </div>
+  <TripFormHelpModal ref="tripFormHelpModal"></TripFormHelpModal>
+  <div class="modal-content">
+    <div class="modal-body">
+      <form @submit.prevent="submitFirst" class="form-container">
+        <div class="form-row mb-1">
+          <div class="form-group">
+            <label class="text-start" for="from">Pickup location:</label>
+            <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="to">Dropoff location:</label>
+            <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
+          </div>
         </div>
         <div class="form-row">
-            <div class="form-group">
-              <label class="text-start" for="pickup-time">Earliest departure time:</label>
-              <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required/>
-            </div>
-            <div class="form-group">
-              <label class="text-start" for="dropoff-time">Latest departure time:</label>
-              <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required/>
-            </div>
+          <div class="form-group">
+            <label class="text-start" for="pickup-time">Earliest departure time:</label>
+            <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
+          </div>
+          <div class="form-group">
+            <label class="text-start" for="dropoff-time">Latest departure time:</label>
+            <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
+          </div>
         </div>
         <div class="mb-1">
-            Can't find a trip you like?
-            <button id="add-trip-btn" class="btn-link">Create your own trip</button>
-            that others can join.
+          Can't find a trip you like?
+          <button id="add-trip-btn" class="btn-link">Create your own trip</button>
+          that others can join.
         </div>
         <!-- <button id="add-trip-btn" class="btn btn-primary">
             Create new trip
@@ -42,122 +42,123 @@
             <div class="form-actions">
               <button type="submit" class="btn primary">Find Matching Trips</button>
             </div> -->
-            <button v-if="showCreateTripModal" class="overlay" @click="toggleCreateTripModal" style="cursor: default;"></button>
-            <form v-if="showCreateTripModal" @submit.prevent="submitForm" class="create-trip-modal">
-                <h5 class="nickname">
-                    <label class="label" for="nickname">Nickname:</label>
-                    <input class="input" id="nickname" v-model="trip.nickname" type="text" placeholder="e.g. Spring break" maxlength="255" required>
-                </h5>
+        <button v-if="showCreateTripModal" class="overlay" @click="toggleCreateTripModal"
+          style="cursor: default;"></button>
+        <form v-if="showCreateTripModal" @submit.prevent="submitNewTrip" class="create-trip-modal">
+          <h5 class="nickname">
+            <label class="label" for="nickname">Nickname:</label>
+            <input class="input" id="nickname" v-model="trip.nickname" type="text"
+              placeholder="e.g. Spring break departure" maxlength="255" required>
+          </h5>
 
-                <div class="luggage">
-                    <label class="text-start" for="luggage-count">Number of luggage bags:</label>
-                    <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
-                </div>
+          <div class="luggage">
+            <label class="text-start" for="luggage-count">Number of luggage bags:</label>
+            <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
+          </div>
 
-                <div>Create a trip by yourself and wait for others to join you.</div>
-                <hr>
+          <div>Create a trip by yourself and wait for others to join you.</div>
+          <hr>
 
-                <div>
-                    <div class="create-trip-row">
-                        <b> Pickup location:</b> <br>
-                        <div class="">{{ trip.from }}</div>
-                    </div>
-                    <div class="create-trip-row">
-                        <b> Dropoff location:</b><br>
-                        <div class="">{{ trip.to }}</div>
-                    </div>
-                    <div class="create-trip-row">
-                        <b> Earliest departure time:</b>
-                        <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
-                    </div>
-                    <div class="create-trip-row">
-                        <b> Latest departure time:</b>
-                        <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
-                    </div>
-                </div>
-
-                <div class="create-trip-footer">
-                    <button type="button" @click="toggleCreateTripModal" class="btn cancel-btn">Close</button>
-                    <button type="submit" class="btn primary">Create trip request</button>
-                </div>
-            </form>
-            <div v-if="showInvalidLocationModal" class="overlay"></div>
-            <div v-if="showInvalidLocationModal" class="invalid-location-modal">
-              <div class="modal-header">
-                <h4 class="modal-title">Invalid Location</h4>
-                <button @click="closeInvalidLocationModal" class="close-btn">&times;</button>
-              </div>
-              <div class="modal-body">
-                <p>Please select a valid {{ invalidLocationType }} location from the suggestions.</p>
-              </div>
-              <div class="modal-footer">
-                <button @click="closeInvalidLocationModal" class="btn primary">OK</button>
-              </div>
+          <div>
+            <div class="create-trip-row">
+              <b> Pickup location:</b> <br>
+              <div class="">{{ trip.from }}</div>
             </div>
-          </form>
-        </div>
+            <div class="create-trip-row">
+              <b> Dropoff location:</b><br>
+              <div class="">{{ trip.to }}</div>
+            </div>
+            <div class="create-trip-row">
+              <b> Earliest departure time:</b>
+              <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
+            </div>
+            <div class="create-trip-row">
+              <b> Latest departure time:</b>
+              <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
+            </div>
+          </div>
 
-      </div>
-  </template>
+          <div class="create-trip-footer">
+            <button type="button" @click="toggleCreateTripModal" class="btn cancel-btn">Close</button>
+            <button type="submit" class="btn primary">Create trip request</button>
+          </div>
+        </form>
+        <div v-if="showInvalidLocationModal" class="overlay"></div>
+        <div v-if="showInvalidLocationModal" class="invalid-location-modal">
+          <div class="modal-header">
+            <h4 class="modal-title">Invalid Location</h4>
+            <button @click="closeInvalidLocationModal" class="close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Please select a valid {{ invalidLocationType }} location from the suggestions.</p>
+          </div>
+          <div class="modal-footer">
+            <button @click="closeInvalidLocationModal" class="btn primary">OK</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</template>
   
-  <script>
-  import TripFormHelpModal from '../components/TripFormHelpModal.vue';
-  import CreateNewTripModal from './CreateNewTripModal.vue';
-  import { getTime, getDate } from './common.js'; 
-  
-  let fromLocationWasSelected = false;
-  let toLocationWasSelected = false;
-  
-  export default {
-    name: "AddTripModal",
-    components: {
-      TripFormHelpModal, CreateNewTripModal
+<script>
+import TripFormHelpModal from '../components/TripFormHelpModal.vue';
+import { getTime, getDate } from './common.js';
+
+let fromLocationWasSelected = false;
+let toLocationWasSelected = false;
+
+export default {
+  name: "AddTripModal",
+  components: {
+    TripFormHelpModal
+  },
+  emits: ['getFilteredTrips', 'createTrip', 'refreshTrips'],
+  data() {
+    return {
+      showCreateTripModal: false,
+      showInvalidLocationModal: false,
+      invalidLocationType: '',
+      fromLocationWasSelected: false,
+      toLocationWasSelected: false,
+      from: '',
+      to: '',
+      trip: {
+        fromLat: '',
+        fromLong: '',
+        toLat: '',
+        toLong: '',
+        departureDate: '',
+        earliestDepartureTime: '',
+        latestDepartureTime: '',
+        luggageCount: 0,
+        nickname: '',
+        comment: '',
+      },
+    }
+  },
+  computed: {
+    allFieldsFilled() {
+      return this.trip.from && this.trip.to && this.trip.earliestDepartureTime && this.trip.latestDepartureTime && this.trip.luggageCount > 0;
     },
-    emits: ['addTripRequest', 'refreshTrips', 'getTrips'],
-    data() {
-      return {
-        showCreateTripModal: false,
-        showInvalidLocationModal: false,
-        invalidLocationType: '',
-        fromLocationWasSelected: false,
-        toLocationWasSelected: false,
-        from: '',
-        to: '',
-        trip: {
-          fromLat: '',
-          fromLong: '',
-          toLat: '',
-          toLong: '',
-          departureDate: '',
-          earliestDepartureTime: '',
-          latestDepartureTime: '',
-          luggageCount: 0,
-          nickname: '',
-          comment: '',
-        },
-      }
-    },
-    computed: {
-        allFieldsFilled() {
-        return this.trip.from && this.trip.to && this.trip.earliestDepartureTime && this.trip.latestDepartureTime && this.trip.luggageCount > 0;
-        },
-    },
-    watch: {
-        'trip.from': 'checkAndCreateTripRequest',
-        'trip.to': 'checkAndCreateTripRequest',
-        'trip.earliestDepartureTime': 'checkAndCreateTripRequest',
-        'trip.latestDepartureTime': 'checkAndCreateTripRequest',
-        'trip.luggageCount': 'checkAndCreateTripRequest',
-    },
-    mounted() {
+  },
+  watch: {
+    'trip.from': 'checkAndCreateTripRequest',
+    'trip.to': 'checkAndCreateTripRequest',
+    'trip.earliestDepartureTime': 'checkAndCreateTripRequest',
+    'trip.latestDepartureTime': 'checkAndCreateTripRequest',
+    'trip.luggageCount': 'checkAndCreateTripRequest',
+  },
+  mounted() {
     this.initializeAutocomplete();
+  },
+  methods: {
+    getTime, getDate,
+    checkAndCreateTripRequest() {
+      emit('getFilteredTrips', { ...this.trip })
     },
-    methods: {
-        getTime, getDate,
-        checkAndCreateTripRequest() {
-          this.autoSearchForTrips();
-        },
-        initializeAutocomplete() {
+    initializeAutocomplete() {
       const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
         types: ["transit_station"],
         fields: ["geometry"]
@@ -186,321 +187,302 @@
         toLocationWasSelected = true;
       });
     },
-      toggleHelp() {
-        console.log(this.$refs.tripFormHelpModal)
-        this.$refs.tripFormHelpModal.show();
-      },
-      async addManualTripRequest() {
-        if(!validateFormData(tripData)) return;
-        showCommentsAndLuggagePopup();
-        let data = {
-            "earliest_departure_time": trip.earliestDepartureTime,
-            "latest_departure_time": trip.latestDepartureTime,
-            "num_luggage_bags": trip.luggageCount,
-            "user": user.id,
-            "departure_location": trip.departure_location,
-            "arrival_location": trip.arrival_location,
-        };
-        
-        const endpoint = await endpoints["tripRequest"];
-        try {
-            const response = axios.post(endpoint, data);    
-            if (response.status === 200) {
-              alert("Trip created successfully!");
-            } else {
-              alert("Trip creation failed. Please try again.");
-            } 
-          }
-        catch (error) {
-            alert("Error creating trip: " + error.message);
-        }
-        },
-      resetForm() {
-        this.from = '';
-        this.trip.fromLat = '';
-        this.trip.fromLong = '';
-        this.to = '';
-        this.trip.toLat = '';
-        this.trip.toLong = '';
-        this.trip.departureDate = '';
-        this.trip.earliestDepartureTime = '';
-        this.trip.latestDepartureTime = '';
-        this.trip.luggageCount = 0;
-        this.trip.comment = '';
-      },
-      showInvalidLocationAlert(locationType) {
-        this.invalidLocationType = locationType;
-        this.showInvalidLocationModal = true;
-      },
-  
-      closeInvalidLocationModal() {
-        this.showInvalidLocationModal = false;
-      },
-      submitFirst() {
-        if (!fromLocationWasSelected) {
-          this.showInvalidLocationAlert('pickup');
-          return;
-        }
-        if (!toLocationWasSelected) {
-          this.showInvalidLocationAlert('dropoff');
-          return;
-        }
-        this.toggleCreateTripModal()
-      },
-      submitForm() {
-        console.log("Submitting trip:", { ...this.trip });
-        this.$emit('addTripRequest', { ...this.trip });
-        this.$emit('refreshTrips');
-        this.resetForm();
-        this._close();
-      },
-      autoSearchForTrips() {
-        console.log("TEST")
-        this.$emit('getTrips', { ...this.trip });
-      },
-      toggleCreateTripModal() {
-        this.showCreateTripModal = !this.showCreateTripModal
-    }
-    }
-  }
-  </script>
-  <style>
-  :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --input-border-color: #ccc;
-    --hover-opacity: 0.9;
-  }
+    toggleHelp() {
+      console.log(this.$refs.tripFormHelpModal)
+      this.$refs.tripFormHelpModal.show();
+    },
+    async submitNewTrip() {
+      // if(!validateFormData(tripData)) return;
+      console.log("Submitting trip:", { ...this.trip });
+      this.$emit('createTrip', { ...this.trip });
+      this.$emit('refreshTrips');
+      this.resetForm();
+      this._close();
+    },
+    resetForm() {
+      this.from = '';
+      this.trip.fromLat = '';
+      this.trip.fromLong = '';
+      this.to = '';
+      this.trip.toLat = '';
+      this.trip.toLong = '';
+      this.trip.departureDate = '';
+      this.trip.earliestDepartureTime = '';
+      this.trip.latestDepartureTime = '';
+      this.trip.luggageCount = 0;
+      this.trip.comment = '';
+    },
+    showInvalidLocationAlert(locationType) {
+      this.invalidLocationType = locationType;
+      this.showInvalidLocationModal = true;
+    },
 
-  .btn-link {
-    background: none!important;
-    border: none;
-    padding: 0!important;
-    /*optional*/
-    font-family: arial, sans-serif;
-    /*input has OS specific font-family*/
-    color: rgb(13, 110, 253);
-    text-decoration: underline;
-    cursor: pointer;
+    closeInvalidLocationModal() {
+      this.showInvalidLocationModal = false;
+    },
+    submitFirst() {
+      if (!fromLocationWasSelected) {
+        this.showInvalidLocationAlert('pickup');
+        return;
+      }
+      if (!toLocationWasSelected) {
+        this.showInvalidLocationAlert('dropoff');
+        return;
+      }
+      this.toggleCreateTripModal()
+    },
+    toggleCreateTripModal() {
+      this.showCreateTripModal = !this.showCreateTripModal
+    }
   }
-  .create-trip-footer {
-    display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    gap: 10px
-  }
-  .create-trip-row {
-    display: flex; 
-    gap: 5px;
-  }
+}
+</script>
+<style>
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --input-border-color: #ccc;
+  --hover-opacity: 0.9;
+}
+
+.btn-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: rgb(13, 110, 253);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.create-trip-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  gap: 10px
+}
+
+.create-trip-row {
+  display: flex;
+  gap: 5px;
+}
 
 
 .luggage {
-    flex: 2;
+  flex: 2;
 }
+
 .luggage label {
-    font-weight: bold;
-    width: 200px;
-    margin-bottom: 10px;
+  font-weight: bold;
+  width: 200px;
+  margin-bottom: 10px;
 }
+
 .luggage input {
-    width: 55px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+  width: 55px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
+
 .nickname {
-    white-space: nowrap;
+  white-space: nowrap;
 }
+
 .nickname label {
-    float: left;
-    margin-right: 10px;
-    width: 100px;
-    padding: 5px;
-    font-weight: bold;
+  float: left;
+  margin-right: 10px;
+  width: 100px;
+  padding: 5px;
+  font-weight: bold;
 }
+
 .nickname input {
-    width: calc(100% - 110px);
-    padding: 5px;
-    background-color: rgba(0, 0, 0, 0.05);
+  width: calc(100% - 110px);
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.05);
 }
-  
-  .trip-request-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #0e0b0b;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* left-align all elements */
-    text-align: left;
-  }
-  
-  
-  .trip-request-form h3 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  
-  /* Style for form groups */
-  .form-group {
+
+.trip-request-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #0e0b0b;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* left-align all elements */
+  text-align: left;
+}
+
+
+.trip-request-form h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+
+/* Style for form groups */
+.form-group {
   flex: 1;
   margin-right: 10px;
 }
-  .form-row {
+
+.form-row {
   display: flex;
   justify-content: space-between;
   /* margin-bottom: 15px; */
 }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-  }
-  
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  
-  .form-group textarea {
-    height: 100px;
-    resize: vertical;
-  }
-  
-  
-  /* Style for buttons */
-  .form-actions {
-    display: flex;
-    justify-content: center;
-    padding-top: 10px;
-  }
-  
-  
-  .btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  
-  .btn.primary {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  
-  .btn.cancel-btn {
-    background-color: #6c757d;
-    color: white;
-    margin-left: 10px;
-  }
-  
-  
-  .btn:hover {
-    opacity: 0.9;
-  }
-  
-  
-  /* Additional styles for responsiveness and interactivity */
-  @media (max-width: 768px) {
-    .trip-request-form {
-      padding: 10px;
-    }
-  }
-  
-  
-  input:focus,
-  textarea:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  
-  .btn {
-    border-radius: 30px;
-  }
-  
-  
-  .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
 
-  .create-trip-modal {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    width: 80%;
-    max-width: 500px;
-    text-align: left;
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+.form-group textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+
+/* Style for buttons */
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+}
+
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+.btn.primary {
+  background-color: #007bff;
+  color: white;
+}
+
+
+.btn.cancel-btn {
+  background-color: #6c757d;
+  color: white;
+  margin-left: 10px;
+}
+
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+
+/* Additional styles for responsiveness and interactivity */
+@media (max-width: 768px) {
+  .trip-request-form {
+    padding: 10px;
   }
-  .create-trip-modal .modal-header {
-    /* margin-bottom: 10px; */
-  }
-  
-  .invalid-location-modal {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    width: 80%;
-    max-width: 400px;
-  }
-  
-  .invalid-location-modal .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .invalid-location-modal .modal-header .close-btn {
-    border: none;
-    background: none;
-    font-size: 1.5em;
-    cursor: pointer;
-  }
-  
-  .invalid-location-modal .modal-body p {
-    color: #333;
-  }
-  
-  .invalid-location-modal .modal-footer {
-    text-align: right;
-  }
-  .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    }
-  </style>
+}
+
+
+input:focus,
+textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.btn {
+  border-radius: 30px;
+}
+
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-trip-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 80%;
+  max-width: 500px;
+  text-align: left;
+}
+
+.create-trip-modal .modal-header {
+  /* margin-bottom: 10px; */
+}
+
+.invalid-location-modal {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 80%;
+  max-width: 400px;
+}
+
+.invalid-location-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.invalid-location-modal .modal-header .close-btn {
+  border: none;
+  background: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.invalid-location-modal .modal-body p {
+  color: #333;
+}
+
+.invalid-location-modal .modal-footer {
+  text-align: right;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}</style>

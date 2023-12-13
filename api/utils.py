@@ -40,7 +40,7 @@ def send_member_left_email(participant_list, trip):
     to = [participant.email for participant in participant_list.all()]
 
     # Load the HTML template
-    html_content = render_to_string('emails/member_left.html', {'dep': trip.departure_location.address.split(" ")[0], 'arr': trip.arrival_location.address.split(" ")[0]})
+    html_content = render_to_string('emails/member_left.html', {'dep': trip.departure_location.address.split(" ")[0], 'arr': trip.arrival_location.address.split(" ")[0], 'user': user})
 
     # Create the email body with both HTML and plain text versions
     text_content = strip_tags(html_content)

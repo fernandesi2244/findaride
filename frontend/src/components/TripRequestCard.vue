@@ -2,17 +2,6 @@
 <h2 class="accordion-header">
     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
         :data-bs-target="'#tripRequest' + tripRequest.id">
-        <span class="location">
-        {{ cleanLocation(tripRequest.departure_location) }} &#8594; {{ cleanLocation(tripRequest.arrival_location) }} 
-        </span>
-        <span class="date">
-        {{ getDate(tripRequest.earliest_departure_time) }}
-        </span>
-        <span class="time">
-        <!-- {{ getTime(tripRequest.earliest_departure_time) }} and {{ getTime(tripRequest.latest_departure_time) }}
-        {{ getDatePart(tripRequest.earliest_departure_time, tripRequest.latest_departure_time) }} -->
-        {{ getTimeRange(tripRequest.earliest_departure_time, tripRequest.latest_departure_time) }} <sup>{{ getDateDiff(tripRequest.earliest_departure_time, tripRequest.latest_departure_time) }}</sup>
-        </span>
         <span class="status">
             Waiting for groups
         </span>
@@ -29,7 +18,7 @@
                 </div>
             </div>
 
-            <div v-if="tripRequest.join_requests.filter(joinRequest => !hasConfirmationRequest(tripRequest, joinRequest)).length == 0">
+            <div v-if="tripRequest.join_requests.length == 0">
                 <p class="text-start">You have no active requests.</p>
             </div>
             <div v-else class="table-responsive">
@@ -49,7 +38,7 @@
                     </thead>
                     <tbody>
                         <!-- TODO: Fix display when there are no join requests as a result of the filter check on the next line. -->
-                        <tr v-for="join in tripRequest.join_requests.filter(joinRequest => !hasConfirmationRequest(tripRequest, joinRequest))"
+                        <tr v-for="join in tripRequest.join_requests"
                             :key="join.id" :class="{ 'join-request-orange': join.status === 'pending' }">
                             <td>{{ join.trip.num_participants }}</td>
                             <td>{{ cleanLocation(join.trip.departure_location) }}</td>
@@ -61,7 +50,7 @@
                             <td>{{ join.trip.num_luggage_bags }}</td>
                             <td>
                                 <button class="btn-text withdraw-btn"
-                                    @click="emit('rejectJoinRequest', join.id)">Withdraw</button>
+                                    @click="emit('withdrawJoinRequest', join.id)">Withdraw</button>
                             </td>
                         </tr>
                     </tbody>
@@ -80,12 +69,7 @@ import { getDatePart, getDate, getTime, cleanLocation, getDateDiff, getTimeRange
 const props = defineProps(['tripRequest'])
 const { tripRequest } = toRefs(props)
 
-const emit = defineEmits(['removeTripRequest', 'rejectJoinRequest'])
-
-function hasConfirmationRequest(tripRequest, joinRequest) {
-    // return false
-    return tripRequest.confirmation_requests.some(confirmationRequest => confirmationRequest.join_request.id === joinRequest.id);
-}
+const emit = defineEmits(['removeTripRequest', 'withdrawJoinRequest'])
 
 </script>
 

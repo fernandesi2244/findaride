@@ -192,6 +192,11 @@ button:hover, .accordion-button:hover {
   background-color: #0056b3;
 }
 
+.accordion-button:not(.collapsed) {
+  background-color: #0056b3;
+  color: white;
+}
+
 .row {
   text-align: center;
 }

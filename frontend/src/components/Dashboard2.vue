@@ -26,7 +26,7 @@
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
-          <AddTripForm @getTrips="getFilteredTrips" @addTripRequest="addTripRequest" @refreshTrips="refreshData"
+          <AddTripForm @getFilteredTrips="getFilteredTrips" @createTrip="createTrip" @refreshTrips="refreshData"
             ref="addTripModal"></AddTripForm>
           <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
             class="btn btn-primary">Create a new trip</button>
@@ -36,7 +36,6 @@
           <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="toggleCreateTripModal" class="btn btn-primary">
             Create a new trip
             </button>
-            <CreateNewTripModal ref="createTripModalRef"></CreateNewTripModal>
           <v-data-table v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
@@ -72,7 +71,6 @@ import { axios } from '../common/axios_service.js'
 import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import ManageTripsTab from './ManageTripsTab.vue';
-import CreateNewTripModal from './CreateNewTripModal.vue';
 import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from './PopupModal.vue';
 import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
@@ -89,11 +87,10 @@ const tripHelpModalRef = ref(null);
 const loading = ref(false);
 
 // display vars
-const showTripForm = ref(true)
-const tripComment = ref("");
 const addTripModal = ref(null)
 const confirmDialogue = ref(null);
 const selectedTrips = ref([]);
+const createTripModalRef = ref(null);
 
 const headers = ref([
   {
@@ -128,14 +125,6 @@ const headers = ref([
   },
 ])
 
-// display vars
-const tripComment = ref("");
-const addTripModal = ref(null)
-const confirmDialogue = ref(null);
-const selectedTrips = ref([]);
-const createTripData = ref({});
-const createTripModalRef = ref(null);
-
 function toggleCreateTripModal() {
     console.log(addTripModal.value.trip)
     createTripModalRef
@@ -163,14 +152,11 @@ function getTripFormData(trip) {
     }
 }
 
-async function createNewTrip() {
-
-}
-
 async function refreshData() {
   getUserInfo();
   getUserTrips();
 }
+
 onMounted(async () => {
   await getUserInfo();
   await getFilteredTrips({});
@@ -203,52 +189,54 @@ async function getUserTrips() {
   userID.value = response.data.id;
 }
 
-async function getFilteredTrips(params) {
-  let endpoint = `${endpoints["trip"]}?`;
+async function getFilteredTrips(tripDetails) {
+  let endpoint = `${endpoints["tripList"]}`;
 
-  for (const [key, value] of Object.entries(params)) {
+  let params = {}
+
+  for (const [key, value] of Object.entries(tripDetails)) {
     if (value !== "") {
       if (key === "earliestDepartureTime" || key === "latestDepartureTime") {
         let str = new Date(value).toUTCString();
-        endpoint += `${key}=${str}&`;
+        params[key] = str;
       } else {
-        endpoint += `${key}=${value}&`;
+        params[key] = value;
       }
     }
   }
-  console.log(endpoint)
-  const response = await axios.get(endpoint);
-  filteredTrips.value = response.data;
+  const response = await axios.get(endpoint, { params: params });
+  filteredTrips.value = response.data.trips;
 }
 
-async function addTripRequest(newTripRequest) {
+async function createTrip(newTrip) {
   //tripRequests.value.push(newTripRequest);
   loading.value = true;
 
   let departure = {
-    "address": newTripRequest.from,
-    "longitude": newTripRequest.fromLong,
-    "latitude": newTripRequest.fromLat,
+    "address": newTrip.from,
+    "longitude": newTrip.fromLong,
+    "latitude": newTrip.fromLat,
   }
   let arrival = {
-    "address": newTripRequest.to,
-    "longitude": newTripRequest.toLong,
-    "latitude": newTripRequest.toLat,
+    "address": newTrip.to,
+    "longitude": newTrip.toLong,
+    "latitude": newTrip.toLat,
   }
 
-  let earliest_departure_time = new Date(newTripRequest.earliestDepartureTime).toUTCString();
-  let latest_departure_time = new Date(newTripRequest.latestDepartureTime).toUTCString();
+  let earliest_departure_time = new Date(newTrip.earliestDepartureTime).toUTCString();
+  let latest_departure_time = new Date(newTrip.latestDepartureTime).toUTCString();
 
   let data = {
     "earliest_departure_time": earliest_departure_time,
     "latest_departure_time": latest_departure_time,
-    "num_luggage_bags": newTripRequest.luggageCount,
+    "num_luggage_bags": newTrip.luggageCount,
     "user": user.id,
     "departure_location": departure,
     "arrival_location": arrival,
-    "comment": newTripRequest.comment,
+    "trip_nickname": trip.nickname,
   }
-  const endpoint = endpoints["tripRequest"];
+
+  const endpoint = endpoints["trip"];
   try {
     const response = await axios.post(endpoint, data);
 
@@ -256,49 +244,26 @@ async function addTripRequest(newTripRequest) {
 
     loading.value = false;
 
-    if (response.data.message === "Trip request created") {
-      goToTripRequestsTab();
+    if (response.data.message === "Trip created") {
+      goToManageTrips();
       confirmDialogue.value.show({
-        title: "You have a match!",
-        message: "Congrats! We found matching trips. We have sent requests to join on your behalf, and you will receive an email if they accept.",
+        title: "Trip successfully created!",
+        message: "Your trip has been created. You can manage your trips in the 'Manage my trips' tab.",
         cancelButton: "Close"
       });
-    }
-    else {
-      goToTripsTab();
-      const confirm = await confirmDialogue.value.show({
-        title: "Create Trip Request",
-        message: "There were no matching trips. Would you like to create a new trip?",
-        okButton: "Yes",
-        cancelButton: "No",
+    } else {
+      confirmDialogue.value.show({
+        title: "Error",
+        message: "Error creating trip:\n" + (response.data.error !== undefined ? formatError(response.data.error) : response.data.message),
+        cancelButton: "Close",
       });
-      if (!confirm) {
-        const endpoint = `${endpoints["trip"]}${newTripRequest.id}/`;
-        try {
-          axios.patch(endpoint, null, {
-            params: {
-              action: 'removeUser'
-            }
-          });
-          emit('refreshTrips');
-        } catch (error) {
-          confirmDialogue.value.show({
-            title: "Error",
-            message: "Error leaving trip:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
-            cancelButton: "Close",
-            okClass: "btn btn-danger",
-          });
-          return;
-        }
-      }
     }
   } catch (error) {
-
     loading.value = false;
     // create modal dialog indicating the error that has occurred and to retry
     confirmDialogue.value.show({
       title: "Error",
-      message: "Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+      message: "Error creating trip:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
       cancelButton: "Close",
     });
     return;
