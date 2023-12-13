@@ -52,7 +52,6 @@
     },
     methods: {
       show() {
-        console.log("HERE")
         this.$refs.popup.open();
       },
       _close() {
@@ -64,7 +63,7 @@
         this.myData.comment = '';
       },
       submit() {
-        this.$emit('joinSelectedTrips', { ...this.trips } , this.myData );
+        this.$emit('joinSelectedTrips', this.myData );
         this.$emit('refreshTrips');
         this.resetForm();
         this._close();

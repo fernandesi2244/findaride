@@ -129,8 +129,8 @@ class JoinSelectedTripsAPIView(views.APIView):
         user = request.user
         trip_request = TripRequest.objects.create(
             user = user,
-            trip_nickname = request.data['trip_nickname'],
-            num_luggage_bags = request.data['num_luggage_bags'],
+            trip_nickname = request.data['nickname'],
+            num_luggage_bags = request.data['luggageCount'],
             comment = request.data['comment']
         )
         trip_request.save()

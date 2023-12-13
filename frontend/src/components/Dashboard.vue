@@ -276,26 +276,27 @@ async function removeTripRequest(id) {
   }
 }
 
+const noTripsSelected = computed(() => {
+  return selectedTrips.value.length === 0;
+})
+
 function toggleShowJoinTripsModal() {
-    if (noTripsSelected()) {
+    if (noTripsSelected.value) {
         alert("Please select at least one trip.");
         return;
     }
     joinTripsRef.value.show()
 }
 
-function noTripsSelected() {
-    return selectedTrips.value.length === 0;
-}
-
-async function joinSelectedTrips() {
-  if (noTripsSelected()) {
+async function joinSelectedTrips(data) {
+  if (noTripsSelected.value) {
     alert("Please select at least one trip.");
     return;
   }
+  console.log(data)
   loading.value = true;
   try {
-    const response = await axios.post(endpoints["joinSelectedTrips"], { selected_trip_ids: selectedTrips.value });
+    const response = await axios.post(endpoints["joinSelectedTrips"], { selected_trip_ids: selectedTrips.value, ...data });
     if (response.status === 200) {
       confirmDialogue.value.show({
         title: "Requested to join the selected trip(s)!",
