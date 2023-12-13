@@ -30,7 +30,7 @@
           <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
         </div>
         <div class="create-trip-row">
-          <b> Latest departure timse:</b>
+          <b> Latest departure time:</b>
           <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
         </div>
       </div>
@@ -230,6 +230,7 @@ export default {
       this.trip.latestDepartureTime = '';
       this.trip.luggageCount = 0;
       this.trip.comment = '';
+      this.trip.nickname = '';
     },
     showInvalidLocationAlert(locationType) {
       this.invalidLocationType = locationType;
