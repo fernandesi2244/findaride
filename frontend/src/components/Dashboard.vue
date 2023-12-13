@@ -246,13 +246,11 @@ async function createTrip(newTrip) {
       confirmDialogue.value.show({
         title: "Trip successfully created!",
         message: "Your trip has been created. You can manage your trips in the 'Manage my trips' tab.",
-        cancelButton: "Close"
       });
     } else {
       confirmDialogue.value.show({
         title: "Error",
         message: "Error creating trip:\n" + (response.data.error !== undefined ? formatError(response.data.error) : response.data.message),
-        cancelButton: "Close",
       });
     }
   } catch (error) {
@@ -261,7 +259,6 @@ async function createTrip(newTrip) {
     confirmDialogue.value.show({
       title: "Error",
       message: "Error creating trip:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
-      cancelButton: "Close",
     });
     return;
   }
@@ -305,7 +302,6 @@ async function joinSelectedTrips(data) {
       confirmDialogue.value.show({
         title: "Requested to join the selected trip(s)!",
         message: "We have sent requests to join the selected trips on your behalf, and you will receive an email notification when any group accepts.",
-        cancelButton: "Close"
       });
       loading.value = false;
       goToManageTrips();
@@ -340,22 +336,11 @@ async function joinSelectedTrips(data) {
 }
 
 .nav-link {
-  --bs-nav-link-color: #3B3B3B;
-  --bs-nav-pills-link-active-color: #fff;
-  --bs-nav-pills-link-active-bg: #3B3B3B;
-  --bs-nav-pills-border-radius: 30px;
-  --bs-nav-link-hover-color: none;
   border: 2px solid #1A1A1A;
   display: inline-block;
   padding: 10px;
   text-align: center;
   transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
-}
-
-.nav-link.active, .nav-link:hover {
-  background-color: #007bff;
-  color: #fff;
-  border-color: #007bff;
 }
 
 .col-2 {
@@ -393,20 +378,6 @@ async function joinSelectedTrips(data) {
   color: #007bff;
 }
 
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
 .loading-overlay {
   width: 100%;
   height: 100%;
@@ -429,17 +400,6 @@ async function joinSelectedTrips(data) {
   color: rgb(255, 255, 255);
 }
 
-button.btn {
-  color: white;
-  background-color: #007bff;
-  border-color: #007bff;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-button.btn:hover {
-  background-color: #0056b3;
-  border-color: #0056b3;
-}
 @media (max-width: 768px) {
   .narrow-container {
     padding: 15px;
