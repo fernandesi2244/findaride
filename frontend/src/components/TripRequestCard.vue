@@ -2,9 +2,8 @@
 <h2 class="accordion-header">
     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
         :data-bs-target="'#tripRequest' + tripRequest.id">
-        <span class="status">
-            Waiting for groups
-        </span>
+        <span class="nickname-card">{{ tripRequest.trip_nickname }}</span>
+        <span class="status">Waiting for groups</span>
     </button>
 </h2>
 <div :id="'tripRequest' + tripRequest.id" class="accordion-collapse collapse">
@@ -79,6 +78,9 @@ const emit = defineEmits(['removeTripRequest', 'withdrawJoinRequest'])
     margin-left: auto;
 }
 
+.nickname-card {
+    width: 80%;
+}
 .location {
     width: 30%;
 }
