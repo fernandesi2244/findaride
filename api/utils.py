@@ -2,9 +2,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.urls import reverse
+from threading import *
 
 def send_trip_joined_email(user, trip):
     subject = "findaride: Joined a trip"
@@ -18,7 +16,8 @@ def send_trip_joined_email(user, trip):
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, "text/html")
-    email.send()
+    thread=Thread(target=email.send)
+    thread.start()
 
 def send_join_email(participant_list, trip):
     subject = "findaride: Request to join your trip"
@@ -32,7 +31,8 @@ def send_join_email(participant_list, trip):
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, "text/html")
-    email.send()
+    thread=Thread(target=email.send)
+    thread.start()
 
 def send_member_left_email(participant_list, trip):
     subject = "findaride: A member has left your trip"
@@ -46,7 +46,8 @@ def send_member_left_email(participant_list, trip):
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, "text/html")
-    email.send()
+    thread=Thread(target=email.send)
+    thread.start()
 
 def send_absolute_rejection_email(user):
     subject = "findaride: Request(s) to join trip(s) failed"
@@ -60,4 +61,5 @@ def send_absolute_rejection_email(user):
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives(subject, text_content, from_email, to)
     email.attach_alternative(html_content, "text/html")
-    email.send()
+    thread=Thread(target=email.send)
+    thread.start()

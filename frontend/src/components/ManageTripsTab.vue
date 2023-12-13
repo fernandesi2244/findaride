@@ -73,11 +73,10 @@ function toggleTripIsFull(tripID) {
     }
 }
 
-function acceptJoinRequest(joinID) {
+async function acceptJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=accept`;
-    console.log(endpoint)
     try {
-        axios.post(endpoint);
+        await axios.post(endpoint);
         emit('refreshTrips', null, true);
     } catch (error) {
         alert(error);
@@ -85,10 +84,10 @@ function acceptJoinRequest(joinID) {
     }
 }
 
-function rejectJoinRequest(joinID) {
+async function rejectJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
     try {
-        axios.post(endpoint);
+        await axios.post(endpoint);
         emit('refreshTrips', null, true);
     } catch (error) {
         alert(error);

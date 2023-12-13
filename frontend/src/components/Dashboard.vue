@@ -155,6 +155,7 @@ function toggleHelp() {
 }
 
 async function refreshData(deletedTripID=null, manageTrips=false) {
+  console.log("TEST")
   getUserInfo();
   await getUserTrips()
 

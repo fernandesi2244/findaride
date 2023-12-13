@@ -125,11 +125,8 @@ const { trip, userID } = toRefs(props)
 const emit = defineEmits(['acceptJoinRequest', 'rejectJoinRequest', 'leaveTrip', 'toggleTripIsFull'])
 
 const numRidersText = computed(() => {
-    console.log(trip.value.participant_list)
     const numOthers = trip.value.participant_list.length - 1
-    if (numOthers == 0) {
-        return "You"
-    } else if (numOthers == 1) {
+    if (numOthers == 1) {
         return "You + 1 other"
     }
     return "You + " + String(numOthers) + " others"
