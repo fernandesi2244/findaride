@@ -58,8 +58,7 @@ const sortedTrips = computed(() => {
     });
 });
 
-function toggleTripIsFull(tripID) {
-    trips.is_full = !trips.is_full
+function toggleTripIsFull(tripID) {   
     const endpoint = `${endpoints["trip"]}${tripID}/`;
     try {
         axios.patch(endpoint, null, {
@@ -67,7 +66,7 @@ function toggleTripIsFull(tripID) {
                 action: 'toggleIsFullSetting'
             }
         });
-        emit('refreshTrips');
+        emit('refreshTrips', null, true);
     } catch (error) {
         alert(error);
         return;
@@ -79,7 +78,7 @@ function acceptJoinRequest(joinID) {
     console.log(endpoint)
     try {
         axios.post(endpoint);
-        emit('refreshTrips');
+        emit('refreshTrips', null, true);
     } catch (error) {
         alert(error);
         return;
@@ -90,7 +89,7 @@ function rejectJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
     try {
         axios.post(endpoint);
-        emit('refreshTrips');
+        emit('refreshTrips', null, true);
     } catch (error) {
         alert(error);
         return;
@@ -114,7 +113,7 @@ async function leaveTrip(tripID) {
                     action: 'removeUser'
                 }
             });
-            emit('refreshTrips');
+            emit('refreshTrips', tripID, true);
         } catch (error) {
             confirmDialogue.value.show({
                 title: "Error",
@@ -139,7 +138,7 @@ async function removeTripRequest(tripRequestID) {
         const endpoint = `${endpoints["deleteTripRequest"]}${tripRequestID}/`;
         try {
             await axios.delete(endpoint);
-            emit('refreshTrips');
+            emit('refreshTrips', null, true);
         } catch (error) {
             confirmDialogue.value.show({
                 title: "Error",

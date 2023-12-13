@@ -19,7 +19,7 @@ from django.db.models import F
 UserModel = get_user_model()
 
 from .models import TripRequest, Trip, JoinRequest, Location, TripUserDetails
-from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleTripSerializer
+from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, UserTripsSerializer, SimpleTripSerializer, SimpleUserTripSerializer
 
 # TODO: see if any permissions need to be changed
 
@@ -30,11 +30,13 @@ class TripRequestListAPIView(generics.ListAPIView):
 class TripListAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
+    # gets the filtered list of trips in the search widget
     def get(self, request):
         user = request.user
         user_college = user.college
         blacklisted_trips_id = user.blacklisted_trips.values('id')
         user_trip_ids = user.trips.values('id')
+        trips_requested = [joinRequest.trip.id for tripRequest in TripRequest.objects.filter(user=user) for joinRequest in tripRequest.join_requests.all()]
 
         curr_utc_time = make_aware(datetime.utcnow())
 
@@ -43,8 +45,8 @@ class TripListAPIView(views.APIView):
             is_full=False,
             # allow trips to be joined late but not too late (halfway through the defined range)
             earliest_departure_time__gt=curr_utc_time - (F('latest_departure_time') - F('earliest_departure_time')) / 2,
-        ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).order_by('num_participants', 'num_luggage_bags')
-    
+        ).exclude(id__in=blacklisted_trips_id).exclude(id__in=user_trip_ids).exclude(id__in=trips_requested).order_by('num_participants', 'num_luggage_bags')
+
         earliest_departure_time = self.request.query_params.get("earliestDepartureTime", None)
         latest_departure_time = self.request.query_params.get("latestDepartureTime", None)
         # num_luggage_bags = self.request.query_params.get("luggageCount", None)
@@ -180,10 +182,9 @@ class TripRequestAPIView(views.APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
     
-class UserTripsDetailAPIView(generics.RetrieveAPIView):
+class UserTripsDetailAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
     queryset = UserModel.objects.all()
-    serializer_class = UserTripsSerializer
 
     def get(self, request):
         when = self.request.query_params.get("when", None)
@@ -202,7 +203,7 @@ class UserTripsDetailAPIView(generics.RetrieveAPIView):
                 associated_trips = associated_trips.filter(latest_departure_time__gte=utcnow)
 
             return Response(status=status.HTTP_200_OK, data={
-                "trips": SimpleTripSerializer(associated_trips, many=True).data,
+                "trips": SimpleUserTripSerializer(associated_trips, many=True, context={'request': request}).data,
                 "trip_requests": SimpleTripRequestSerializer(associated_trip_requests, many=True).data,
                 "id": user.id,
             })

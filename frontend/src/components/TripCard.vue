@@ -1,124 +1,117 @@
 <template>
-<h2 class="accordion-header">
-    <button class="accordion-button collapsed" type="button"
-        data-bs-toggle="collapse" :data-bs-target="'#' + trip.college + trip.id">
-        <span class="location">
-        {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }} 
-        </span>
-        <span class="date">
-        {{ getDate(trip.earliest_departure_time) }}
-        </span>
-        <span class="time">
-        {{ getTimeRange(trip.earliest_departure_time, trip.latest_departure_time) }} <sup>{{ getDateDiff(trip.earliest_departure_time, trip.latest_departure_time) }}</sup>
-        </span>
-        <span class="status">
-            {{ numRidersText }}
-        </span>
-    </button>
-</h2>
-<div :id="trip.college + trip.id" class="accordion-collapse collapse">
-    <div class="accordion-body">
-        <div class='mb-2'>
-            <div class="flex">
-                <div>
-                    <div class="flex">
-                        <h5 class="text-start margin-right-1 header-border">Members<br></h5>
-                        <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
-                        <div class="">
-                            <label class="form-check-label margin-right-2">
-                                Mark trip as full
-                            </label>                                            
-                            <input @click="emit('toggleTripIsFull', trip.id)" :checked="trip.is_full" class="form-check-input" type="checkbox" value="" :id="'check' + trip.id">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            :data-bs-target="'#' + trip.college + trip.id">
+            <span class="nickname-card">
+                {{ trip.trip_nickname }}
+            </span>
+            <span class="status">
+                {{ numRidersText }}
+            </span>
+        </button>
+    </h2>
+    <div :id="trip.college + trip.id" class="accordion-collapse collapse">
+        <div class="accordion-body">
+            <div class='mb-2'>
+                <div class="flex">
+                    <div>
+                        <h5 class="text-start"> {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }}
+                        </h5>
+                        <div class="flex" style="justify-content: start;">
+                            <h6> {{ getDate(trip.earliest_departure_time) }}</h6>
+                            <h6> {{ getTimeRange(trip.earliest_departure_time, trip.latest_departure_time) }} <sup>{{
+                                getDateDiff(trip.earliest_departure_time, trip.latest_departure_time) }}</sup></h6>
                         </div>
-                    </div>
-                    <!-- put each member on a separate line -->
-                    <!-- print all trip participants except current user -->
-                    <h6 class="text-start">You</h6>
-                    <h6 v-for="participant in trip.participant_list.filter(participant => participant.id !== userID)" :key="participant.id" class="text-start">
-                        {{ nameEmail(participant) }}
-                    </h6>
-                    <div class="tooltip" style="margin-bottom: 10px;">
-                        <button class="btn-text copy-emails-btn"
-                            @click="copyEmailsOf(trip.participant_list.filter(participant => participant.id !== userID), trip.id)">
-                            Copy emails
-                        </button>
-                        <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to
-                            clipboard</span>
-                    </div>
+                        <br>
+                        <div class="flex" style="justify-content: start;">
+                            <h5 class="text-start margin-right-1 header-border">Members<br></h5>
+                            <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
+                            <div class="">
+                                <label class="form-check-label margin-right-2">
+                                    Mark trip as full
+                                </label>
+                                <input @click="emit('toggleTripIsFull', trip.id)" :checked="trip.is_full"
+                                    class="form-check-input" type="checkbox" value="" :id="'check' + trip.id">
+                            </div>
+                        </div>
+                        <!-- put each member on a separate line -->
+                        <!-- print all trip participants except current user -->
+                        <h6 class="text-start">You</h6>
+                        <h6 v-for="participant in trip.participant_list.filter(participant => participant.id !== userID)"
+                            :key="participant.id" class="text-start">
+                            {{ nameEmail(participant) }}
+                        </h6>
+                        <div class="tooltip" style="margin-bottom: 10px;">
+                            <button class="btn-text copy-emails-btn"
+                                @click="copyEmailsOf(trip.participant_list.filter(participant => participant.id !== userID), trip.id)">
+                                Copy emails
+                            </button>
+                            <span class="tooltiptext" :id="'copyTooltip' + trip.id">Copied to
+                                clipboard</span>
+                        </div>
 
+                    </div>
+                    <div class="hug-right">
+                        <button class="btn btn-danger btn-sm" @click="emit('leaveTrip', trip.id)">Leave</button>
+                    </div>
                 </div>
-                <div class="hug-right">
-                    <button class="btn btn-danger btn-sm" @click="emit('leaveTrip', trip.id)">Leave</button>
+                <h5 class="text-start">Join requests</h5>
+                <div v-if="trip.join_requests.length == 0">
+                    <h6 class="text-start">No requests to join yet.</h6>
                 </div>
-            </div>
-            <h5 class="text-start">Join requests</h5>
-            <div v-if="trip.join_requests.length == 0">
-                <h6 class="text-start">No requests to join yet.</h6>
-            </div>
-            <div v-else class="table-responsive">
-                <table class="table bdr">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="column">Name</th>
-                            <th scope="col" class="column">Departure</th>
-                            <th scope="col" class="column">Arrival</th>
-                            <th scope="col" class="column">Earliest time</th>
-                            <th scope="col" class="column">Latest time</th>
-                            <th scope="col" class="column">Bags</th>
-                            <th scope="col" class="column"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template v-for="join in trip.join_requests" :key="join.id">
-
+                <div v-else class="table-responsive">
+                    <table class="table bdr">
+                        <thead>
                             <tr>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">{{ join.trip_request.user.first_name }} {{
-                                    join.trip_request.user.last_name }}</td>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">{{ cleanLocation(join.trip_request.departure_location)
-                                }}</td>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">{{ cleanLocation(join.trip_request.arrival_location)
-                                }}</td>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">{{ getTime(join.trip_request.earliest_departure_time)
-                                    + " (" + getDate(join.trip_request.earliest_departure_time) + ")" }}</td>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">{{ getTime(join.trip_request.latest_departure_time) +
-                                    " (" + getDate(join.trip_request.latest_departure_time) + ")" }}</td>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">{{ join.trip_request.num_luggage_bags }}</td>
-                                <td v-bind:class="join.trip_request.comment?'no-border':''">
-                                    <div v-if="join.participants_that_accepted.includes(userID)">
-                                        <!-- check if there are other members of the trip that need to approve the reqeust -->
-                                        <div
-                                            v-if="join.participants_that_accepted.length < trip.num_participants">
-                                            Waiting for other members...
+                                <th scope="col" class="column">Name</th>
+                                <th scope="col" class="column">Bags</th>
+                                <th scope="col" class="column"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template v-for="join in trip.join_requests" :key="join.id">
+                                <tr>
+                                    <td v-bind:class="join.trip_request.comment ? 'no-border' : ''">{{
+                                        join.trip_request.user.first_name }} {{
+        join.trip_request.user.last_name }}</td>
+                                    <td v-bind:class="join.trip_request.comment ? 'no-border' : ''">{{
+                                        join.trip_request.num_luggage_bags }}</td>
+                                    <td v-bind:class="join.trip_request.comment ? 'no-border' : ''">
+                                        <div v-if="join.participants_that_accepted.includes(userID)">
+                                            <!-- check if there are other members of the trip that need to approve the reqeust -->
+                                            <div v-if="join.participants_that_accepted.length < trip.num_participants">
+                                                Waiting for other members...
+                                            </div>
+                                            <div v-else>
+                                                They're in!
+                                            </div>
                                         </div>
                                         <div v-else>
-                                            Waiting for response...
+                                            <button class="btn-text accept" role="button"
+                                                style="width:60px; margin-right:5px"
+                                                @click="emit('acceptJoinRequest', join.id)">Accept</button>
+                                            <button class="btn-text reject" role="button" style="width:60px"
+                                                @click="emit('rejectJoinRequest', join.id)">Reject</button>
                                         </div>
-                                    </div>
-                                    <div v-else>
-                                        <button class="btn-text accept" role="button"
-                                            style="width:60px; margin-right:5px" @click="emit('acceptJoinRequest',join.id)">Accept</button>
-                                        <button class="btn-text reject" role="button"
-                                            style="width:60px" @click="emit('rejectJoinRequest', join.id)">Reject</button>
-                                    </div>
-                                </td>
+                                    </td>
 
-                            </tr>
-                            <tr v-if="join.trip_request.comment">
-                                <td colspan="30" class="">
-                                    <table class="text-muted no-padding">
-                                        &#x21B3;
-                                        Comments: {{ join.trip_request.comment }}
-                                    </table>
-                                </td>
-                            </tr>
+                                </tr>
+                                <tr v-if="join.trip_request.comment">
+                                    <td colspan="30" class="">
+                                        <table class="text-muted no-padding">
+                                            &#x21B3;
+                                            Comments: {{ join.trip_request.comment }}
+                                        </table>
+                                    </td>
+                                </tr>
 
-                        </template>
-                    </tbody>
-                </table>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script setup>
@@ -127,7 +120,7 @@ import { getDatePart, getDate, getTime, cleanLocation, nameEmail, getTimeRange, 
 
 
 const props = defineProps(['trip', 'userID'])
-const { trip, userID} = toRefs(props)
+const { trip, userID } = toRefs(props)
 
 const emit = defineEmits(['acceptJoinRequest', 'rejectJoinRequest', 'leaveTrip', 'toggleTripIsFull'])
 
@@ -177,6 +170,7 @@ function copyEmailsOf(participants, id) {
 .margin-right-1 {
     margin-right: 50px;
 }
+
 .margin-right-2 {
     margin-right: 10px;
 }
@@ -307,5 +301,4 @@ function copyEmailsOf(participants, id) {
 
 button.btn.btn-danger {
     color: white;
-}
-</style>
+}</style>

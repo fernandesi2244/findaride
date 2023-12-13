@@ -8,11 +8,21 @@
       </div>
       <h5>Sending requests...</h5>
     </div>
+  </div>
+  <div v-show="loadingTripCreation">
+    <div class="loading-overlay">
     </div>
-    <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
-    <JoinTripsModal @joinSelectedTrips="joinSelectedTrips" @refreshTrips="refreshData" 
-                    :trips="selectedTrips" ref="joinTripsRef"></JoinTripsModal>
-    
+    <div class="spinner">
+      <div class="spinner-border" style="z-index: 104; width: 6rem; height: 6rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <h5>Creating trip...</h5>
+    </div>
+  </div>
+  <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
+  <JoinTripsModal @joinSelectedTrips="joinSelectedTrips" @refreshTrips="refreshData" :trips="selectedTrips"
+    ref="joinTripsRef"></JoinTripsModal>
+
   <div class="container-xl" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
@@ -20,30 +30,29 @@
       </div>
       <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button">
+          <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button" @click="refreshData">
             Plan a new trip</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button">Manage my trips</a>
+          <a id="manage-trips-tab" class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button" @click="refreshData">Manage my trips</a>
         </li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
           <AddTripForm @getFilteredTrips="getFilteredTrips" @createTrip="createTrip" @refreshTrips="refreshData"
             ref="addTripModal"></AddTripForm>
-          <!-- <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
-            class="btn btn-primary">Create a new trip</button> -->
-            <div class="flex mt-4">
-                <button @click="toggleShowJoinTripsModal" :disabled="noTripsSelected" class="btn btn-primary mt-4">
-                    Request to join
-                </button>
-                <h3 style="margin: auto; padding-top: 15px;">Trip Matches</h3>
-                <div style="visibility: hidden;" class="btn btn-primary mt-4">
-                    Request to join
-                </div>
+          <div class="flex mt-4">
+            <button @click="toggleShowJoinTripsModal" :disabled="noTripsSelected" class="btn btn-primary mt-4">
+              Request to join
+            </button>
+            <h3 style="margin: auto; padding-top: 15px;">Trip Matches</h3>
+            <div style="visibility: hidden;" class="btn btn-primary mt-4">
+              Request to join
             </div>
-          
-          <v-data-table no-data-text="No matching trips" v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
+          </div>
+
+          <v-data-table no-data-text="No matching trips" v-model="selectedTrips" :headers="headers" :items="filteredTrips"
+            item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
             </template>
@@ -63,7 +72,8 @@
           </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
-          <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id" @refreshTrips="refreshData"></ManageTripsTab>
+          <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id" @refreshTrips="refreshData">
+          </ManageTripsTab>
         </div>
       </div>
     </div>
@@ -92,6 +102,7 @@ const userID = ref(0);
 const tripHelpModalRef = ref(null);
 
 const loading = ref(false);
+const loadingTripCreation = ref(false);
 
 // display vars
 const addTripModal = ref(null)
@@ -143,10 +154,16 @@ function toggleHelp() {
   }
 }
 
-async function refreshData() {
+async function refreshData(deletedTripID=null, manageTrips=false) {
   getUserInfo();
-  getFilteredTrips({});
-  getUserTrips();
+  await getUserTrips()
+
+  if (deletedTripID !== null) {
+    userTrips.value = userTrips.value.filter(trip => trip.id !== deletedTripID);
+  }
+  if (manageTrips) {
+    goToManageTrips();
+  }
 }
 
 onMounted(async () => {
@@ -154,6 +171,10 @@ onMounted(async () => {
   await getFilteredTrips({});
   await getUserTrips();
 });
+
+function goToManageTrips() {
+  $("#manage-trips-tab").click();
+}
 
 async function getUserInfo() {
   const endpoint = endpoints["me"];
@@ -191,7 +212,7 @@ async function getFilteredTrips(tripDetails) {
 
 async function createTrip(newTrip) {
   //tripRequests.value.push(newTripRequest);
-  loading.value = true;
+  loadingTripCreation.value = true;
 
   let departure = {
     "address": newTrip.from,
@@ -223,7 +244,7 @@ async function createTrip(newTrip) {
 
     await refreshData(); // force to wait before showing confirmation modal
 
-    loading.value = false;
+    loadingTripCreation.value = false;
 
     if (response.data.message === "Trip created") {
       goToManageTrips();
@@ -240,7 +261,7 @@ async function createTrip(newTrip) {
       });
     }
   } catch (error) {
-    loading.value = false;
+    loadingTripCreation.value = false;
     // create modal dialog indicating the error that has occurred and to retry
     confirmDialogue.value.show({
       title: "Error",
@@ -270,11 +291,11 @@ const noTripsSelected = computed(() => {
 })
 
 function toggleShowJoinTripsModal() {
-    if (noTripsSelected.value) {
-        alert("Please select at least one trip.");
-        return;
-    }
-    joinTripsRef.value.show()
+  if (noTripsSelected.value) {
+    alert("Please select at least one trip.");
+    return;
+  }
+  joinTripsRef.value.show()
 }
 
 async function joinSelectedTrips(data) {
@@ -309,22 +330,22 @@ async function joinSelectedTrips(data) {
   
 <style>
 .tab-content {
-    background-color: white;
-    border: solid;
-    border-width: thin;
-    /* border-left-width: thin;
+  background-color: white;
+  border: solid;
+  border-width: thin;
+  /* border-left-width: thin;
     border-right-width: thin;
     border-top-width: 0;
     border-bottom-width: thin; */
-    border-top-right-radius: var(--bs-border-radius);
-    border-bottom-left-radius: var(--bs-border-radius);
-    border-bottom-right-radius: var(--bs-border-radius);
-    border-color: var(--bs-border-color);
+  border-top-right-radius: var(--bs-border-radius);
+  border-bottom-left-radius: var(--bs-border-radius);
+  border-bottom-right-radius: var(--bs-border-radius);
+  border-color: var(--bs-border-color);
 
 }
 
 .nav-tabs {
-    border-bottom-width: 0;
+  border-bottom-width: 0;
 }
 
 .nav-link {

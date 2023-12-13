@@ -37,7 +37,7 @@
 
       <div class="create-trip-footer">
         <button type="button" @click="closeCreateTripModal" class="btn cancel-btn">Close</button>
-        <button type="submit" class="btn primary">Create trip request</button>
+        <button type="submit" class="btn primary">Create trip</button>
       </div>
     </form>
     </div>
@@ -192,31 +192,6 @@ export default {
     toggleHelp() {
       console.log(this.$refs.tripFormHelpModal)
       this.$refs.tripFormHelpModal.show();
-    },
-    async addManualTripRequest() {
-      if (!validateFormData(tripData)) return;
-      showCommentsAndLuggagePopup();
-      let data = {
-        "earliest_departure_time": trip.earliestDepartureTime,
-        "latest_departure_time": trip.latestDepartureTime,
-        "num_luggage_bags": trip.luggageCount,
-        "user": user.id,
-        "departure_location": trip.departure_location,
-        "arrival_location": trip.arrival_location,
-      };
-
-      const endpoint = await endpoints["tripRequest"];
-      try {
-        const response = axios.post(endpoint, data);
-        if (response.status === 200) {
-          alert("Trip created successfully!");
-        } else {
-          alert("Trip creation failed. Please try again.");
-        }
-      }
-      catch (error) {
-        alert("Error creating trip: " + error.message);
-      }
     },
     resetForm() {
       this.trip.from = '';

@@ -78,8 +78,8 @@ class Trip(models.Model):
                 self.save()
 
 class TripUserDetails(models.Model):
-    trip = models.ForeignKey('Trip', related_name='user_timespans', on_delete=models.CASCADE)
-    user = models.ForeignKey('users.CustomUser', related_name='trip_timespans', on_delete=models.CASCADE)
+    trip = models.ForeignKey('Trip', related_name='trip_user_details', on_delete=models.CASCADE)
+    user = models.ForeignKey('users.CustomUser', related_name='trip_user_details', on_delete=models.CASCADE)
     num_luggage_bags = models.IntegerField()
     trip_nickname = models.CharField(max_length=255, blank=True)
 
@@ -166,7 +166,7 @@ class JoinRequest(models.Model):
             self.delete()
 
             # send email to team indicating new team along with details
-            send_trip_joined_email(trip.participant_list, user)
+            send_trip_joined_email(user, trip.participant_list)
 
             # mark all other join requests to this trip as trip details changed
             for joinRequest in trip.join_requests.all():

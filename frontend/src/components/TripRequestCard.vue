@@ -3,7 +3,7 @@
     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
         :data-bs-target="'#tripRequest' + tripRequest.id">
         <span class="nickname-card">{{ tripRequest.trip_nickname }}</span>
-        <span class="status">Waiting for groups</span>
+        <span class="status">Waiting for groups to accept</span>
     </button>
 </h2>
 <div :id="'tripRequest' + tripRequest.id" class="accordion-collapse collapse">

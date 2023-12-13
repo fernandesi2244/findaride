@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from users.serializers import SimpleUserSerializer
 
-from .models import TripRequest, Trip, JoinRequest, Location
+from .models import TripRequest, Trip, JoinRequest, Location, TripUserDetails
 
 UserModel = get_user_model()
 
@@ -56,6 +56,23 @@ class SimpleTripSerializer(serializers.ModelSerializer):
     departure_location = serializers.StringRelatedField()
     participant_list = SimpleUserSerializer(many=True)
     join_requests = JoinRequestSerializer(many=True)
+
+    class Meta:
+        model = Trip
+        fields = '__all__'
+
+class SimpleUserTripSerializer(serializers.ModelSerializer):
+    arrival_location = serializers.StringRelatedField()
+    departure_location = serializers.StringRelatedField()
+    participant_list = SimpleUserSerializer(many=True)
+    join_requests = JoinRequestSerializer(many=True)
+    trip_nickname = serializers.SerializerMethodField()
+
+    def get_trip_nickname(self, obj):
+        user = self.context['request'].user
+        if user in obj.participant_list.all():
+            return TripUserDetails.objects.get(trip=obj, user=user).trip_nickname
+        return "Rideshare trip"
 
     class Meta:
         model = Trip
