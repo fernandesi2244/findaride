@@ -19,7 +19,7 @@
               Request to join <b>{{ trips.length }}</b> trip(s)
             <hr>
             <div class="create-trip-footer">
-                <button @click="_close" class="btn btn-secondary">Close</button>
+                <button style="color: white" type="button" @click="_close" class="btn btn-secondary">Close</button>
               <button type="submit" class="btn primary">Send requests</button>
             </div>
           </form>
