@@ -22,13 +22,6 @@ const routes = [
     path: '/dashboard/',
     name: 'dashboard',
     component: () => import('../views/DashboardView.vue'),
-    
-  },
-  {
-    path: '/dashboard2/',
-    name: 'dashboard2',
-    component: () => import('../views/Dashboard2View.vue'),
-    
   }
 ]
 async function isLoggedIn() {

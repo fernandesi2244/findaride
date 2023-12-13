@@ -6,62 +6,87 @@
       <div class="spinner-border" style="z-index: 104; width: 6rem; height: 6rem;" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
-      <h5>Finding matches...</h5>
+      <h5>Sending requests...</h5>
     </div>
-  </div>
-  <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
+    </div>
+    <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
+    <JoinTripsModal @joinSelectedTrips="joinSelectedTrips" @refreshTrips="refreshData" 
+                    :trips="selectedTrips" ref="joinTripsRef"></JoinTripsModal>
+    
   <div class="container-xl" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name }}!</h2>
-        <button id="add-trip-btn" @click="toggleTripModal" class="btn btn-primary">Plan a new trip</button>
-        <AddTripModal @addTripRequest="addTripRequest" @refreshTrips="refreshData" ref="addTripModal"></AddTripModal>
       </div>
-      <ul class="mt-2 nav nav-pills" role="tablist">
-        <li class="nav-item" role="presentation" style="margin-right: 10px;">
-          <button class="nav-link active btn-sm" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips" type="button"
-            role="tab" aria-selected="false" @click="refreshData">
-            My confirmed trips
-          </button>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button">
+            Plan a new trip</a>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link btn-sm" id="triprequests-tab" data-bs-toggle="tab" data-bs-target="#triprequests" type="button"
-            role="tab" aria-selected="false" @click="refreshData">
-            My pending trips
-          </button>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button">Manage my trips</a>
         </li>
-        <button @click="toggleHelp" class="btn btn-primary need-help-btn" style="background-color: #95a1ac; font-size:small; width: 42px; height: 42px; margin-left: 1em">?</button>
-        <TripHelpModal ref="tripHelpModalRef"></TripHelpModal>
-    </ul>
-      <div class="col-10 tab-content fill pt-4" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="trips" role="tabpanel" aria-labelledby="v-pills-trips-tab">
-          <TripsTab :trips="trips" :userID="userID" @refreshTrips="refreshData" />
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
+          <AddTripForm @getFilteredTrips="getFilteredTrips" @createTrip="createTrip" @refreshTrips="refreshData"
+            ref="addTripModal"></AddTripForm>
+          <!-- <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
+            class="btn btn-primary">Create a new trip</button> -->
+            <div class="flex mt-4">
+                <button @click="toggleShowJoinTripsModal" :disabled="noTripsSelected" class="btn btn-primary mt-4">
+                    Request to join
+                </button>
+                <h3 style="margin: auto; padding-top: 15px;">Trip Matches</h3>
+                <div style="visibility: hidden;" class="btn btn-primary mt-4">
+                    Request to join
+                </div>
+            </div>
+          
+          <v-data-table no-data-text="No matching trips" v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
+            <template v-slot:item.latest_departure_time="{ item }">
+              <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
+            </template>
+            <template v-slot:item.earliest_departure_time="{ item }">
+              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time)
+              }}</div>
+            </template>
+            <template v-slot:item.departure_location="{ item }">
+              <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
+            </template>
+            <template v-slot:item.arrival_location="{ item }">
+              <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
+            </template>
+            <template v-slot:item.num_luggage_bags="{ item }">
+              <div class="text-start">{{ item.num_luggage_bags }}</div>
+            </template>
+          </v-data-table>
         </div>
-        <div class="tab-pane fade" id="triprequests" role="tabpanel" aria-labelledby="v-pills-triprequests-tab">
-          <TripRequestsTab :tripRequests="tripRequests" @refreshTrips="refreshData" @goToTripsTab="goToTripsTab"
-            @goToTripRequestsTab="goToTripRequestsTab" />
+        <div class="tab-pane fade" id="manageTrip" role="tabpanel">
+          <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
         </div>
       </div>
     </div>
   </div>
 </template>
-
+  
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
-import TripsTab from '../components/TripsTab.vue';
-import TripRequestsTab from '../components/TripRequestsTab.vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
-import AddTripModal from '../components/AddTripModal.vue';
+import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
+import ManageTripsTab from './ManageTripsTab.vue';
+import JoinTripsModal from './JoinTripsModal.vue';
 import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from './PopupModal.vue';
-import { formatError } from './common.js';
+import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
 import $ from "jquery";
 
 // ground truth data
 const user = reactive({ first_name: "", id: -1, })
-const trips = ref([]);
+const filteredTrips = ref([]);
+const userTrips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
 const tripHelpModalRef = ref(null);
@@ -69,14 +94,49 @@ const tripHelpModalRef = ref(null);
 const loading = ref(false);
 
 // display vars
-const showTripForm = ref(false)
-
 const addTripModal = ref(null)
 const confirmDialogue = ref(null);
+const joinTripsRef = ref(null);
+const selectedTrips = ref([]);
+const createTripModalRef = ref(null);
+
+const headers = ref([
+  {
+    title: 'Departure date',
+    align: 'start',
+    sortable: true,
+    key: 'latest_departure_time',
+  },
+  {
+    title: 'Departure time range',
+    align: 'start',
+    sortable: false,
+    key: 'earliest_departure_time',
+  },
+  {
+    title: 'From',
+    align: 'start',
+    sortable: true,
+    key: 'departure_location',
+  },
+  {
+    title: 'To',
+    align: 'start',
+    sortable: true,
+    key: 'arrival_location',
+  },
+  {
+    title: '# luggage bags',
+    align: 'start',
+    sortable: true,
+    key: 'num_luggage_bags',
+  },
+])
 
 function toggleTripModal() {
   addTripModal.value.show();
 }
+
 function toggleHelp() {
   if (tripHelpModalRef.value) {
     tripHelpModalRef.value.show();
@@ -90,17 +150,8 @@ async function refreshData() {
 
 onMounted(async () => {
   await getUserInfo();
+  await getFilteredTrips({});
   await getUserTrips();
-
-  // if the user already has a trip, show the trip tab
-  if (trips.value.length > 0) {
-    $("#trips-tab").click();
-  } else if (tripRequests.value.length > 0) {
-    $("#triprequests-tab").click();
-  } else {
-    $("#triprequests-tab").click();
-    $("#add-trip-btn").click();
-  }
 });
 
 function goToTripsTab() {
@@ -109,6 +160,9 @@ function goToTripsTab() {
 
 function goToTripRequestsTab() {
   $("#triprequests-tab").click();
+}
+function goToManageTrips() {
+  $("#manageTrip").click();
 }
 
 async function getUserInfo() {
@@ -119,44 +173,61 @@ async function getUserInfo() {
 
 async function getUserTrips() {
   const endpoint = `${endpoints["userTrips"]}`;
-  const response = await axios.get(endpoint);
+  const response = await axios.get(endpoint, { params: { when: "upcoming" } });
   tripRequests.value = response.data.trip_requests;
-  trips.value = response.data.trips;
+  userTrips.value = response.data.trips;
 
   userID.value = response.data.id;
 }
 
-async function addTripRequest(newTripRequest) {
+async function getFilteredTrips(tripDetails) {
+  let endpoint = `${endpoints["tripList"]}`;
+
+  let params = {}
+
+  for (const [key, value] of Object.entries(tripDetails)) {
+    if (value !== "") {
+      if (key === "earliestDepartureTime" || key === "latestDepartureTime") {
+        let str = new Date(value).toUTCString();
+        params[key] = str;
+      } else {
+        params[key] = value;
+      }
+    }
+  }
+  const response = await axios.get(endpoint, { params: params });
+  filteredTrips.value = response.data.trips;
+}
+
+async function createTrip(newTrip) {
   //tripRequests.value.push(newTripRequest);
   loading.value = true;
 
   let departure = {
-    "address": newTripRequest.from,
-    "longitude": newTripRequest.fromLong,
-    "latitude": newTripRequest.fromLat,
+    "address": newTrip.from,
+    "longitude": newTrip.fromLong,
+    "latitude": newTrip.fromLat,
   }
   let arrival = {
-    "address": newTripRequest.to,
-    "longitude": newTripRequest.toLong,
-    "latitude": newTripRequest.toLat,
+    "address": newTrip.to,
+    "longitude": newTrip.toLong,
+    "latitude": newTrip.toLat,
   }
 
-  let earliest_departure_time = new Date(newTripRequest.earliestDepartureTime).toUTCString();
-  let latest_departure_time = new Date(newTripRequest.latestDepartureTime).toUTCString();
+  let earliest_departure_time = new Date(newTrip.earliestDepartureTime).toUTCString();
+  let latest_departure_time = new Date(newTrip.latestDepartureTime).toUTCString();
 
   let data = {
     "earliest_departure_time": earliest_departure_time,
     "latest_departure_time": latest_departure_time,
-    "num_luggage_bags": newTripRequest.luggageCount,
+    "num_luggage_bags": newTrip.luggageCount,
     "user": user.id,
     "departure_location": departure,
     "arrival_location": arrival,
-    "comment": newTripRequest.comment,
+    "trip_nickname": trip.nickname,
   }
 
-  showTripForm.value = false;
-
-  const endpoint = endpoints["tripRequest"];
+  const endpoint = endpoints["trip"];
   try {
     const response = await axios.post(endpoint, data);
 
@@ -164,29 +235,26 @@ async function addTripRequest(newTripRequest) {
 
     loading.value = false;
 
-    if (response.data.message==="Trip request created") {
-      goToTripRequestsTab();
+    if (response.data.message === "Trip created") {
+      goToManageTrips();
       confirmDialogue.value.show({
-        title: "You have a match!",
-        message: "Congrats! We found matching trips. We have sent requests to join on your behalf, and you will receive an email if they accept.",
+        title: "Trip successfully created!",
+        message: "Your trip has been created. You can manage your trips in the 'Manage my trips' tab.",
         cancelButton: "Close"
       });
-    }
-    else {
-      goToTripsTab();
+    } else {
       confirmDialogue.value.show({
-        title: "Success",
-        message: "There weren't any trips that matched your request. For now, you're in a trip on your own, but you will receive an email when other users request to join!",
-        cancelButton: "Close"
+        title: "Error",
+        message: "Error creating trip:\n" + (response.data.error !== undefined ? formatError(response.data.error) : response.data.message),
+        cancelButton: "Close",
       });
     }
   } catch (error) {
-
     loading.value = false;
     // create modal dialog indicating the error that has occurred and to retry
     confirmDialogue.value.show({
       title: "Error",
-      message: "Error submitting trip request:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
+      message: "Error creating trip:\n" + (error.response.data.error !== undefined ? formatError(error.response.data.error) : error.response.statusText),
       cancelButton: "Close",
     });
     return;
@@ -206,20 +274,79 @@ async function removeTripRequest(id) {
     }
   }
 }
-</script>
 
+function toggleShowJoinTripsModal() {
+    if (noTripsSelected()) {
+        alert("Please select at least one trip.");
+        return;
+    }
+    joinTripsRef.value.show()
+}
+
+function noTripsSelected() {
+    return selectedTrips.value.length === 0;
+}
+
+async function joinSelectedTrips() {
+  if (noTripsSelected()) {
+    alert("Please select at least one trip.");
+    return;
+  }
+  loading.value = true;
+  try {
+    const response = await axios.post(endpoints["joinSelectedTrips"], { selected_trip_ids: selectedTrips.value });
+    if (response.status === 200) {
+      confirmDialogue.value.show({
+        title: "Requested to join the selected trip(s)!",
+        message: "We have sent requests to join the selected trips on your behalf, and you will receive an email notification when any group accepts.",
+        cancelButton: "Close"
+      });
+      loading.value = false;
+      goToManageTrips();
+    } else {
+      console.error("Request to join trips failed:", response.data);
+    }
+  } catch (error) {
+    console.error("Error requesting to join selected trips:", error);
+    alert("Error requesting to join selected trips: " + error.message);
+  } finally {
+    loading.value = false;
+  }
+}
+
+</script>
+  
 <style>
+.tab-content {
+    background-color: white;
+    border: solid;
+    border-width: thin;
+    /* border-left-width: thin;
+    border-right-width: thin;
+    border-top-width: 0;
+    border-bottom-width: thin; */
+    border-top-right-radius: var(--bs-border-radius);
+    border-bottom-left-radius: var(--bs-border-radius);
+    border-bottom-right-radius: var(--bs-border-radius);
+    border-color: var(--bs-border-color);
+
+}
+
+.nav-tabs {
+    border-bottom-width: 0;
+}
+
 .nav-link {
-    --bs-nav-link-color: #3B3B3B;
-    --bs-nav-pills-link-active-color: #fff;
-    --bs-nav-pills-link-active-bg: #3B3B3B;
-    --bs-nav-pills-border-radius: 30px;
-    --bs-nav-link-hover-color: none;
-    border: 2px solid #1A1A1A;
-    display: inline-block;
-    padding: 10px;
-    text-align: center;
-    transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  --bs-nav-link-color: #3B3B3B;
+  --bs-nav-pills-link-active-color: #fff;
+  --bs-nav-pills-link-active-bg: #3B3B3B;
+  --bs-nav-pills-border-radius: 30px;
+  --bs-nav-link-hover-color: none;
+  border: 2px solid #1A1A1A;
+  display: inline-block;
+  padding: 10px;
+  text-align: center;
+  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
 }
 
 .col-2 {
