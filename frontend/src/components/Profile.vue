@@ -160,7 +160,7 @@ body, .dashboard {
 }
 
 .container-xl {
-  padding: 2rem;
+  padding: 0rem;
 }
 
 .narrow-container-profile {

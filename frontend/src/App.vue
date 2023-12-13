@@ -16,7 +16,7 @@
         </div>
     </nav>
 
-    <router-view class="full-height pt-5" style="overflow: auto;"/>
+    <router-view class="full-height pt-8" style="overflow: auto;"/>
 </div>
 </template>
 <script>
