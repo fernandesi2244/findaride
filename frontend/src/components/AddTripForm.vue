@@ -1,5 +1,45 @@
 <template>
-  <TripFormHelpModal ref="tripFormHelpModal"></TripFormHelpModal>
+  <popup-modal ref="popup" medium>
+    <form @submit.prevent="submitNewTrip" class="modal-content create-trip-modal">
+      <h5 class="nickname">
+        <label class="label" for="nickname">Nickname:</label>
+        <input class="input" id="nickname" v-model="trip.nickname" type="text" placeholder="e.g. Spring break"
+          maxlength="255" required>
+      </h5>
+
+      <div class="luggage">
+        <label class="text-start" for="luggage-count">Number of luggage bags:</label>
+        <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
+      </div>
+
+      <div>Create a trip by yourself and wait for others to join you.</div>
+      <hr>
+
+      <div>
+        <div class="create-trip-row">
+          <b> Pickup location:</b> <br>
+          <div class="">{{ trip.from }}</div>
+        </div>
+        <div class="create-trip-row">
+          <b> Dropoff location:</b><br>
+          <div class="">{{ trip.to }}</div>
+        </div>
+        <div class="create-trip-row">
+          <b> Earliest departure time:</b>
+          <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
+        </div>
+        <div class="create-trip-row">
+          <b> Latest departure time:</b>
+          <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
+        </div>
+      </div>
+
+      <div class="create-trip-footer">
+        <button type="button" @click="closeCreateTripModal" class="btn cancel-btn">Close</button>
+        <button type="submit" class="btn primary">Create trip request</button>
+      </div>
+    </form>
+  </popup-modal>
   <div class="modal-content">
     <div class="modal-body">
       <form @submit.prevent="submitFirst" class="form-container">
@@ -42,47 +82,36 @@
             <div class="form-actions">
               <button type="submit" class="btn primary">Find Matching Trips</button>
             </div> -->
-        <button v-if="showCreateTripModal" class="overlay" @click="toggleCreateTripModal"
-          style="cursor: default;"></button>
-        <form v-if="showCreateTripModal" @submit.prevent="submitNewTrip" class="create-trip-modal">
-          <h5 class="nickname">
-            <label class="label" for="nickname">Nickname:</label>
-            <input class="input" id="nickname" v-model="trip.nickname" type="text"
-              placeholder="e.g. Spring break departure" maxlength="255" required>
-          </h5>
-
-          <div class="luggage">
-            <label class="text-start" for="luggage-count">Number of luggage bags:</label>
-            <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
+        <!-- <button v-if="showCreateTripModal" class="overlay" @click="toggleCreateTripModal" style="cursor: default;"></button> -->
+        <div v-if="showInvalidLocationModal" class="overlay"></div>
+        <div v-if="showInvalidLocationModal" class="invalid-location-modal">
+          <div class="modal-header">
+            <h4 class="modal-title">Invalid Location</h4>
+            <button @click="closeInvalidLocationModal" class="close-btn">&times;</button>
           </div>
-
-          <div>Create a trip by yourself and wait for others to join you.</div>
-          <hr>
-
-          <div>
-            <div class="create-trip-row">
-              <b> Pickup location:</b> <br>
-              <div class="">{{ trip.from }}</div>
-            </div>
-            <div class="create-trip-row">
-              <b> Dropoff location:</b><br>
-              <div class="">{{ trip.to }}</div>
-            </div>
-            <div class="create-trip-row">
-              <b> Earliest departure time:</b>
-              <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
-            </div>
-            <div class="create-trip-row">
-              <b> Latest departure time:</b>
-              <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
-            </div>
+          <div class="modal-body">
+            <p>Please select a valid {{ invalidLocationType }} location from the suggestions.</p>
           </div>
-
-          <div class="create-trip-footer">
-            <button type="button" @click="toggleCreateTripModal" class="btn cancel-btn">Close</button>
-            <button type="submit" class="btn primary">Create trip request</button>
+          <div class="modal-footer">
+            <button @click="closeInvalidLocationModal" class="btn primary">OK</button>
           </div>
-        </form>
+        </div>
+        <div class="create-trip-row">
+          <b> Dropoff location:</b><br>
+          <div class="">{{ trip.to }}</div>
+        </div>
+        <div class="create-trip-row">
+          <b> Earliest departure time:</b>
+          <div class="">{{ getDate(trip.earliestDepartureTime) + ", " + getTime(trip.earliestDepartureTime) }}</div>
+        </div>
+        <div class="create-trip-row">
+          <b> Latest departure time:</b>
+          <div class="">{{ getDate(trip.latestDepartureTime) + ", " + getTime(trip.latestDepartureTime) }}</div>
+        </div>
+        <div class="create-trip-footer">
+          <button type="button" @click="toggleCreateTripModal" class="btn cancel-btn">Close</button>
+          <button type="submit" class="btn primary">Create trip request</button>
+        </div>
         <div v-if="showInvalidLocationModal" class="overlay"></div>
         <div v-if="showInvalidLocationModal" class="invalid-location-modal">
           <div class="modal-header">
@@ -98,12 +127,12 @@
         </div>
       </form>
     </div>
-
   </div>
 </template>
   
 <script>
 import TripFormHelpModal from '../components/TripFormHelpModal.vue';
+import PopupModal from './PopupModal.vue';
 import { getTime, getDate } from './common.js';
 
 let fromLocationWasSelected = false;
@@ -112,7 +141,7 @@ let toLocationWasSelected = false;
 export default {
   name: "AddTripModal",
   components: {
-    TripFormHelpModal
+    TripFormHelpModal, PopupModal
   },
   emits: ['getFilteredTrips', 'createTrip', 'refreshTrips'],
   data() {
@@ -191,13 +220,30 @@ export default {
       console.log(this.$refs.tripFormHelpModal)
       this.$refs.tripFormHelpModal.show();
     },
-    async submitNewTrip() {
-      // if(!validateFormData(tripData)) return;
-      console.log("Submitting trip:", { ...this.trip });
-      this.$emit('createTrip', { ...this.trip });
-      this.$emit('refreshTrips');
-      this.resetForm();
-      this._close();
+    async addManualTripRequest() {
+      if (!validateFormData(tripData)) return;
+      showCommentsAndLuggagePopup();
+      let data = {
+        "earliest_departure_time": trip.earliestDepartureTime,
+        "latest_departure_time": trip.latestDepartureTime,
+        "num_luggage_bags": trip.luggageCount,
+        "user": user.id,
+        "departure_location": trip.departure_location,
+        "arrival_location": trip.arrival_location,
+      };
+
+      const endpoint = await endpoints["tripRequest"];
+      try {
+        const response = axios.post(endpoint, data);
+        if (response.status === 200) {
+          alert("Trip created successfully!");
+        } else {
+          alert("Trip creation failed. Please try again.");
+        }
+      }
+      catch (error) {
+        alert("Error creating trip: " + error.message);
+      }
     },
     resetForm() {
       this.from = '';
@@ -220,16 +266,32 @@ export default {
     closeInvalidLocationModal() {
       this.showInvalidLocationModal = false;
     },
+    closeCreateTripModal() {
+      this.$refs.popup.close()
+    },
     submitFirst() {
-      if (!fromLocationWasSelected) {
-        this.showInvalidLocationAlert('pickup');
-        return;
-      }
-      if (!toLocationWasSelected) {
-        this.showInvalidLocationAlert('dropoff');
-        return;
-      }
+      // if (!fromLocationWasSelected) {
+      //   this.showInvalidLocationAlert('pickup');
+      //   return;
+      // }
+      // if (!toLocationWasSelected) {
+      //   this.showInvalidLocationAlert('dropoff');
+      //   return;
+      // }
+      this.$refs.popup.open()
       this.toggleCreateTripModal()
+    },
+    async submitNewTrip() {
+      // if(!validateFormData(tripData)) return;
+      console.log("Submitting trip:", { ...this.trip });
+      this.$emit('createTrip', { ...this.trip });
+      this.$emit('refreshTrips');
+      this.resetForm();
+      this._close();
+    },
+    autoSearchForTrips() {
+      console.log("TEST")
+      this.$emit('getTrips', { ...this.trip });
     },
     toggleCreateTripModal() {
       this.showCreateTripModal = !this.showCreateTripModal
@@ -297,7 +359,7 @@ export default {
   float: left;
   margin-right: 10px;
   width: 100px;
-  padding: 5px;
+  padding: 5px 5px 5px 0px;
   font-weight: bold;
 }
 
@@ -485,4 +547,5 @@ textarea:focus {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
-}</style>
+}
+</style>

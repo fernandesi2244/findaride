@@ -8,8 +8,11 @@
       </div>
       <h5>Sending requests...</h5>
     </div>
-  </div>
-  <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
+    </div>
+    <ConfirmDialogue ref="confirmDialogue"> </ConfirmDialogue>
+    <JoinTripsModal @joinSelectedTrips="joinSelectedTrips" @refreshTrips="refreshData" 
+                    :trips="selectedTrips" ref="joinTripsRef"></JoinTripsModal>
+
   <div class="container-xl" style="row-gap: 20px;">
     <div class="narrow-container">
       <div class="d-flex justify-content-between">
@@ -28,14 +31,19 @@
         <div class="tab-pane fade show active pt-4 px-3" id="addTrip" role="tabpanel">
           <AddTripForm @getFilteredTrips="getFilteredTrips" @createTrip="createTrip" @refreshTrips="refreshData"
             ref="addTripModal"></AddTripForm>
-          <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
-            class="btn btn-primary">Create a new trip</button>
-          <button @click="joinSelectedTrips" class="btn btn-primary">
-            Join Selected Trips
-          </button>
-          <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="toggleCreateTripModal" class="btn btn-primary">
-            Create a new trip
-            </button>
+          <!-- <button v-tooltip="'Would you like to create a trip?'" id="add-trip-btn" @click="addManualTripRequest"
+            class="btn btn-primary">Create a new trip</button> -->
+            <div class="flex mt-4">
+                <button @click="toggleShowJoinTripsModal" :disabled="false" class="btn btn-primary mt-4">
+                    Request to join
+                </button>
+                <h3 style="margin: auto; padding-top: 15px;">Trip Matches</h3>
+                <div style="visibility: hidden;" class="btn btn-primary mt-4">
+                    Request to join
+                </div>
+            </div>
+          
+
           <v-data-table v-model="selectedTrips" :headers="headers" :items="filteredTrips" item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
@@ -71,6 +79,7 @@ import { axios } from '../common/axios_service.js'
 import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import ManageTripsTab from './ManageTripsTab.vue';
+import JoinTripsModal from './JoinTripsModal.vue';
 import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from './PopupModal.vue';
 import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
@@ -89,6 +98,7 @@ const loading = ref(false);
 // display vars
 const addTripModal = ref(null)
 const confirmDialogue = ref(null);
+const joinTripsRef = ref(null);
 const selectedTrips = ref([]);
 const createTripModalRef = ref(null);
 
@@ -283,8 +293,17 @@ async function removeTripRequest(id) {
     }
   }
 }
+
+function toggleShowJoinTripsModal() {
+    joinTripsRef.value.show()
+}
+
+function noTripsSelected() {
+    return selectedTrips.value.length === 0;
+}
+
 async function joinSelectedTrips() {
-  if (selectedTrips.value.length === 0) {
+  if (noTripsSelected()) {
     alert("Please select at least one trip.");
     return;
   }
