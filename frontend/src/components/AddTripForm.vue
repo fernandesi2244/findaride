@@ -48,21 +48,21 @@
         <div class="form-row mb-1">
           <div class="form-group">
             <label class="text-start" for="from">Pickup location:</label>
-            <input id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
+            <input class="form-control" :class="{ 'is-valid': fromLocationWasSelected }" @keydown="pickupLocationChanged()" id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
           </div>
           <div class="form-group">
             <label class="text-start" for="to">Dropoff location:</label>
-            <input id="to" ref="toRef" v-model="trip.to" placeholder="Start typing to see results..." required />
+            <input class="form-control" :class="{ 'is-valid': toLocationWasSelected }" id="to" ref="toRef" @keydown="dropoffLocationChanged()" v-model="trip.to" placeholder="Start typing to see results..." required />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="text-start" for="pickup-time">Earliest departure time:</label>
-            <input id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
+            <input class="form-control" :class="{ 'is-valid': trip.earliestDepartureTime != '' }" id="pickup-time" v-model="trip.earliestDepartureTime" type="datetime-local" required />
           </div>
           <div class="form-group">
             <label class="text-start" for="dropoff-time">Latest departure time:</label>
-            <input id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
+            <input class="form-control" :class="{ 'is-valid': trip.latestDepartureTime != '' }" id="dropoff-time" v-model="trip.latestDepartureTime" type="datetime-local" required />
           </div>
         </div>
         <div class="mb-1">
@@ -107,9 +107,6 @@
 import TripFormHelpModal from '../components/TripFormHelpModal.vue';
 import PopupModal from './PopupModal.vue';
 import { getTime, getDate, cleanLocation } from './common.js';
-
-let fromLocationWasSelected = false;
-let toLocationWasSelected = false;
 
 export default {
   name: "AddTripModal",
@@ -184,7 +181,7 @@ export default {
         this.trip.fromLong = place.lng();
         this.trip.from = this.$refs.fromRef.value;
         this.$emit('getTrips', { ...this.trip });
-        fromLocationWasSelected = true;
+        this.fromLocationWasSelected = true;
       });
 
       acTo.addListener("place_changed", () => {
@@ -193,7 +190,7 @@ export default {
         this.trip.toLong = place.lng();
         this.trip.to = this.$refs.toRef.value;
         this.$emit('getTrips', { ...this.trip });
-        toLocationWasSelected = true;
+        this.toLocationWasSelected = true;
       });
     },
     toggleHelp() {
@@ -219,6 +216,13 @@ export default {
       this.showInvalidLocationModal = true;
     },
 
+    pickupLocationChanged() {
+      this.fromLocationWasSelected = false;
+    },
+    dropoffLocationChanged() {
+      this.toLocationWasSelected = false;
+    },
+
     closeInvalidLocationModal() {
       this.showInvalidLocationModal = false;
     },
@@ -226,11 +230,11 @@ export default {
       this.$refs.popup.close()
     },
     submitFirst() {
-      if (!fromLocationWasSelected) {
+      if (!this.fromLocationWasSelected) {
         this.showInvalidLocationAlert('pickup');
         return;
       }
-      if (!toLocationWasSelected) {
+      if (!this.toLocationWasSelected) {
         this.showInvalidLocationAlert('dropoff');
         return;
       }
@@ -341,7 +345,6 @@ export default {
   color: #333;
   margin-bottom: 20px;
 }
-
 
 /* Style for form groups */
 .form-group {
