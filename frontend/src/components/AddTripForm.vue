@@ -42,7 +42,7 @@
     </form>
     </div>
   </popup-modal>
-  <div class="modal-content">
+  <div class="modal-content mb-3">
     <div class="modal-body">
       <form @submit.prevent="submitFirst" class="form-container">
         <div class="form-row mb-1">

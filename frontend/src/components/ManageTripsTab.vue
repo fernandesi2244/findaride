@@ -1,7 +1,7 @@
 <template>
     <ConfirmDialogue ref="confirmDialogue" cancel-color="red"></ConfirmDialogue>
     <div v-if="trips.length == 0">
-        <h4 class="mt-2">No trips yet.</h4>
+        <h4 class="my-8">No trips yet.</h4>
     </div>
 
     <div v-else>

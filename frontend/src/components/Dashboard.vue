@@ -63,7 +63,7 @@
           </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
-          <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id"></ManageTripsTab>
+          <ManageTripsTab :trips="userTrips" :tripRequests="tripRequests" :userID="user.id" @refreshTrips="refreshData"></ManageTripsTab>
         </div>
       </div>
     </div>
@@ -145,6 +145,7 @@ function toggleHelp() {
 
 async function refreshData() {
   getUserInfo();
+  getFilteredTrips({});
   getUserTrips();
 }
 
@@ -409,5 +410,9 @@ async function joinSelectedTrips() {
   margin: 0 auto;
   z-index: 101;
   color: rgb(255, 255, 255);
+}
+
+button.btn.btn-secondary {
+  color: white;
 }
 </style>

@@ -214,6 +214,7 @@ function copyEmailsOf(participants, id) {
     /* align with left of screen */
     display: flex;
     justify-content: center;
+    background-color: rgb(221, 221, 221);
 }
 
 .tooltip {
@@ -302,5 +303,9 @@ function copyEmailsOf(participants, id) {
 .no-padding {
     padding: none;
     height: 0;
+}
+
+button.btn.btn-danger {
+    color: white;
 }
 </style>
