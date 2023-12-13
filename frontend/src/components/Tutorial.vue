@@ -1,17 +1,21 @@
 <template>
     <header>
-        <h1>Welcome to FindARide!</h1>
+        <h1>Welcome to findaride!</h1>
     </header>
 
     <section>
         <h2>Getting Started</h2>
-        <p>Before you start booking your next ride, here's a quick guide on how to use findaride.
-            Please note, findaride bookings are independent of traditional taxi or public transport
-            services. Availability may vary, so always check the 'Manage My Trips' tab for specific
-            information about each ride, including current group members and pending join requests.</p>
+        <p>Before you start booking your next ride, here's a quick guide on how to use findaride.<br><br>
+            Please note that findaride bookings are independent of public transport schedules, i.e.,
+            we only provide a scheduling and group formation mechanism based on user preferences
+            and don't handle the process of actually acquiring the Uber/Lyft. As the actual availability
+            of rides may vary, be sure to cross-reference the trip information under the 'Manage my trips' tab
+            with availability for the preferred ride-sharing service.</p>
     </section>
     <section>
-        <p>Filter trip data by typing your trip details. Once you find a trip that meets your criteria, send a join request.</p>
+        <p>Filter trip data by typing your trip details. Once you find a trip that meets your criteria, mark the checkbox next to it
+          and click the 'Request to join' button to send a request to join that group. You can then view these requests under the
+          'Manage my trips' tab.</p>
         <!---TO DO: Add comments to each picutre explaining features-->
         <!-- TO DO: Create an image showing filtering data with a created trip showing join feature -->
         <div class="profile-image">
@@ -19,18 +23,18 @@
         </div>
     </section>
     <section>
-    <p>If you don't find a suitable trip, or there are no trips available, feel free to create a new one.</p>
+    <p>If you don't find a suitable trip, or if there aren't trips available, feel free to create a new one.</p>
         <div class="profile-image">
             <img class="img-fluid" src="static/create_trip.png" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
     </section>
         <section>
         <!---TO DO: Create an image for manage my trip tab with join requests functionality-->
-        <p>Review your trip details in the 'Manage My Trips' tab once you're done.</p>
+        <p>Review your trip details in the 'Manage my trips' tab once you're done.</p>
         <div class="profile-image">
             <img class="img-fluid" src="static/manage_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
-        <p>It's simple! You'll receive email notifications for trip updates, which can also be viewed in the 'Manage My Trips' tab.
+        <p>It's simple! You'll receive email notifications for trip updates, which can also be viewed in the 'Manage my trips' tab.
             
         </p>
     </section>
