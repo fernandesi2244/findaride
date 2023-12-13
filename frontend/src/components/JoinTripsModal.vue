@@ -19,8 +19,8 @@
               Request to join <b>{{ trips.length }}</b> trip(s)
             <hr>
             <div class="create-trip-footer">
-                <button type="button" @click="_close" class="btn cancel-btn">Close</button>
-              <button type="submit" class="btn primary">Create trip request</button>
+                <button @click="_close" class="btn btn-secondary">Close</button>
+              <button type="submit" class="btn primary">Send requests</button>
             </div>
           </form>
         </div>
@@ -30,9 +30,6 @@
   
   <script>
   import PopupModal from "./PopupModal.vue";
-  
-  let fromLocationWasSelected = false;
-  let toLocationWasSelected = false;
   
   export default {
     name: "AddTripModal",
@@ -151,18 +148,9 @@
     color: white;
   }
   
-  
-  .btn.cancel-btn {
-    background-color: #6c757d;
-    color: white;
-    margin-left: 10px;
-  }
-  
-  
   .btn:hover {
     opacity: 0.9;
   }
-  
   
   /* Additional styles for responsiveness and interactivity */
   @media (max-width: 768px) {
@@ -181,7 +169,6 @@
   .btn {
     border-radius: 30px;
   }
-  
   
   .header-container {
     display: flex;
@@ -232,5 +219,5 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
-    }
+  }
   </style>

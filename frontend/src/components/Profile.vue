@@ -179,36 +179,12 @@ h2, h4, h5 {
   color: #007BFF;
 }
 
-button, .accordion-profile-button {
-  background-color: #3894f7;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-button:hover, .accordion-profile-button:hover {
-  background-color: #0056b3;
-}
-
-.accordion-profile-button:not(.collapsed) {
-  background-color: #0056b3;
-  color: white;
-}
-
 .row {
   text-align: center;
 }
 
 .col-4 {
   padding: 15px;
-}
-
-.accordion-profile-item {
-  border: none;
-  border-bottom: 1px solid #ECECEC;
-  padding-bottom: 10px;
 }
 
 .accordion-profile-header {

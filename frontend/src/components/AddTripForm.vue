@@ -36,7 +36,7 @@
       </div>
 
       <div class="create-trip-footer">
-        <button type="button" @click="closeCreateTripModal" class="btn cancel-btn">Close</button>
+        <button type="button" @click="closeCreateTripModal" class="btn btn-secondary">Close</button>
         <button type="submit" class="btn primary">Create trip</button>
       </div>
     </form>
@@ -401,14 +401,6 @@ export default {
   color: white;
 }
 
-
-.btn.cancel-btn {
-  background-color: #6c757d;
-  color: white;
-  margin-left: 10px;
-}
-
-
 .btn:hover {
   opacity: 0.9;
 }
@@ -431,7 +423,6 @@ textarea:focus {
 .btn {
   border-radius: 30px;
 }
-
 
 .header-container {
   display: flex;
