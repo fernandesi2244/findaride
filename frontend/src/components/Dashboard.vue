@@ -24,7 +24,8 @@
             Plan a new trip</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button">Manage my trips</a>
+          <a class="nav-link" data-bs-toggle="tab" data-bs-target="#manageTrip" type="button">
+            Manage my trips</a>
         </li>
       </ul>
       <div class="tab-content">

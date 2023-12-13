@@ -1,6 +1,6 @@
 <template>
   <div class="container-xl pt-4">
-    <div class="narrow-container">
+    <div class="narrow-container-profile">
       <h2 class="text-start">{{ user.first_name }} {{ user.last_name }} </h2>
       <!--TODO: insert cute section with ur stats eg how many trips, how many miles traveled etc-->
       <div class="mt-4">
@@ -48,9 +48,9 @@
       </div>
       <h4>Your past trips</h4>
       <div v-if="trips.length > 0" class="past-trips accordion" id="accordion">
-        <div v-for="trip in trips" :key="trip.college + trip.id" class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+        <div v-for="trip in trips" :key="trip.college + trip.id" class="accordion-item accordion-profile-item">
+          <h2 class="accordion-header accordion-profile-header">
+            <button class="accordion-button accordion-profile-button collapsed" type="button" data-bs-toggle="collapse"
               :data-bs-target="'#' + trip.college + trip.id">
               {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }}
               between
@@ -96,7 +96,15 @@ const userStats = reactive({
   past_riders: 0,
   id: -1,
 })
-const trips = ref([]);
+const trips = ref([
+    {id: 0,
+    college: "c",
+departure_location: "a",
+arrival_location: "d",
+earliest_departure_time: "q",
+latest_departure_time: "r",
+}
+]);
 const userID = ref(0);
 
 const addTripModal = ref(null)
@@ -107,8 +115,8 @@ async function refreshData() {
 }
 
 onMounted(async () => {
-  await getUserInfo();
-  await getUserTrips();
+//   await getUserInfo();
+//   await getUserTrips();
 });
 
 async function getUserInfo() {
@@ -155,7 +163,7 @@ body, .dashboard {
   padding: 2rem;
 }
 
-.narrow-container {
+.narrow-container-profile {
   max-width: 90%;
   margin: 20px auto;
   background: #FFFFFF;
@@ -179,7 +187,7 @@ h2, h4, h5 {
   color: #007BFF;
 }
 
-button, .accordion-button {
+button, .accordion-profile-button {
   background-color: #3894f7;
   color: white;
   border: none;
@@ -188,11 +196,11 @@ button, .accordion-button {
   transition: background-color 0.3s, color 0.3s;
 }
 
-button:hover, .accordion-button:hover {
+button:hover, .accordion-profile-button:hover {
   background-color: #0056b3;
 }
 
-.accordion-button:not(.collapsed) {
+.accordion-profile-button:not(.collapsed) {
   background-color: #0056b3;
   color: white;
 }
@@ -205,18 +213,18 @@ button:hover, .accordion-button:hover {
   padding: 15px;
 }
 
-.accordion-item {
+.accordion-profile-item {
   border: none;
   border-bottom: 1px solid #ECECEC;
   padding-bottom: 10px;
 }
 
-.accordion-header {
+.accordion-profile-header {
   margin-bottom: 10px;
 }
 
 @media (min-width: 768px) {
-  .narrow-container {
+  .narrow-container-profile {
     max-width: 800px;
   }
 }
