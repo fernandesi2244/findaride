@@ -210,6 +210,9 @@ export default {
       this.trip.luggageCount = 0;
       this.trip.comment = '';
       this.trip.nickname = '';
+
+      this.fromLocationWasSelected = false;
+      this.toLocationWasSelected = false
     },
     showInvalidLocationAlert(locationType) {
       this.invalidLocationType = locationType;
