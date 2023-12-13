@@ -245,6 +245,7 @@ async function createTrip(newTrip) {
       goToManageTrips();
       confirmDialogue.value.show({
         title: "Trip successfully created!",
+        cancelButton: "Close",
         message: "Your trip has been created. You can manage your trips in the 'Manage my trips' tab.",
       });
     } else {
