@@ -20,7 +20,7 @@
             <hr>
             <div class="create-trip-footer">
                 <button style="color: white" type="button" @click="_close" class="btn btn-secondary">Close</button>
-              <button type="submit" class="btn primary">Send requests</button>
+              <button type="submit" class="btn btn-primary">Send requests</button>
             </div>
           </form>
         </div>

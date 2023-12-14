@@ -150,15 +150,15 @@ function toggleHelp() {
 }
 
 async function refreshData(deletedTripID=null, manageTrips=false) {
-  getUserInfo();
-  await getUserTrips()
+    getUserInfo();
+    await getUserTrips();
 
-  if (deletedTripID !== null) {
-    userTrips.value = userTrips.value.filter(trip => trip.id !== deletedTripID);
-  }
-  if (manageTrips) {
-    goToManageTrips();
-  }
+    if (deletedTripID !== null) {
+        userTrips.value = userTrips.value.filter(trip => trip.id !== deletedTripID);
+    }
+    if (manageTrips) {
+        goToManageTrips();
+    }
 }
 
 onMounted(async () => {
@@ -302,10 +302,19 @@ async function joinSelectedTrips(data) {
     if (response.status === 200) {
       confirmDialogue.value.show({
         title: "Requested to join the selected trip(s)!",
-        message: "We have sent requests to join the selected trips on your behalf, and you will receive an email notification when any group accepts.",
+        cancelButton: "Close",
+        message: "You will receive an email notification when any group accepts.",
       });
       loading.value = false;
+      for (var trip of selectedTrips) {
+            const index = filteredTrips.value.findIndex(obj => obj.id == trip.id);
+            if(index > -1) {
+                filteredTrips.value.splice(index);
+            }
+      }
+      selectedTrips.value = [];
       goToManageTrips();
+      refreshData();
     } else {
       console.error("Request to join trips failed:", response.data);
     }
