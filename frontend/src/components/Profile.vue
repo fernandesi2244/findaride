@@ -12,7 +12,7 @@
         </h5>
       </div>
       <div class="row mt-4 mb-3">
-        <div class="col-4 px-4">
+        <div class="col-4 col-padding px-4">
           <p class="text-start">
             been on
           </p>
@@ -23,7 +23,7 @@
             trips
           </p>
         </div>
-        <div class="col-4">
+        <div class="col-4 col-padding">
           <p class="text-start">
             traveled
           </p>
@@ -34,7 +34,7 @@
             miles
           </p>
         </div>
-        <div class="col-4">
+        <div class="col-4 col-padding">
           <p class="text-start">
             shared rides with
           </p>
@@ -183,8 +183,8 @@ h2, h4, h5 {
   text-align: center;
 }
 
-.col-4 {
-  padding: 15px;
+.col-padding {
+    padding: 15px;
 }
 
 .accordion-profile-header {
