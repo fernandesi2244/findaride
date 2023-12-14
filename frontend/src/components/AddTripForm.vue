@@ -150,7 +150,6 @@ export default {
     'trip.to': 'checkAndCreateTripRequest',
     'trip.earliestDepartureTime': 'checkAndCreateTripRequest',
     'trip.latestDepartureTime': 'checkAndCreateTripRequest',
-    'trip.luggageCount': 'checkAndCreateTripRequest',
   },
   mounted() {
     this.initializeAutocomplete();
@@ -158,6 +157,14 @@ export default {
   methods: {
     getTime, getDate, cleanLocation,
     checkAndCreateTripRequest() {
+        if(!this.toLocationWasSelected) {
+            this.trip.toLat = '';
+            this.trip.toLong = ''
+        }
+        if(!this.fromLocationWasSelected) {
+            this.trip.fromLat = '';
+            this.trip.fromLong = '';
+        }
         if(this.noFieldsFilled) {
             this.$emit('getFilteredTrips', {})
         } else {
