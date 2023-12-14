@@ -79,7 +79,7 @@ const emit = defineEmits(['removeTripRequest', 'withdrawJoinRequest'])
 }
 
 .nickname-card {
-    width: 80%;
+    width: 70%;
 }
 .location {
     width: 30%;
@@ -91,7 +91,7 @@ const emit = defineEmits(['removeTripRequest', 'withdrawJoinRequest'])
     width: 30%;
 }
 .status {
-    width:20%;
+    width:30%;
     text-align: right;
     padding-right: 10px;
 }
