@@ -20,7 +20,7 @@
     "src": "assets/filter_trips.jpeg"
   },
   "assets/home.svg": {
-    "file": "assets/home-d0137f60.svg",
+    "file": "assets/home-a285bb47.svg",
     "src": "assets/home.svg"
   },
   "assets/manage_trips.jpeg": {
@@ -46,7 +46,7 @@
       "views/DashboardView.vue",
       "views/TutorialView.vue"
     ],
-    "file": "assets/index-e3e42e00.js",
+    "file": "assets/index-f8a01667.js",
     "imports": [
       "_vendor-4c76fc02.js"
     ],
@@ -58,14 +58,14 @@
     "src": "vendor.css"
   },
   "views/AboutView.css": {
-    "file": "assets/AboutView-74ae33a0.css",
+    "file": "assets/AboutView-a4edf163.css",
     "src": "views/AboutView.css"
   },
   "views/AboutView.vue": {
     "css": [
-      "assets/AboutView-74ae33a0.css"
+      "assets/AboutView-a4edf163.css"
     ],
-    "file": "assets/AboutView-a542d4d0.js",
+    "file": "assets/AboutView-23ee8a98.js",
     "imports": [
       "index.html",
       "_vendor-4c76fc02.js"
@@ -74,14 +74,14 @@
     "src": "views/AboutView.vue"
   },
   "views/DashboardView.css": {
-    "file": "assets/DashboardView-c04e66c0.css",
+    "file": "assets/DashboardView-8e69968d.css",
     "src": "views/DashboardView.css"
   },
   "views/DashboardView.vue": {
     "css": [
-      "assets/DashboardView-c04e66c0.css"
+      "assets/DashboardView-8e69968d.css"
     ],
-    "file": "assets/DashboardView-6ae6d707.js",
+    "file": "assets/DashboardView-1c098331.js",
     "imports": [
       "_vendor-4c76fc02.js",
       "index.html",
@@ -96,12 +96,12 @@
   },
   "views/HomeView.vue": {
     "assets": [
-      "assets/home-d0137f60.svg"
+      "assets/home-a285bb47.svg"
     ],
     "css": [
       "assets/HomeView-e4c169b1.css"
     ],
-    "file": "assets/HomeView-e28fa488.js",
+    "file": "assets/HomeView-e602968d.js",
     "imports": [
       "index.html",
       "_vendor-4c76fc02.js"
@@ -117,7 +117,7 @@
     "css": [
       "assets/ProfileView-1ca2e6ac.css"
     ],
-    "file": "assets/ProfileView-d0cda292.js",
+    "file": "assets/ProfileView-f8be8e51.js",
     "imports": [
       "_axios_service-9ad5ce54.js",
       "index.html",
@@ -127,7 +127,7 @@
     "src": "views/ProfileView.vue"
   },
   "views/TutorialView.css": {
-    "file": "assets/TutorialView-311cb69d.css",
+    "file": "assets/TutorialView-65b59376.css",
     "src": "views/TutorialView.css"
   },
   "views/TutorialView.vue": {
@@ -138,9 +138,9 @@
       "assets/profile-b354e00e.png"
     ],
     "css": [
-      "assets/TutorialView-311cb69d.css"
+      "assets/TutorialView-65b59376.css"
     ],
-    "file": "assets/TutorialView-67c76832.js",
+    "file": "assets/TutorialView-60b1efd5.js",
     "imports": [
       "index.html",
       "_vendor-4c76fc02.js"

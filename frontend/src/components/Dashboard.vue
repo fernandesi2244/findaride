@@ -373,6 +373,10 @@ async function joinSelectedTrips(data) {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
 }
 
+.btn-secondary {
+  color: white;
+}
+
 .spinner-border {
   width: 6rem;
   height: 6rem;
