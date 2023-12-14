@@ -5,7 +5,7 @@
     </div>
 
     <div v-else>
-        <div class="accordion" id="accordion">
+        <div class="accordion my-8" id="accordion">
             <div v-for="trip in sortedTrips" :key="trip.type + trip.id" class="accordion-item">
                 <div v-if="trip.type === 't'">
                     <TripCard :trip="trip"
