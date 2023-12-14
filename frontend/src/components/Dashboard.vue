@@ -28,7 +28,7 @@
       <div class="d-flex justify-content-between">
         <h2 class="text-start">Welcome, {{ user.first_name == "" ? 'fellow ridesharer' : user.first_name }}!</h2>
       </div>
-      <ul class="nav nav-tabs">
+      <ul class="nav nav-tabs no-border-bottom">
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" data-bs-toggle="tab" data-bs-target="#addTrip" type="button" @click="refreshData">
             Plan a new trip</a>
@@ -331,10 +331,12 @@ async function joinSelectedTrips(data) {
 
 }
 
-.nav-tabs {
-  border-bottom: none;
-  /* margin-bottom: 15px; */
+.no-border-bottom {
+    border-bottom: none !important;;
 }
+/* .nav-tabs {
+  border-bottom: none;
+} */
 
 .nav-link {
   border: 2px solid #1A1A1A;

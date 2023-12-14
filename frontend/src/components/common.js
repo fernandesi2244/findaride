@@ -49,7 +49,7 @@ export function getTimeRange(startString, endString) {
 
 export function getDate(dateString) {
     const date = new Date(dateString)
-    return months[date.getMonth() + 1] + ". " + date.getDate() + " " + date.getFullYear() 
+    return months[date.getMonth() + 1] + ". " + date.getDate() + ", " + date.getFullYear() 
     // return new Date(dateString).toLocaleDateString();
 }
 

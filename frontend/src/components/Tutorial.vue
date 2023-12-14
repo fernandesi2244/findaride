@@ -1,6 +1,6 @@
 <template>
     <header>
-        <h1>Welcome to findaride!</h1>
+        <h1>How to use findaride!</h1>
     </header>
 
     <section>
@@ -52,7 +52,7 @@
 /* Base Styles */
 header h1 {
   text-align: center;
-  color: #007bff;
+  /* color: #007bff; */
   font-size: 2.5rem;
   margin-bottom: 30px;
 }
