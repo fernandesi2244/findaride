@@ -10,9 +10,6 @@ def cas_user_authenticated_callback(sender, user, created, attributes, **kwargs)
         user.first_name = names[1]
         user.last_name = names[0]
         user.email = attributes['mail']
-        #for now
-        user.is_staff = True
-        user.is_superuser = True
         user.save()
 
         user_stats = UserStats()
