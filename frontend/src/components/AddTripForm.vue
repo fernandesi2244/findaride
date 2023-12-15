@@ -104,14 +104,13 @@
 </template>
   
 <script>
-import TripFormHelpModal from '../components/TripFormHelpModal.vue';
 import PopupModal from './PopupModal.vue';
 import { getTime, getDate, cleanLocation } from './common.js';
 
 export default {
   name: "AddTripModal",
   components: {
-    TripFormHelpModal, PopupModal
+     PopupModal
   },
   emits: ['getFilteredTrips', 'createTrip', 'refreshTrips', 'getTrips'],
   data() {
@@ -199,10 +198,6 @@ export default {
         this.$emit('getTrips', { ...this.trip });
         this.toLocationWasSelected = true;
       });
-    },
-    toggleHelp() {
-      console.log(this.$refs.tripFormHelpModal)
-      this.$refs.tripFormHelpModal.show();
     },
     resetForm() {
       this.trip.from = '';

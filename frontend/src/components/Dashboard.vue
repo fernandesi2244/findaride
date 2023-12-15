@@ -88,7 +88,6 @@ import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import ManageTripsTab from './ManageTripsTab.vue';
 import JoinTripsModal from './JoinTripsModal.vue';
-import TripHelpModal from '../components/TripHelpModal.vue';
 import PopupModal from './PopupModal.vue';
 import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
 import $ from "jquery";
@@ -99,7 +98,6 @@ const filteredTrips = ref([]);
 const userTrips = ref([]);
 const tripRequests = ref([]);
 const userID = ref(0);
-const tripHelpModalRef = ref(null);
 
 const loading = ref(false);
 const loadingTripCreation = ref(false);
@@ -142,12 +140,6 @@ const headers = ref([
     key: 'num_luggage_bags',
   },
 ])
-
-function toggleHelp() {
-  if (tripHelpModalRef.value) {
-    tripHelpModalRef.value.show();
-  }
-}
 
 async function refreshData(deletedTripID=null, manageTrips=false) {
     getUserInfo();

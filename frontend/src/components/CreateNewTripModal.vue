@@ -1,6 +1,5 @@
 <template>
     <popup-modal ref="popup" medium>
-      <TripFormHelpModal ref="tripFormHelpModal"></TripFormHelpModal>
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">New trip</h4>
@@ -62,7 +61,6 @@
   </template>
   
   <script>
-  import TripFormHelpModal from '../components/TripFormHelpModal.vue';
   import PopupModal from "./PopupModal.vue";
   
   let fromLocationWasSelected = false;
@@ -73,7 +71,6 @@
     props: ['data'],
     components: {
       PopupModal,
-      TripFormHelpModal,
     },
     data() {
       return {
@@ -148,10 +145,6 @@
       },
       _close() {
         this.$refs.popup.close();
-      },
-      toggleHelp() {
-        console.log(this.$refs.tripFormHelpModal)
-        this.$refs.tripFormHelpModal.show();
       },
       resetForm() {
         this.trip.from = '';

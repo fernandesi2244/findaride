@@ -16,8 +16,6 @@
         <p>Filter trip data by typing your trip details. Once you find a trip that meets your criteria, mark the checkbox next to it
           and click the 'Request to join' button to send a request to join that group. You can then view these requests under the
           'Manage my trips' tab.</p>
-        <!---TO DO: Add comments to each picutre explaining features-->
-        <!-- TO DO: Create an image showing filtering data with a created trip showing join feature -->
         <div class="profile-image">
             <img class="img-fluid" src="/assets/filter_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
@@ -35,7 +33,6 @@
             <img class="img-fluid" src="/assets/manage_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
         <p>It's simple! You'll receive email notifications for trip updates, which can also be viewed in the 'Manage my trips' tab.
-            
         </p>
     </section>
     <section>

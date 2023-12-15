@@ -115,7 +115,6 @@
             </div>
         </div>
         <!-- <button @click="toggleHelp" class="need-help-btn">Need Help</button> -->
-        <TripRequestsHelpModal ref="tripRequestsHelpModal"></TripRequestsHelpModal>
     </div>
 </template>
 
@@ -128,11 +127,9 @@ import { getDate, getDatePart, getTime, cleanLocation, formatError } from '../co
 import { toRefs } from 'vue'
 
 const emit = defineEmits(['refreshTrips', 'goToTripsTab', 'goToTripRequestsTab']);
-import TripRequestsHelpModal from '../components/TripRequestsHelpModal.vue';
 
 const props = defineProps(['tripRequests']);
 const { tripRequests } = toRefs(props);
-const tripRequestsHelpModal = ref(null);
 const confirmDialogue = ref(null);
 
 
@@ -141,39 +138,6 @@ const sortedTripRequests = computed(() => {
         return new Date(a.earliest_departure_time) - new Date(b.earliest_departure_time);
     });
 });
-
-// function acceptConfirmationRequest(confirmationID) {
-//     const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=accept`;
-//     console.log(endpoint)
-//     try {
-//         axios.post(endpoint);
-//         emit('refreshTrips');
-//         emit('goToTripsTab')
-//     } catch (error) {
-//         alert(error);
-//         return;
-//     }
-// }
-
-// function hasConfirmationRequest(tripRequest, joinRequest) {
-//     return tripRequest.confirmation_requests.some(confirmationRequest => confirmationRequest.join_request.id === joinRequest.id);
-// }
-
-function toggleHelp() {
-    tripRequestsHelpModal.value.show();
-}
-
-// function rejectConfirmationRequest(confirmationID) {
-//     const endpoint = `${endpoints["confirmationRequests"]}${confirmationID}/?action=reject`;
-//     try {
-//         axios.post(endpoint);
-//         emit('refreshTrips');
-//         emit('goToTripsTab')  // temp fix to refresh confirmation requests; TODO: STAY ON PAGE unless there are no more confirmation requests
-//     } catch (error) {
-//         alert(error);
-//         return;
-//     }
-// }
 
 function rejectJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;

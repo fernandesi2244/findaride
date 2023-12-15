@@ -2,7 +2,6 @@
   <div class="container-xl pt-4">
     <div class="narrow-container-profile">
       <h2 class="text-start">{{ user.first_name }} {{ user.last_name }} </h2>
-      <!--TODO: insert cute section with ur stats eg how many trips, how many miles traveled etc-->
       <div class="mt-4">
         <h4 class="text-start">
           Thank you for using findaride!
@@ -65,7 +64,6 @@
                   <h5 class="text-start margin-right-1 header-border">Members<br></h5>
                   <div class="text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
                 </div>
-                <!-- put each member on a separate line -->
                 <h6 v-for="participant in trip.participant_list" class="text-start">
                     {{ nameEmail(participant) }}
                 </h6>

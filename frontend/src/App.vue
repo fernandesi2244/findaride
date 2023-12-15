@@ -16,23 +16,10 @@
           </div>
         </div>
         <div class="right" id="rightNav">
-                <!-- <router-link to="/">Home</router-link>-->
                 <router-link to="/about">About</router-link>
                 <a href="/tutorial">Tutorial</a>
-                <!----<a href="/accounts/login/">Login</a> -->
-                <!-----<router-link to="/login">Login</router-link> 
-                <router-link to="/signup">Sign Up</router-link>---->
                 <router-link to="/dashboard">Dashboard</router-link>
-                <!-- <router-link to="/dashboard2">Dashboard</router-link>  -->
                 <router-link to="/profile">Profile</router-link>
-                
-              <!-- Add logout button -->
-              <!-- <div v-if="isLoggedIn">
-                  <a href="/accounts/logout/">Logout</a>
-              </div>
-              <div v-else></div> -->
-
-
         </div>
       </div>
     </nav>
