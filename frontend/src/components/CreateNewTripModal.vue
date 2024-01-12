@@ -176,7 +176,7 @@
           this.showInvalidLocationAlert('dropoff');
           return;
         }
-        console.log("Submitting trip:", { ...this.trip });
+        // console.log("Submitting trip:", { ...this.trip });
         this.$emit('addTripRequest', { ...this.trip });
         this.$emit('refreshTrips');
         this.resetForm();

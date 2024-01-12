@@ -22,24 +22,29 @@
                                 {{ getDate(trip.earliest_departure_time) }}
                             </span>
 
-                            {{ getTimeRange(trip.earliest_departure_time, trip.latest_departure_time) }} 
+                            {{ getTimeRange(trip.earliest_departure_time, trip.latest_departure_time) }}
                             <sup>
                                 {{ getDateDiff(trip.earliest_departure_time, trip.latest_departure_time) }}
                             </sup>
                         </p>
                     </div>
                     <div class="col-4">
-                        <button class="float-end btn btn-danger btn-sm" style="max-width: 80px;" @click="emit('leaveTrip', trip.id)">Leave</button>
+                        <button class="float-end btn btn-danger btn-sm" style="max-width: 80px;"
+                            @click="emit('leaveTrip', trip.id)">Leave</button>
                     </div>
                 </div>
                 <div class="row mt-2 mb-5">
                     <div class="col-3 text-start">Luggage bags: <span>{{ trip.num_luggage_bags }}</span></div>
                     <div class="col-4 text-start">
-                        <label class="form-check-label me-2">
-                            Mark trip as full
-                        </label>
-                        <input @click="emit('toggleTripIsFull', trip.id)" :checked="trip.is_full"
-                            class="form-check-input" type="checkbox" value="" :id="'check' + trip.id">
+                        <div class="flex mark-trip-div">
+                            <label class="form-check-label me-2">
+                                Mark trip as full
+                            </label>
+                            <div class="form-check form-switch">
+                                <input @click="emit('toggleTripIsFull', trip.id)" v-model="trip.is_full"
+                                    class="form-check-input" type="checkbox" role="switch" value="" :id="'check' + trip.id">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row mt-5 pt-5">
@@ -58,7 +63,8 @@
                         <!-- put each member on a separate line -->
                         <!-- print all trip participants except current user -->
                         <p class="text-start text-muted" style="margin-bottom: 0.4em;">- You</p>
-                        <p style="margin-bottom: 0.4em;" v-for="participant in trip.participant_list.filter(participant => participant.id !== userID)"
+                        <p style="margin-bottom: 0.4em;"
+                            v-for="participant in trip.participant_list.filter(participant => participant.id !== userID)"
                             :key="participant.id" class="text-start text-muted">
                             - {{ nameEmail(participant) }}
                         </p>
@@ -82,13 +88,14 @@
                                         <tr>
                                             <td v-bind:class="join.trip_request.comment ? 'no-border' : ''">{{
                                                 join.trip_request.user.first_name }} {{
-                join.trip_request.user.last_name }}</td>
+        join.trip_request.user.last_name }}</td>
                                             <td v-bind:class="join.trip_request.comment ? 'no-border' : ''">{{
                                                 join.trip_request.num_luggage_bags }}</td>
                                             <td v-bind:class="join.trip_request.comment ? 'no-border' : ''">
                                                 <div v-if="join.participants_that_accepted.includes(userID)">
                                                     <!-- check if there are other members of the trip that need to approve the reqeust -->
-                                                    <div v-if="join.participants_that_accepted.length < trip.num_participants">
+                                                    <div
+                                                        v-if="join.participants_that_accepted.length < trip.num_participants">
                                                         Waiting for other members...
                                                     </div>
                                                     <div v-else>
@@ -155,7 +162,7 @@ function showTooltip(id) {
 function copyEmailsOf(participants, id) {
     const emails = participants.map(p => p.email).join(",")
     navigator.clipboard.writeText(emails)
-    console.log("copyTooltip" + id)
+    // console.log("copyTooltip" + id)
     showTooltip("copyTooltip" + id)
 }
 </script>
@@ -309,4 +316,13 @@ function copyEmailsOf(participants, id) {
 
 button.btn.btn-danger {
     color: white;
-}</style>
+}
+
+.mark-trip-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.2em;
+}
+</style>

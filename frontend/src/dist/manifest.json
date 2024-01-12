@@ -1,15 +1,15 @@
 {
-  "_axios_service-deb991fd.js": {
-    "file": "assets/axios_service-deb991fd.js",
+  "_axios_service-eba734f5.js": {
+    "file": "assets/axios_service-eba734f5.js",
     "imports": [
-      "_vendor-f603e7ca.js"
+      "_vendor-3743131b.js"
     ]
   },
-  "_vendor-f603e7ca.js": {
+  "_vendor-3743131b.js": {
     "css": [
       "assets/vendor-86a04bde.css"
     ],
-    "file": "assets/vendor-f603e7ca.js"
+    "file": "assets/vendor-3743131b.js"
   },
   "assets/create_trip.png": {
     "file": "assets/create_trip-72908a5b.png",
@@ -20,7 +20,7 @@
     "src": "assets/filter_trips.jpeg"
   },
   "assets/home.svg": {
-    "file": "assets/home-a285bb47.svg",
+    "file": "assets/home-d0137f60.svg",
     "src": "assets/home.svg"
   },
   "assets/manage_trips.jpeg": {
@@ -46,9 +46,9 @@
       "views/DashboardView.vue",
       "views/TutorialView.vue"
     ],
-    "file": "assets/index-652e566b.js",
+    "file": "assets/index-a7bf7628.js",
     "imports": [
-      "_vendor-f603e7ca.js"
+      "_vendor-3743131b.js"
     ],
     "isEntry": true,
     "src": "index.html"
@@ -58,34 +58,34 @@
     "src": "vendor.css"
   },
   "views/AboutView.css": {
-    "file": "assets/AboutView-a4edf163.css",
+    "file": "assets/AboutView-d155bbfc.css",
     "src": "views/AboutView.css"
   },
   "views/AboutView.vue": {
     "css": [
-      "assets/AboutView-a4edf163.css"
+      "assets/AboutView-d155bbfc.css"
     ],
-    "file": "assets/AboutView-788ffa26.js",
+    "file": "assets/AboutView-d46917be.js",
     "imports": [
       "index.html",
-      "_vendor-f603e7ca.js"
+      "_vendor-3743131b.js"
     ],
     "isDynamicEntry": true,
     "src": "views/AboutView.vue"
   },
   "views/DashboardView.css": {
-    "file": "assets/DashboardView-31d0df17.css",
+    "file": "assets/DashboardView-a5544f66.css",
     "src": "views/DashboardView.css"
   },
   "views/DashboardView.vue": {
     "css": [
-      "assets/DashboardView-31d0df17.css"
+      "assets/DashboardView-a5544f66.css"
     ],
-    "file": "assets/DashboardView-c4a1b7c6.js",
+    "file": "assets/DashboardView-e83f2956.js",
     "imports": [
-      "_vendor-f603e7ca.js",
+      "_vendor-3743131b.js",
       "index.html",
-      "_axios_service-deb991fd.js"
+      "_axios_service-eba734f5.js"
     ],
     "isDynamicEntry": true,
     "src": "views/DashboardView.vue"
@@ -96,15 +96,15 @@
   },
   "views/HomeView.vue": {
     "assets": [
-      "assets/home-a285bb47.svg"
+      "assets/home-d0137f60.svg"
     ],
     "css": [
       "assets/HomeView-e4c169b1.css"
     ],
-    "file": "assets/HomeView-f5f2e87f.js",
+    "file": "assets/HomeView-298011c4.js",
     "imports": [
       "index.html",
-      "_vendor-f603e7ca.js"
+      "_vendor-3743131b.js"
     ],
     "isDynamicEntry": true,
     "src": "views/HomeView.vue"
@@ -117,17 +117,17 @@
     "css": [
       "assets/ProfileView-8e3965cf.css"
     ],
-    "file": "assets/ProfileView-223ebe39.js",
+    "file": "assets/ProfileView-b2de96d5.js",
     "imports": [
-      "_axios_service-deb991fd.js",
+      "_axios_service-eba734f5.js",
       "index.html",
-      "_vendor-f603e7ca.js"
+      "_vendor-3743131b.js"
     ],
     "isDynamicEntry": true,
     "src": "views/ProfileView.vue"
   },
   "views/TutorialView.css": {
-    "file": "assets/TutorialView-de9c20ed.css",
+    "file": "assets/TutorialView-cf5b1278.css",
     "src": "views/TutorialView.css"
   },
   "views/TutorialView.vue": {
@@ -138,12 +138,12 @@
       "assets/profile-b354e00e.png"
     ],
     "css": [
-      "assets/TutorialView-de9c20ed.css"
+      "assets/TutorialView-cf5b1278.css"
     ],
-    "file": "assets/TutorialView-f7d9f3e6.js",
+    "file": "assets/TutorialView-1bc34939.js",
     "imports": [
       "index.html",
-      "_vendor-f603e7ca.js"
+      "_vendor-3743131b.js"
     ],
     "isDynamicEntry": true,
     "src": "views/TutorialView.vue"

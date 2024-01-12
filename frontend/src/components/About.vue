@@ -16,19 +16,20 @@
 
     <section class="mission">
       <p>
-        Our mission is to revolutionize the way students find
+        Our mission is to transform the way students find
         and book their rides. When peak travel season rolls around,
         findaride steps in to provide a service that’s not only
         easy to use but also kind to your wallet. We’ve crafted
         a tool that does away with the complexities of planning
-        your trips, whether it’s a ride back home or to an event.
+        your trips, whether it’s a ride to the airport, back to your dorm, or to an off-campus event.
       </p>
       <p>
         At the core of findaride is a commitment to simplicity
-        and affordability. We understand that manual searches
-        for the right travel option can be time-consuming
+        and affordability. We understand that conventional searches
+        for the right travel option through last-minute email threads and
+        forgetten spreadsheets can be time-consuming
         and frustrating, often leading to overpriced choices
-        or last-minute scrambles. findaride eliminates this
+        or last-minute scrambles in the end. findaride eliminates this
         stress by consolidating travel options in one accessible
         place, enabling students to book their ride in
         just a few clicks.
@@ -59,14 +60,23 @@
     <section class="acknowledgments">
       <h2>Special thanks to</h2>
       <ul>
-        <li>Tolulope Oshinowo COS 333 - Fall 2023 Advisor</li>
-        <li>Robert Dondero - COS 333 Fall 2023 Professor</li>
+        <li>Tolulope Oshinowo (COS 333 Fall 2023 Advisor)</li>
+        <li>Robert Dondero (COS 333 Fall 2023 Professor)</li>
       </ul>
     </section>
   </div>
 </template>
   
 <style scoped>
+
+p {
+  margin-bottom: 0rem;
+}
+
+.about p + p {
+  margin-top: 1rem;
+}
+
 .about {
   font-family: 'Roboto', Arial, sans-serif;
   color: #4A4A4A;

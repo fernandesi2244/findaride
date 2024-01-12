@@ -8,18 +8,13 @@
         <div class="accordion" id="accordion">
             <div v-for="trip in sortedTrips" :key="trip.type + trip.id" class="accordion-item">
                 <div v-if="trip.type === 't'">
-                    <TripCard :trip="trip"
-                              :userID="userID"
-                              @acceptJoinRequest="acceptJoinRequest"
-                              @rejectJoinRequest="rejectJoinRequest"
-                              @leaveTrip="leaveTrip"
-                              @toggleTripIsFull="toggleTripIsFull"
-                              ></TripCard>
+                    <TripCard :trip="trip" :userID="userID" @acceptJoinRequest="acceptJoinRequest"
+                        @rejectJoinRequest="rejectJoinRequest" @leaveTrip="leaveTrip" @toggleTripIsFull="toggleTripIsFull">
+                    </TripCard>
                 </div>
                 <div v-else>
-                    <TripRequestCard :tripRequest="trip"
-                                     @withdrawJoinRequest="rejectJoinRequest"
-                                     @removeTripRequest="removeTripRequest"></TripRequestCard>
+                    <TripRequestCard :tripRequest="trip" @withdrawJoinRequest="rejectJoinRequest"
+                        @removeTripRequest="removeTripRequest"></TripRequestCard>
                 </div>
             </div>
         </div>
@@ -45,7 +40,7 @@ const sortedTrips = computed(() => {
     const myRequests = tripRequests.value.map(obj => ({ ...obj, type: 'r' }))
     let allTrips = myTrips.concat(myRequests);
     return allTrips.sort((a, b) => {
-        // sort by nickname string
+        // sort by nickname string if comparing pending trips with possibly many trip requests
         if (a.type === 'r' && b.type === 'r') {
             return a.trip_nickname.localeCompare(b.trip_nickname)
         } else if (a.type === 't' && b.type === 't') {
@@ -58,7 +53,7 @@ const sortedTrips = computed(() => {
     });
 });
 
-function toggleTripIsFull(tripID) {   
+function toggleTripIsFull(tripID) {
     const endpoint = `${endpoints["trip"]}${tripID}/`;
     try {
         axios.patch(endpoint, null, {
@@ -66,9 +61,10 @@ function toggleTripIsFull(tripID) {
                 action: 'toggleIsFullSetting'
             }
         });
-        emit('refreshTrips', null, true);
+        // note that we don't refresh trips because the patch might not have finished
     } catch (error) {
         alert(error);
+        emit('refreshTrips', null, true);
         return;
     }
 }

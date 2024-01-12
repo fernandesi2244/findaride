@@ -65,7 +65,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (isProtected) {
     const isloggedin = await isLoggedIn();
-    console.log(isloggedin)
+    // console.log(isloggedin)
     if (isloggedin) {
       next()
     }

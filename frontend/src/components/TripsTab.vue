@@ -183,7 +183,7 @@ function checkUpdate(tripID) {
 
 function acceptJoinRequest(joinID) {
     const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=accept`;
-    console.log(endpoint)
+    // console.log(endpoint)
     try {
         axios.post(endpoint);
         emit('refreshTrips');
@@ -246,7 +246,7 @@ function showTooltip(id) {
 function copyEmailsOf(participants, id) {
     const emails = participants.map(p => p.email).join(",")
     navigator.clipboard.writeText(emails)
-    console.log("copyTooltip" + id)
+    // console.log("copyTooltip" + id)
     showTooltip("copyTooltip" + id)
 }
 

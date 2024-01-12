@@ -144,6 +144,8 @@ const headers = ref([
 async function refreshData(deletedTripID=null, manageTrips=false) {
     getUserInfo();
     await getUserTrips();
+    // console.log("New trips after refresh:")
+    // console.log(userTrips.value)
 
     if (deletedTripID !== null) {
         userTrips.value = userTrips.value.filter(trip => trip.id !== deletedTripID);

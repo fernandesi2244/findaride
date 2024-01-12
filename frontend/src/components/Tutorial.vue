@@ -4,12 +4,11 @@
     </header>
 
     <section>
-        <h2>Getting Started</h2>
         <p>Before you start booking your next ride, here's a quick guide on how to use findaride.<br><br>
             Please note that findaride bookings are independent of public transport schedules, i.e.,
-            we only provide a scheduling and group formation mechanism based on user preferences
+            we only provide a scheduling and group formation mechanism based on user preferences (rather than transport availability)
             and don't handle the process of actually acquiring the Uber/Lyft. As the actual availability
-            of rides may vary, be sure to cross-reference the trip information under the 'Manage my trips' tab
+            of rides may vary, be sure to cross-reference the trip information
             with availability for the preferred ride-sharing service.</p>
     </section>
     <section>
@@ -28,11 +27,11 @@
     </section>
         <section>
         <!---TO DO: Create an image for manage my trip tab with join requests functionality-->
-        <p>Review your trip details in the 'Manage my trips' tab once you're done.</p>
+        <p>Review your trip details under the 'Manage my trips' tab once you're done.</p>
         <div class="profile-image">
             <img class="img-fluid" src="/assets/manage_trips.jpeg" alt="Profile" style="max-width:600pt; height:300pt;">
         </div>
-        <p>It's simple! You'll receive email notifications for trip updates, which can also be viewed in the 'Manage my trips' tab.
+        <p>It's simple! You'll receive email notifications for trip updates, which can also be viewed under the 'Manage my trips' tab.
         </p>
     </section>
     <section>

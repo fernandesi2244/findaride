@@ -13,7 +13,8 @@
         <input id="luggage-count" v-model.number="trip.luggageCount" type="number" min="0" required />
       </div>
 
-      <div>Create a trip by yourself and wait for others to join you.</div>
+      <hr>  
+      <div>Create a trip with the below details and wait for others to join.</div>
       <hr>
 
       <div>
@@ -248,7 +249,7 @@ export default {
     },
     async submitNewTrip() {
       // if(!validateFormData(tripData)) return;
-      console.log("Submitting trip:", { ...this.trip });
+      // console.log("Submitting trip:", { ...this.trip });
       this.$emit('createTrip', { ...this.trip });
       this.$emit('refreshTrips');
       this.resetForm();
