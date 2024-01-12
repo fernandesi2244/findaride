@@ -1,22 +1,22 @@
 {
-  "_axios_service-9ad5ce54.js": {
-    "file": "assets/axios_service-9ad5ce54.js",
+  "_axios_service-deb991fd.js": {
+    "file": "assets/axios_service-deb991fd.js",
     "imports": [
-      "_vendor-4c76fc02.js"
+      "_vendor-f603e7ca.js"
     ]
   },
-  "_vendor-4c76fc02.js": {
+  "_vendor-f603e7ca.js": {
     "css": [
       "assets/vendor-86a04bde.css"
     ],
-    "file": "assets/vendor-4c76fc02.js"
+    "file": "assets/vendor-f603e7ca.js"
   },
   "assets/create_trip.png": {
     "file": "assets/create_trip-72908a5b.png",
     "src": "assets/create_trip.png"
   },
   "assets/filter_trips.jpeg": {
-    "file": "assets/filter_trips-edd23b07.jpeg",
+    "file": "assets/filter_trips-223d04eb.jpeg",
     "src": "assets/filter_trips.jpeg"
   },
   "assets/home.svg": {
@@ -24,7 +24,7 @@
     "src": "assets/home.svg"
   },
   "assets/manage_trips.jpeg": {
-    "file": "assets/manage_trips-d2167e32.jpeg",
+    "file": "assets/manage_trips-d71d4cee.jpeg",
     "src": "assets/manage_trips.jpeg"
   },
   "assets/profile.png": {
@@ -46,9 +46,9 @@
       "views/DashboardView.vue",
       "views/TutorialView.vue"
     ],
-    "file": "assets/index-f8a01667.js",
+    "file": "assets/index-652e566b.js",
     "imports": [
-      "_vendor-4c76fc02.js"
+      "_vendor-f603e7ca.js"
     ],
     "isEntry": true,
     "src": "index.html"
@@ -65,27 +65,27 @@
     "css": [
       "assets/AboutView-a4edf163.css"
     ],
-    "file": "assets/AboutView-23ee8a98.js",
+    "file": "assets/AboutView-788ffa26.js",
     "imports": [
       "index.html",
-      "_vendor-4c76fc02.js"
+      "_vendor-f603e7ca.js"
     ],
     "isDynamicEntry": true,
     "src": "views/AboutView.vue"
   },
   "views/DashboardView.css": {
-    "file": "assets/DashboardView-8e69968d.css",
+    "file": "assets/DashboardView-31d0df17.css",
     "src": "views/DashboardView.css"
   },
   "views/DashboardView.vue": {
     "css": [
-      "assets/DashboardView-8e69968d.css"
+      "assets/DashboardView-31d0df17.css"
     ],
-    "file": "assets/DashboardView-1c098331.js",
+    "file": "assets/DashboardView-c4a1b7c6.js",
     "imports": [
-      "_vendor-4c76fc02.js",
+      "_vendor-f603e7ca.js",
       "index.html",
-      "_axios_service-9ad5ce54.js"
+      "_axios_service-deb991fd.js"
     ],
     "isDynamicEntry": true,
     "src": "views/DashboardView.vue"
@@ -101,49 +101,49 @@
     "css": [
       "assets/HomeView-e4c169b1.css"
     ],
-    "file": "assets/HomeView-e602968d.js",
+    "file": "assets/HomeView-f5f2e87f.js",
     "imports": [
       "index.html",
-      "_vendor-4c76fc02.js"
+      "_vendor-f603e7ca.js"
     ],
     "isDynamicEntry": true,
     "src": "views/HomeView.vue"
   },
   "views/ProfileView.css": {
-    "file": "assets/ProfileView-1ca2e6ac.css",
+    "file": "assets/ProfileView-8e3965cf.css",
     "src": "views/ProfileView.css"
   },
   "views/ProfileView.vue": {
     "css": [
-      "assets/ProfileView-1ca2e6ac.css"
+      "assets/ProfileView-8e3965cf.css"
     ],
-    "file": "assets/ProfileView-f8be8e51.js",
+    "file": "assets/ProfileView-223ebe39.js",
     "imports": [
-      "_axios_service-9ad5ce54.js",
+      "_axios_service-deb991fd.js",
       "index.html",
-      "_vendor-4c76fc02.js"
+      "_vendor-f603e7ca.js"
     ],
     "isDynamicEntry": true,
     "src": "views/ProfileView.vue"
   },
   "views/TutorialView.css": {
-    "file": "assets/TutorialView-65b59376.css",
+    "file": "assets/TutorialView-de9c20ed.css",
     "src": "views/TutorialView.css"
   },
   "views/TutorialView.vue": {
     "assets": [
-      "assets/filter_trips-edd23b07.jpeg",
+      "assets/filter_trips-223d04eb.jpeg",
       "assets/create_trip-72908a5b.png",
-      "assets/manage_trips-d2167e32.jpeg",
+      "assets/manage_trips-d71d4cee.jpeg",
       "assets/profile-b354e00e.png"
     ],
     "css": [
-      "assets/TutorialView-65b59376.css"
+      "assets/TutorialView-de9c20ed.css"
     ],
-    "file": "assets/TutorialView-60b1efd5.js",
+    "file": "assets/TutorialView-f7d9f3e6.js",
     "imports": [
       "index.html",
-      "_vendor-4c76fc02.js"
+      "_vendor-f603e7ca.js"
     ],
     "isDynamicEntry": true,
     "src": "views/TutorialView.vue"
