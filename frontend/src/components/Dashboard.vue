@@ -69,6 +69,9 @@
             <template v-slot:item.num_luggage_bags="{ item }">
               <div class="text-start">{{ item.num_luggage_bags }}</div>
             </template>
+            <template v-slot:item.num_pending_requests="{ item }">
+              <div class="text-start">{{ item.num_pending_requests }}</div>
+            </template>
           </v-data-table>
         </div>
         <div class="tab-pane fade" id="manageTrip" role="tabpanel">
@@ -134,10 +137,16 @@ const headers = ref([
     key: 'arrival_location',
   },
   {
-    title: '# luggage bags',
+    title: '# Luggage bags',
     align: 'start',
     sortable: true,
     key: 'num_luggage_bags',
+  },
+  {
+    title: '# Pending requests to join',
+    align: 'start',
+    sortable: true,
+    key: 'num_pending_requests',
   },
 ])
 

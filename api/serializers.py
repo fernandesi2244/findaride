@@ -57,6 +57,11 @@ class SimpleTripSerializer(serializers.ModelSerializer):
     participant_list = SimpleUserSerializer(many=True)
     join_requests = JoinRequestSerializer(many=True)
 
+    num_pending_requests = serializers.SerializerMethodField()
+
+    def get_num_pending_requests(self, obj):
+        return obj.join_requests.count()
+
     class Meta:
         model = Trip
         fields = '__all__'
