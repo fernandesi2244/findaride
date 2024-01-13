@@ -99,10 +99,10 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_college_display()
     
     class Meta:
-        model = UserModel 
-        fields = '__all__'
+        model = UserModel
+        fields = ('first_name', 'last_name', 'id', 'email', 'college', 'phone_number', 'college_display', 'user_stats')
 
 class SimpleUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserModel 
-        fields = ('first_name', 'last_name', 'id', 'email', 'college',)
+        model = UserModel
+        fields = ('first_name', 'last_name', 'id', 'email', 'college', 'phone_number')

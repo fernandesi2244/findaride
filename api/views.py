@@ -23,10 +23,6 @@ from .serializers import TripRequestSerializer, SimpleTripRequestSerializer, Use
 
 # TODO: see if any permissions need to be changed
 
-class TripRequestListAPIView(generics.ListAPIView):
-    serializer_class = SimpleTripRequestSerializer
-    queryset = TripRequest.objects.all()
-
 class TripListAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
@@ -108,15 +104,22 @@ class TripListAPIView(views.APIView):
         })
 
 class JoinRequestAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
         action = self.request.query_params.get("action", None)
         try:
             join_request = JoinRequest.objects.get(pk=pk)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": str(e)})
-        # TODO: Do all the logic for preventing users from typing random stuff in the URL
+        
+        # Verify that the user is in the trip that the join request is for
+        user = self.request.user
+        if user not in join_request.trip.participant_list.all():
+            return Response(status=status.HTTP_403_FORBIDDEN, data={"error": "Not authorized."})
+
         if action == "accept":
-            join_request.accept(self.request.user)
+            join_request.accept(user)
         elif action == "reject":
             join_request.reject()
         else:
@@ -124,11 +127,20 @@ class JoinRequestAPIView(views.APIView):
         return Response(status=status.HTTP_200_OK)
 
 class JoinSelectedTripsAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         selected_trip_ids = request.data['selected_trip_ids']
         if selected_trip_ids is None:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "No trips selected."})
         user = request.user
+
+        # validate request data
+        if request.data['luggageCount'] < 0: # or data['num_luggage_bags'] > TripRequestAPIView.INDIVIDUAL_BAG_LIMIT: 
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"Number of luggage bags must be greater than 0."})
+        if (len(request.data['nickname']) > TripUserDetails.MAX_NICKNAME_LENGTH):
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": f"Nickname too long. Stay under {TripUserDetails.MAX_NICKNAME_LENGTH} characters."})
+
         trip_request = TripRequest.objects.create(
             user = user,
             trip_nickname = request.data['nickname'],
@@ -142,6 +154,21 @@ class JoinSelectedTripsAPIView(views.APIView):
                 trip = Trip.objects.get(pk=trip_id)
             except Exception as e:
                 continue
+
+            # check if the user CAN join the trip
+            if trip.college != user.college:
+                continue
+            if trip.is_full:
+                continue
+            if trip.earliest_departure_time <= make_aware(datetime.utcnow()) - (trip.latest_departure_time - trip.earliest_departure_time) / 2:
+                continue
+            if trip.blacklisted_users.filter(id=user.id).exists():
+                continue
+            if trip.participant_list.filter(id=user.id).exists():
+                continue
+            if JoinRequest.objects.filter(trip_request__user=user).filter(trip=trip).exists():
+                continue
+
             request_made = True
             join_request = JoinRequest.objects.create(
                 num_participants_accepted=0,
@@ -153,7 +180,8 @@ class JoinSelectedTripsAPIView(views.APIView):
             send_join_email(trip.participant_list, trip)
         
         if not request_made:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "The requested trips do not exist."})
+            trip_request.delete()
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "The requested trips do not exist or are unavailable to join."})
         return Response(status=status.HTTP_200_OK)
 
 class TripRequestAPIView(views.APIView):
@@ -205,10 +233,11 @@ class UserTripsDetailAPIView(views.APIView):
             return Response(status=status.HTTP_200_OK, data={
                 "trips": SimpleUserTripSerializer(associated_trips, many=True, context={'request': request}).data,
                 "trip_requests": SimpleTripRequestSerializer(associated_trip_requests, many=True).data,
-                "id": user.id,
             })
 
 class TripAPIView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = SimpleTripSerializer
 
     def getRequestDataValidationResults(self, data):
@@ -232,6 +261,9 @@ class TripAPIView(views.APIView):
         if data['num_luggage_bags'] < 0: # or data['num_luggage_bags'] > TripRequestAPIView.INDIVIDUAL_BAG_LIMIT: 
             validation_results['num_luggage_bags'] = f'Number of luggage bags must be between 0 and {TripRequestAPIView.INDIVIDUAL_BAG_LIMIT}.'
 
+        if (len(data['trip_nickname']) > TripUserDetails.MAX_NICKNAME_LENGTH):
+            validation_results['trip_nickname'] = f'Nickname too long. Stay under {TripUserDetails.MAX_NICKNAME_LENGTH} characters.'
+
         return validation_results
 
     def post(self, request):
@@ -242,7 +274,7 @@ class TripAPIView(views.APIView):
         if len(validation_results) > 0:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": validation_results})
 
-        user = UserModel.objects.get(pk=data['user'])
+        user = self.request.user
 
         try:
             departure_location, arrival_location = self.__getLocationObjects(data['departure_location'], data['arrival_location'])

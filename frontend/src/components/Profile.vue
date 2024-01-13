@@ -95,7 +95,6 @@ const userStats = reactive({
   id: -1,
 })
 const trips = ref([]);
-const userID = ref(0);
 
 const addTripModal = ref(null)
 
@@ -120,8 +119,6 @@ async function getUserTrips() {
   const endpoint = `${endpoints["userTrips"]}`;
   const response = await axios.get(endpoint, { params: { when: "past" } });
   trips.value = response.data.trips;
-
-  userID.value = response.data.id;
 }
 
 function formatError(errorDict) {

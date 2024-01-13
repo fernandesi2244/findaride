@@ -100,7 +100,6 @@ const user = reactive({ first_name: " ", id: -1, })
 const filteredTrips = ref([]);
 const userTrips = ref([]);
 const tripRequests = ref([]);
-const userID = ref(0);
 
 const loading = ref(false);
 const loadingTripCreation = ref(false);
@@ -185,8 +184,6 @@ async function getUserTrips() {
   const response = await axios.get(endpoint, { params: { when: "upcoming" } });
   tripRequests.value = response.data.trip_requests;
   userTrips.value = response.data.trips;
-
-  userID.value = response.data.id;
 }
 
 async function getFilteredTrips(tripDetails) {
@@ -230,7 +227,6 @@ async function createTrip(newTrip) {
     "earliest_departure_time": earliest_departure_time,
     "latest_departure_time": latest_departure_time,
     "num_luggage_bags": newTrip.luggageCount,
-    "user": user.id,
     "departure_location": departure,
     "arrival_location": arrival,
     "trip_nickname": newTrip.nickname,
@@ -309,7 +305,7 @@ async function joinSelectedTrips(data) {
         message: "You will receive an email notification when any group accepts.",
       });
       loading.value = false;
-      for (var trip of selectedTrips) {
+      for (var trip of selectedTrips.value) {
             const index = filteredTrips.value.findIndex(obj => obj.id == trip.id);
             if(index > -1) {
                 filteredTrips.value.splice(index);

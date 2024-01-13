@@ -79,10 +79,12 @@ class Trip(models.Model):
                 self.save()
 
 class TripUserDetails(models.Model):
+    MAX_NICKNAME_LENGTH = 255
+
     trip = models.ForeignKey('Trip', related_name='trip_user_details', on_delete=models.CASCADE)
     user = models.ForeignKey('users.CustomUser', related_name='trip_user_details', on_delete=models.CASCADE)
     num_luggage_bags = models.IntegerField()
-    trip_nickname = models.CharField(max_length=255, blank=True)
+    trip_nickname = models.CharField(max_length=MAX_NICKNAME_LENGTH, blank=True)
 
 # created when a user submits the trip request form from the dashboard
 class TripRequest(models.Model):
