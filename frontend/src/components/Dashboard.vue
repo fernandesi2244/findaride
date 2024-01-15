@@ -51,20 +51,20 @@
             </div>
           </div>
 
-          <v-data-table no-data-text="No matching trips" v-model="selectedTrips" :headers="headers" :items="filteredTrips"
+          <v-data-table no-data-text="No trips matching the provided filters" v-model="selectedTrips" :headers="headers" :items="filteredTrips"
             item-key="id" show-select>
             <template v-slot:item.latest_departure_time="{ item }">
               <div class="text-start">{{ getDateOrRange(item.earliest_departure_time, item.latest_departure_time) }}</div>
             </template>
             <template v-slot:item.earliest_departure_time="{ item }">
-              <div class="text-start">{{ getTime(item.earliest_departure_time) }}~{{ getTime(item.latest_departure_time)
+              <div class="text-start">{{ getTime(item.earliest_departure_time) }} - {{ getTime(item.latest_departure_time)
               }}</div>
             </template>
             <template v-slot:item.departure_location="{ item }">
-              <div class="text-start">{{ cleanLocation(item.departure_location) }}</div>
+              <div :title="item.departure_location" class="text-start">{{ cleanLocation(item.departure_location) }}</div>
             </template>
             <template v-slot:item.arrival_location="{ item }">
-              <div class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
+              <div :title="item.arrival_location" class="text-start">{{ cleanLocation(item.arrival_location) }}</div>
             </template>
             <template v-slot:item.num_luggage_bags="{ item }">
               <div class="text-start">{{ item.num_luggage_bags }}</div>
@@ -150,10 +150,7 @@ const headers = ref([
 ])
 
 async function refreshData(deletedTripID=null, manageTrips=false) {
-    getUserInfo();
     await getUserTrips();
-    // console.log("New trips after refresh:")
-    // console.log(userTrips.value)
 
     if (deletedTripID !== null) {
         userTrips.value = userTrips.value.filter(trip => trip.id !== deletedTripID);
@@ -264,20 +261,6 @@ async function createTrip(newTrip) {
   }
 }
 
-async function removeTripRequest(id) {
-  const index = tripRequests.value.findIndex(trip => trip.id === id);
-  if (index !== -1) {
-    const endpoint = `${endpoints["deleteTripRequest"]}${id}/`;
-    try {
-      axios.delete(endpoint);
-      tripRequests.value.splice(index, index + 1);
-    } catch (error) {
-      alert(formatError(error.response.data.error));
-      return;
-    }
-  }
-}
-
 const noTripsSelected = computed(() => {
   return selectedTrips.value.length === 0;
 })
@@ -306,9 +289,9 @@ async function joinSelectedTrips(data) {
       });
       loading.value = false;
       for (var trip of selectedTrips.value) {
-            const index = filteredTrips.value.findIndex(obj => obj.id == trip.id);
+            const index = filteredTrips.value.findIndex(obj => obj.id == trip);
             if(index > -1) {
-                filteredTrips.value.splice(index);
+                filteredTrips.value.splice(index, 1);
             }
       }
       selectedTrips.value = [];
@@ -318,8 +301,13 @@ async function joinSelectedTrips(data) {
       console.error("Request to join trips failed:", response.data);
     }
   } catch (error) {
-    console.error("Error requesting to join selected trips:", error);
-    alert("Error requesting to join selected trips: " + error.message);
+    if (error?.response?.data?.error) {
+      alert(formatError(error.response.data.error));
+      console.error("Error requesting to join selected trips:", error.response.data.error);
+    } else {
+      alert("Error requesting to join selected trips: " + error.message);
+      console.error("Error requesting to join selected trips:", error.message);
+    }
   } finally {
     loading.value = false;
   }

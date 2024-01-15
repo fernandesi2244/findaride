@@ -169,7 +169,7 @@ class JoinRequest(models.Model):
             self.delete()
 
             # send email to team indicating new team along with details
-            send_trip_joined_email(user, trip.participant_list)
+            send_trip_joined_email(user, trip)
 
             # mark all other join requests to this trip as trip details changed
             for joinRequest in trip.join_requests.all():

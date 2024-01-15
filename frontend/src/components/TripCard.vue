@@ -15,11 +15,11 @@
             <div class='mb-2'>
                 <div class="row">
                     <div class="col-8 text-start">
-                        <h5> {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }}
+                        <h5 :title="`${trip.departure_location} -> ${trip.arrival_location}`"> {{ cleanLocation(trip.departure_location) }} &#8594; {{ cleanLocation(trip.arrival_location) }}
                         </h5>
                         <p class="text-muted" style="font-size: 14px;">
                             <span class="me-4">
-                                {{ getDate(trip.earliest_departure_time) }}
+                                {{ getDateOrRange(trip.earliest_departure_time, trip.latest_departure_time) }}
                             </span>
 
                             {{ getTimeRange(trip.earliest_departure_time, trip.latest_departure_time) }}
@@ -134,7 +134,7 @@
 
 <script setup>
 import { toRefs, defineProps, defineEmits, computed } from 'vue';
-import { getDatePart, getDate, getTime, cleanLocation, nameEmail, getTimeRange, getDateDiff } from '../components/common.js'
+import { getDatePart, getDate, getTime, getDateOrRange, cleanLocation, nameEmail, getTimeRange, getDateDiff } from '../components/common.js'
 
 
 const props = defineProps(['trip', 'userID'])

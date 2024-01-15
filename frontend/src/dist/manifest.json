@@ -1,6 +1,6 @@
 {
-  "_axios_service-eba734f5.js": {
-    "file": "assets/axios_service-eba734f5.js",
+  "_axios_service-e3252c18.js": {
+    "file": "assets/axios_service-e3252c18.js",
     "imports": [
       "_vendor-3743131b.js"
     ]
@@ -46,7 +46,7 @@
       "views/DashboardView.vue",
       "views/TutorialView.vue"
     ],
-    "file": "assets/index-ca3c2a3e.js",
+    "file": "assets/index-cef8a7e6.js",
     "imports": [
       "_vendor-3743131b.js"
     ],
@@ -65,7 +65,7 @@
     "css": [
       "assets/AboutView-d155bbfc.css"
     ],
-    "file": "assets/AboutView-ec74ac68.js",
+    "file": "assets/AboutView-b931cd62.js",
     "imports": [
       "index.html",
       "_vendor-3743131b.js"
@@ -81,11 +81,11 @@
     "css": [
       "assets/DashboardView-a5544f66.css"
     ],
-    "file": "assets/DashboardView-7dbd6a27.js",
+    "file": "assets/DashboardView-f27276a4.js",
     "imports": [
       "_vendor-3743131b.js",
       "index.html",
-      "_axios_service-eba734f5.js"
+      "_axios_service-e3252c18.js"
     ],
     "isDynamicEntry": true,
     "src": "views/DashboardView.vue"
@@ -101,7 +101,7 @@
     "css": [
       "assets/HomeView-e4c169b1.css"
     ],
-    "file": "assets/HomeView-052837f8.js",
+    "file": "assets/HomeView-c788e472.js",
     "imports": [
       "index.html",
       "_vendor-3743131b.js"
@@ -117,9 +117,9 @@
     "css": [
       "assets/ProfileView-8e3965cf.css"
     ],
-    "file": "assets/ProfileView-4457fdfd.js",
+    "file": "assets/ProfileView-e07dc1c5.js",
     "imports": [
-      "_axios_service-eba734f5.js",
+      "_axios_service-e3252c18.js",
       "index.html",
       "_vendor-3743131b.js"
     ],
@@ -140,7 +140,7 @@
     "css": [
       "assets/TutorialView-cf5b1278.css"
     ],
-    "file": "assets/TutorialView-b56135ac.js",
+    "file": "assets/TutorialView-de986a43.js",
     "imports": [
       "index.html",
       "_vendor-3743131b.js"

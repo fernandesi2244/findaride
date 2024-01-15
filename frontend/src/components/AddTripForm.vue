@@ -67,7 +67,7 @@
           </div>
         </div>
         <div class="mb-1">
-          Can't find a trip you like?
+          Can't find a trip from below that you like?
           <button id="add-trip-btn" class="btn-link">Create your own trip</button>
           that others can join.
         </div>
