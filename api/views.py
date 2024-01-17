@@ -67,8 +67,6 @@ class TripListAPIView(views.APIView):
 
         matching_trips = []
 
-        print(arrival_latitude, arrival_longitude, departure_latitude, departure_longitude)
-
         if departure_latitude is not None and arrival_latitude is None:
             departure_latitude = float(departure_latitude)
             departure_longitude = float(departure_longitude)

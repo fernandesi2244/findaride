@@ -54,7 +54,11 @@ class UserStats(models.Model):
 
     @property
     def number_riders(self):
-        return  max(0, self.past_riders.count()-1)
+        # get number of distinct users I've ridden with from user.trips.all()
+        distinct_riders = set()
+        for trip in self.user.trips.all():
+            distinct_riders.update(trip.participant_list.all().values_list('id', flat=True))
+        return len(distinct_riders)
 
 class ActivationToken(models.Model):
     token = models.CharField(max_length=150, unique=True)

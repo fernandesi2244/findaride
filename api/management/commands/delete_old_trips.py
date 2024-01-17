@@ -18,9 +18,6 @@ class Command(BaseCommand):
                     from_coord = (trip.departure_location.latitude, trip.departure_location.longitude)
                     to_coord = (trip.arrival_location.latitude, trip.arrival_location.longitude)
                     user_stats.miles_ridden += round(geodesic(from_coord, to_coord).miles)
-                    for participant in trip.participant_list.all():
-                        user_stats.past_riders.add(participant)
-
                     user_stats.save()
 
         
