@@ -4,6 +4,21 @@ from django.utils.html import strip_tags
 from django.conf import settings
 from threading import *
 
+def send_trip_marked_full_email(participant_list, trip):
+    subject = "findaride: Trip marked full"
+    from_email = settings.EMAIL_HOST_USER
+    to = [participant.email for participant in participant_list.all()]
+
+    # Load the HTML template
+    html_content = render_to_string('emails/marked_full.html', {'dep': trip.departure_location.address.split(",")[0], 'arr': trip.arrival_location.address.split(",")[0]})
+
+    # Create the email body with both HTML and plain text versions
+    text_content = strip_tags(html_content)
+    email = EmailMultiAlternatives(subject, text_content, from_email, to)
+    email.attach_alternative(html_content, "text/html")
+    thread=Thread(target=email.send)
+    thread.start()
+
 def send_trip_joined_email(user, trip):
     subject = "findaride: Joined a trip"
     from_email = settings.EMAIL_HOST_USER

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.timezone import make_aware
-from api.utils import send_trip_joined_email, send_member_left_email, send_absolute_rejection_email
+from api.utils import send_trip_joined_email, send_member_left_email, send_absolute_rejection_email, send_trip_marked_full_email
 from geopy.distance import geodesic
 from threading import *
 
@@ -76,7 +76,10 @@ class Trip(models.Model):
                     joinRequest.trip_request.delete()
                 joinRequest.delete()
 
-                self.save()
+            send_trip_marked_full_email(self.participant_list, self)
+            
+            self.save()
+        
 
 class TripUserDetails(models.Model):
     MAX_NICKNAME_LENGTH = 255
