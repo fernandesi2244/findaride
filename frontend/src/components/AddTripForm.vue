@@ -146,8 +146,6 @@ export default {
     },
   },
   watch: {
-    'trip.from': 'checkAndCreateTripRequest',
-    'trip.to': 'checkAndCreateTripRequest',
     'trip.earliestDepartureTime': 'checkAndCreateTripRequest',
     'trip.latestDepartureTime': 'checkAndCreateTripRequest',
   },
@@ -157,19 +155,19 @@ export default {
   methods: {
     getTime, getDate, cleanLocation,
     checkAndCreateTripRequest() {
-        if(!this.toLocationWasSelected) {
-            this.trip.toLat = '';
-            this.trip.toLong = ''
-        }
-        if(!this.fromLocationWasSelected) {
-            this.trip.fromLat = '';
-            this.trip.fromLong = '';
-        }
-        if(this.noFieldsFilled) {
-            this.$emit('getFilteredTrips', {})
-        } else {
-            this.$emit('getFilteredTrips', { ...this.trip })
-        }
+      if(!this.toLocationWasSelected) {
+        this.trip.toLat = '';
+        this.trip.toLong = ''
+      }
+      if(!this.fromLocationWasSelected) {
+        this.trip.fromLat = '';
+        this.trip.fromLong = '';
+      }
+      if(this.noFieldsFilled) {
+        this.$emit('getFilteredTrips', {})
+      } else {
+        this.$emit('getFilteredTrips', { ...this.trip })
+      }
     },
     initializeAutocomplete() {
       const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
@@ -187,8 +185,8 @@ export default {
         this.trip.fromLat = place.lat();
         this.trip.fromLong = place.lng();
         this.trip.from = this.$refs.fromRef.value;
-        this.$emit('getTrips', { ...this.trip });
         this.fromLocationWasSelected = true;
+        this.checkAndCreateTripRequest();
       });
 
       acTo.addListener("place_changed", () => {
@@ -196,8 +194,8 @@ export default {
         this.trip.toLat = place.lat();
         this.trip.toLong = place.lng();
         this.trip.to = this.$refs.toRef.value;
-        this.$emit('getTrips', { ...this.trip });
         this.toLocationWasSelected = true;
+        this.checkAndCreateTripRequest();
       });
     },
     resetForm() {
@@ -254,9 +252,6 @@ export default {
       this.$emit('refreshTrips');
       this.resetForm();
       this.$refs.popup.close()
-    },
-    autoSearchForTrips() {
-      this.$emit('getTrips', { ...this.trip });
     },
     toggleCreateTripModal() {
       this.showCreateTripModal = !this.showCreateTripModal

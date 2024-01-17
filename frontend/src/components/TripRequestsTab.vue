@@ -49,7 +49,9 @@
                                         <!-- TODO: Fix display when there are no join requests as a result of the filter check on the next line. -->
                                         <tr v-for="join in tripRequest.join_requests.filter(joinRequest => !hasConfirmationRequest(tripRequest, joinRequest))"
                                             :key="join.id" :class="{ 'join-request-orange': join.status === 'pending' }">
-                                            <td>{{ join.trip.num_participants }}</td>
+                                            <td>
+                                                {{ join.trip.num_participants }}
+                                            </td>
                                             <td>{{ cleanLocation(join.trip.departure_location) }}</td>
                                             <td>{{ cleanLocation(join.trip.arrival_location) }}</td>
                                             <td>{{ getTime(join.trip.earliest_departure_time) + " (" +
@@ -59,62 +61,18 @@
                                             <td>{{ join.trip.num_luggage_bags }}</td>
                                             <td>
                                                 <button class="btn-text withdraw-btn"
-                                                    @click="rejectJoinRequest(join.id)">Withdraw</button>
+                                                    @click="rejectJoinRequest(join.id)">Withdraw
+                                                </button>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- <h5 class="mt-2 text-start">Confirmation requests:</h5>
-                            <div v-if="tripRequest.confirmation_requests.length == 0">
-                                <p class="text-start">No confirmations yet.</p>
-                            </div>
-                            <div v-else class="table-responsive">
-                                <p class="text-start">Note: the following information represents the trips
-                                    <strong>after</strong> your possible addition.</p>
-                                <table class="table bdr">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col" class="column">Number of riders</th>
-                                            <th scope="col" class="column">Departure</th>
-                                            <th scope="col" class="column">Arrival</th>
-                                            <th scope="col" class="column">Earliest time</th>
-                                            <th scope="col" class="column">Latest time</th>
-                                            <th scope="col" class="column">Bags</th>
-                                            <th scope="col" class="columnend"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="confirm in tripRequest.confirmation_requests" :key="confirm.id"
-                                            :class="{ 'confirmation-request-green': confirm.status === 'confirmed' }">
-                                           
-                                            <td>{{ confirm.join_request.trip.num_participants + 1 }}</td>
-                                            <td>{{ cleanLocation(confirm.join_request.trip.departure_location) }}</td>
-                                            <td>{{ cleanLocation(confirm.join_request.trip.arrival_location) }}</td>
-                                            <td>{{ getTime(confirm.join_request.trip.earliest_departure_time) + " (" +
-                                                getDate(confirm.join_request.trip.earliest_departure_time) + ")" }}</td>
-                                            <td>{{ getTime(confirm.join_request.trip.latest_departure_time) + " (" +
-                                                getDate(confirm.join_request.trip.latest_departure_time) + ")" }}</td>
-                                            <td>{{ confirm.join_request.trip.num_luggage_bags + tripRequest.num_luggage_bags
-                                            }}</td>
-                                            <td style="max-width: 125px;">
-
-                                                <button class="btn-text accept " style="width:60px; margin-right: 5px;"
-                                                    @click="acceptConfirmationRequest(confirm.id)">Accept</button>
-                                                <button class="btn-text reject " style="width:60px"
-                                                    @click="rejectConfirmationRequest(confirm.id)">Reject</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- <button @click="toggleHelp" class="need-help-btn">Need Help</button> -->
     </div>
 </template>
 
