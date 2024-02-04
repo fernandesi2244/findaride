@@ -72,6 +72,8 @@ export default {
   color: #2c3e50;
   background-color: #F4F4F8;
   min-height: 100vh;
+  margin:0;
+  padding:0;  
 }
 
 .box {

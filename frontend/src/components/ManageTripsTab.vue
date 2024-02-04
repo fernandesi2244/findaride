@@ -25,11 +25,10 @@
 import ConfirmDialogue from "./ConfirmDialogue.vue"
 import TripCard from "./TripCard.vue"
 import TripRequestCard from "./TripRequestCard.vue"
-import { ref, defineProps, defineEmits, computed, onMounted } from 'vue';
+import { ref, defineProps, defineEmits, computed, onMounted, toRefs } from 'vue';
 import { endpoints } from '../common/endpoints.js';
 import { axios } from '../common/axios_service.js'
 import { formatError } from '../components/common.js'
-import { toRefs } from 'vue'
 
 const emit = defineEmits(['refreshTrips']);
 const props = defineProps(['trips', 'tripRequests', 'userID']);

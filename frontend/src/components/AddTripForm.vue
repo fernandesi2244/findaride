@@ -49,11 +49,11 @@
         <div class="form-row mb-1">
           <div class="form-group">
             <label class="text-start" for="from">Pickup location:</label>
-            <input class="form-control" :class="{ 'is-valid': fromLocationWasSelected }" @keydown="pickupLocationChanged()" id="from" ref="fromRef" v-model="trip.from" placeholder="Start typing to see results..." required />
+            <dropdown-select @selectLocation="departureSelected" id="departureInput"></dropdown-select>
           </div>
           <div class="form-group">
             <label class="text-start" for="to">Dropoff location:</label>
-            <input class="form-control" :class="{ 'is-valid': toLocationWasSelected }" id="to" ref="toRef" @keydown="dropoffLocationChanged()" v-model="trip.to" placeholder="Start typing to see results..." required />
+            <dropdown-select @selectLocation="arrivalSelected" id="arrivalInput"></dropdown-select>
           </div>
         </div>
         <div class="form-row">
@@ -106,12 +106,14 @@
   
 <script>
 import PopupModal from './PopupModal.vue';
+import DropdownSelect from './DropdownSelect.vue';
 import { getTime, getDate, cleanLocation } from './common.js';
 
 export default {
   name: "AddTripModal",
   components: {
-     PopupModal
+     PopupModal,
+     DropdownSelect
   },
   emits: ['getFilteredTrips', 'createTrip', 'refreshTrips', 'getTrips'],
   data() {
@@ -149,9 +151,6 @@ export default {
     'trip.earliestDepartureTime': 'checkAndCreateTripRequest',
     'trip.latestDepartureTime': 'checkAndCreateTripRequest',
   },
-  mounted() {
-    this.initializeAutocomplete();
-  },
   methods: {
     getTime, getDate, cleanLocation,
     checkAndCreateTripRequest() {
@@ -169,34 +168,17 @@ export default {
         this.$emit('getFilteredTrips', { ...this.trip })
       }
     },
-    initializeAutocomplete() {
-      const acFrom = new google.maps.places.Autocomplete(this.$refs.fromRef, {
-        types: ["transit_station"],
-        fields: ["geometry"]
-      });
-
-      const acTo = new google.maps.places.Autocomplete(this.$refs.toRef, {
-        types: ["transit_station"],
-        fields: ["geometry"]
-      });
-
-      acFrom.addListener("place_changed", () => {
-        let place = acFrom.getPlace().geometry.location;
-        this.trip.fromLat = place.lat();
-        this.trip.fromLong = place.lng();
-        this.trip.from = this.$refs.fromRef.value;
-        this.fromLocationWasSelected = true;
-        this.checkAndCreateTripRequest();
-      });
-
-      acTo.addListener("place_changed", () => {
-        let place = acTo.getPlace().geometry.location;
-        this.trip.toLat = place.lat();
-        this.trip.toLong = place.lng();
-        this.trip.to = this.$refs.toRef.value;
-        this.toLocationWasSelected = true;
-        this.checkAndCreateTripRequest();
-      });
+    departureSelected(location) {
+      this.trip.from = location.name;
+      this.trip.fromLat = location.coordinates.latitude;
+      this.trip.fromLong = location.coordinates.longitude;
+      this.fromLocationWasSelected = true;
+    },
+    arrivalSelected(location) {
+      this.trip.to = location.name;
+      this.trip.toLat = location.coordinates.latitude;
+      this.trip.toLong = location.coordinates.longitude;
+      this.toLocationWasSelected = true;
     },
     resetForm() {
       this.trip.from = '';
@@ -246,8 +228,6 @@ export default {
       this.toggleCreateTripModal()
     },
     async submitNewTrip() {
-      // if(!validateFormData(tripData)) return;
-      // console.log("Submitting trip:", { ...this.trip });
       this.$emit('createTrip', { ...this.trip });
       this.$emit('refreshTrips');
       this.resetForm();
