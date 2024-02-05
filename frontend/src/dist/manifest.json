@@ -46,7 +46,7 @@
       "views/DashboardView.vue",
       "views/TutorialView.vue"
     ],
-    "file": "assets/index-d7c280a7.js",
+    "file": "assets/index-19f0dd3b.js",
     "imports": [
       "_vendor-078ae3f3.js"
     ],
@@ -65,7 +65,7 @@
     "css": [
       "assets/AboutView-b59bd90a.css"
     ],
-    "file": "assets/AboutView-869d6cb3.js",
+    "file": "assets/AboutView-f5ca6527.js",
     "imports": [
       "index.html",
       "_vendor-078ae3f3.js"
@@ -81,7 +81,7 @@
     "css": [
       "assets/DashboardView-9f54b334.css"
     ],
-    "file": "assets/DashboardView-090da72b.js",
+    "file": "assets/DashboardView-a4be7493.js",
     "imports": [
       "_vendor-078ae3f3.js",
       "index.html",
@@ -101,7 +101,7 @@
     "css": [
       "assets/HomeView-e4c169b1.css"
     ],
-    "file": "assets/HomeView-dd89044b.js",
+    "file": "assets/HomeView-f4648f9a.js",
     "imports": [
       "index.html",
       "_vendor-078ae3f3.js"
@@ -117,7 +117,7 @@
     "css": [
       "assets/ProfileView-8e3965cf.css"
     ],
-    "file": "assets/ProfileView-a0848bce.js",
+    "file": "assets/ProfileView-0b6aab41.js",
     "imports": [
       "_axios_service-f8be5b31.js",
       "index.html",
@@ -140,7 +140,7 @@
     "css": [
       "assets/TutorialView-1d72dffb.css"
     ],
-    "file": "assets/TutorialView-76eb7fa3.js",
+    "file": "assets/TutorialView-f85eed18.js",
     "imports": [
       "index.html",
       "_vendor-078ae3f3.js"

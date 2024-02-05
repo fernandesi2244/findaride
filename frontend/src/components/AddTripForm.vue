@@ -49,11 +49,11 @@
         <div class="form-row mb-1">
           <div class="form-group">
             <label class="text-start" for="from">Pickup location:</label>
-            <dropdown-select @selectLocation="departureSelected" id="departureInput"></dropdown-select>
+            <dropdown-select @unselect="departureUnselected" @selectLocation="departureSelected" id="departureInput"></dropdown-select>
           </div>
           <div class="form-group">
             <label class="text-start" for="to">Dropoff location:</label>
-            <dropdown-select @selectLocation="arrivalSelected" id="arrivalInput"></dropdown-select>
+            <dropdown-select @unselect="arrivalUnselected" @selectLocation="arrivalSelected" id="arrivalInput"></dropdown-select>
           </div>
         </div>
         <div class="form-row">
@@ -168,11 +168,23 @@ export default {
         this.$emit('getFilteredTrips', { ...this.trip })
       }
     },
+    departureUnselected() {
+      this.trip.from = '';
+      this.trip.fromLat = '';
+      this.trip.fromLong = '';
+      this.fromLocationWasSelected = false;
+    },
     departureSelected(location) {
       this.trip.from = location.name;
       this.trip.fromLat = location.coordinates.latitude;
       this.trip.fromLong = location.coordinates.longitude;
       this.fromLocationWasSelected = true;
+    },
+    arrivalUnselected() {
+      this.trip.to = '';
+      this.trip.toLat = '';
+      this.trip.toLong = '';
+      this.toLocationWasSelected = false;
     },
     arrivalSelected(location) {
       this.trip.to = location.name;

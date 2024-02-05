@@ -65,8 +65,7 @@ async function selectLocation(suggestion) {
         suggestions.value = [];
         return;
     }
-    console.log(import.meta.env.VITE_MAPBOX_TOKEN)
-    const url = `https://api.mapbox.com/search/searchbox/v1/retrieve/${suggestion.mapbox_id}?session_token=01e9d614-8fea-46e1-88d7-5f4c20f09fc8&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
+    const url = `https://api.mapbox.com/search/searchbox/v1/retrieve/${encodeURIComponent(suggestion.mapbox_id)}?session_token=01e9d614-8fea-46e1-88d7-5f4c20f09fc8&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
 
     try {
         const results = await axios.get(url);
@@ -80,12 +79,13 @@ async function selectLocation(suggestion) {
 
 async function search() {
     isSelected.value = false;
+    emit('unselect');
     if (input.value.length == 0) {
         suggestions.value = [];
         return;
     }
 
-    const url = `https://api.mapbox.com/search/searchbox/v1/suggest?q=${input.value}&language=en&country=us&types=address,poi&session_token=07c99740-03dc-4261-88d7-1ca73f70b991&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
+    const url = `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(input.value)}&language=en&country=us&types=address,poi&session_token=07c99740-03dc-4261-88d7-1ca73f70b991&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
 
     try {
         const results = await axios.get(url);
