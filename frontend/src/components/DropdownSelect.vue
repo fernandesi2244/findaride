@@ -65,6 +65,7 @@ async function selectLocation(suggestion) {
         suggestions.value = [];
         return;
     }
+    console.log(import.meta.env.VITE_MAPBOX_TOKEN)
     const url = `https://api.mapbox.com/search/searchbox/v1/retrieve/${suggestion.mapbox_id}?session_token=01e9d614-8fea-46e1-88d7-5f4c20f09fc8&access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`;
 
     try {
