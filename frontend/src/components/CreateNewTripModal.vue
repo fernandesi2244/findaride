@@ -51,7 +51,7 @@
                 <p>Please select a valid {{ invalidLocationType }} location from the suggestions.</p>
               </div>
               <div class="modal-footer">
-                <button @click="closeInvalidLocationModal" class="btn primary">OK</button>
+                <button @click="closeInvalidLocationModal" class="btn btn-primary">OK</button>
               </div>
             </div>
           </form>
@@ -186,33 +186,6 @@
   }
   </script>
   <style>
-  :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --input-border-color: #ccc;
-    --hover-opacity: 0.9;
-  }
-  
-  
-  .trip-request-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* left-align all elements */
-    text-align: left;
-  }
-  
-  
-  .trip-request-form h3 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  
   /* Style for form groups */
   .form-group {
     margin-bottom: 15px;
@@ -260,7 +233,7 @@
   }
   
   
-  .btn.primary {
+  .btn.btn-primary {
     background-color: #007bff;
     color: white;
   }
@@ -276,15 +249,6 @@
   .btn:hover {
     opacity: 0.9;
   }
-  
-  
-  /* Additional styles for responsiveness and interactivity */
-  @media (max-width: 768px) {
-    .trip-request-form {
-      padding: 10px;
-    }
-  }
-  
   
   input:focus,
   textarea:focus {

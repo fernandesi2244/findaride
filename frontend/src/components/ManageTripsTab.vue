@@ -80,13 +80,23 @@ async function acceptJoinRequest(joinID) {
 }
 
 async function rejectJoinRequest(joinID) {
-    const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
-    try {
-        await axios.post(endpoint);
-        emit('refreshTrips', null, true);
-    } catch (error) {
-        alert(error);
-        return;
+    const confirm = await confirmDialogue.value.show({
+        title: "Confirm",
+        message: "Are you sure you want to withdraw this request?",
+        cancelButton: "Cancel",
+        okButton: "Confirm",
+        okClass: "btn btn-danger",
+    });
+
+    if (confirm) {
+        const endpoint = `${endpoints["joinRequests"]}${joinID}/?action=reject`;
+        try {
+            await axios.post(endpoint);
+            emit('refreshTrips', null, true);
+        } catch (error) {
+            alert(error);
+            return;
+        }
     }
 }
 

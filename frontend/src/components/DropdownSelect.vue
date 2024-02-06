@@ -42,7 +42,6 @@ onMounted(() => {
     document.addEventListener("click", onClickOutside);
 });
 
-// ground truth data
 const isFocused = ref(false);
 const isSelected = ref(false);
 const input = ref("");

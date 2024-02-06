@@ -166,7 +166,6 @@ AUTHENTICATION_BACKENDS = [
     ]
 
 # CAS Settings
-#CAS_SERVER_URL = 'https://signon.cs.princeton.edu/'
 CAS_SERVER_URL = 'https://fed.princeton.edu/cas/'
 CAS_VERSION = 2
 CAS_USERNAME_ATTRIBUTE = 'mail'
@@ -179,6 +178,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.princeton.edu'
 EMAIL_PORT = 587
-EMAIL_USE_TLS = False
+EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_ID') 
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
+
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+SENDGRID_EMAIL = os.environ.get('SENDGRID_EMAIL')

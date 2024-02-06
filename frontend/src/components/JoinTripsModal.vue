@@ -69,33 +69,6 @@
   }
   </script>
   <style>
-  :root {
-    --primary-color: #007bff;
-    --secondary-color: #6c757d;
-    --input-border-color: #ccc;
-    --hover-opacity: 0.9;
-  }
-  
-  
-  .trip-request-form {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* left-align all elements */
-    text-align: left;
-  }
-  
-  
-  .trip-request-form h3 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  
   /* Style for form groups */
   .form-group {
     margin-bottom: 15px;
@@ -133,32 +106,10 @@
     padding-top: 10px;
   }
   
-  
-  .btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  
-  
-  .btn.primary {
+  .btn.btn-primary {
     background-color: #007bff;
     color: white;
   }
-  
-  .btn:hover {
-    opacity: 0.9;
-  }
-  
-  /* Additional styles for responsiveness and interactivity */
-  @media (max-width: 768px) {
-    .trip-request-form {
-      padding: 10px;
-    }
-  }
-  
   
   input:focus,
   textarea:focus {
@@ -175,42 +126,7 @@
     justify-content: space-between;
     align-items: center;
   }
-  
-  .invalid-location-modal {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    width: 80%;
-    max-width: 400px;
-  }
-  
-  .invalid-location-modal .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  
-  .invalid-location-modal .modal-header .close-btn {
-    border: none;
-    background: none;
-    font-size: 1.5em;
-    cursor: pointer;
-  }
-  
-  .invalid-location-modal .modal-body p {
-    color: #333;
-  }
-  
-  .invalid-location-modal .modal-footer {
-    text-align: right;
-  }
+
   .overlay {
     position: fixed;
     top: 0;

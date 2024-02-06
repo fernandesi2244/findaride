@@ -115,7 +115,7 @@ class JoinRequestAPIView(views.APIView):
         
         # Verify that the user is in the trip that the join request is for
         user = self.request.user
-        if user not in join_request.trip.participant_list.all():
+        if user not in join_request.trip.participant_list.all() and user != join_request.trip_request.user:
             return Response(status=status.HTTP_403_FORBIDDEN, data={"error": "Not authorized."})
 
         if action == "accept":
@@ -130,6 +130,7 @@ class JoinSelectedTripsAPIView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        print("TEST")
         selected_trip_ids = request.data['selected_trip_ids']
         if selected_trip_ids is None:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"error": "No trips selected."})

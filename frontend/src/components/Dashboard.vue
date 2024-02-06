@@ -91,8 +91,7 @@ import AddTripForm from '../components/AddTripForm.vue';
 import ConfirmDialogue from "../components/ConfirmDialogue.vue";
 import ManageTripsTab from './ManageTripsTab.vue';
 import JoinTripsModal from './JoinTripsModal.vue';
-import PopupModal from './PopupModal.vue';
-import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, nameEmail, formatError } from '../components/common.js'
+import { getDate, getDatePart, getDateOrRange, getTime, cleanLocation, formatError } from '../components/common.js'
 import $ from "jquery";
 
 // ground truth data
